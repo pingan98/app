@@ -3,16 +3,15 @@ import ModuleBox from "@/components/business/moduleBox.vue";
 </script>
 
 <template>
-  <div class="score-detail-page">
-    <div class="bg"></div>
-    <div class="base-info-top card">
+  <div class="score-detail-page detail-bg">
+    <div class="base-info-top card info-line-box">
       <div class="info-item">
         <div class="pre-icon"><img src="@/assets/unit_icon@3x.png" /></div>
         <label class="label">责任部门</label>
         <span>1</span>
       </div>
       <div class="info-item">
-        <div class="pre-icon"><img src="@/assets/calendar@3x.png" /></div>
+        <div class="pre-icon"><img src="@/assets/calendar_icon@3x.png" /></div>
         <label class="label">问题时间</label>
         <span>1</span>
       </div>
@@ -22,7 +21,7 @@ import ModuleBox from "@/components/business/moduleBox.vue";
         <span>1</span>
       </div>
       <div class="info-item">
-        <div class="pre-icon"><img src="@/assets/calendar@3x.png" /></div>
+        <div class="pre-icon"><img src="@/assets/calendar_icon@3x.png" /></div>
         <label class="label">记分时间</label>
         <span>1</span>
       </div>
@@ -56,7 +55,7 @@ import ModuleBox from "@/components/business/moduleBox.vue";
         </div>
         <div class="score-num">
           <div class="name">民警姓名</div>
-          <div class="num">分值: <span>5.00</span></div>
+          <div class="num-box">分值: <span class="num">5.00</span></div>
         </div>
       </div>
       <div class="score-clause">
@@ -83,7 +82,7 @@ import ModuleBox from "@/components/business/moduleBox.vue";
         </div>
         <div class="score-num">
           <div class="name">民警姓名</div>
-          <div class="num">分值: <span>5.00</span></div>
+          <div class="num-box">分值: <span class="num">5.00</span></div>
         </div>
       </div>
       <div class="score-clause">
@@ -102,24 +101,9 @@ import ModuleBox from "@/components/business/moduleBox.vue";
   position: relative;
   padding: 10px;
 }
-.bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 200px;
-  background: linear-gradient(180deg, #1b91ff 0%, rgba(2, 194, 250, 0) 100%);
-}
-.card {
-  box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.07);
-  border-radius: 10px;
-  background: #ffffff;
-  margin-bottom: 12px;
-}
+
 .base-info-top {
   position: relative;
-  padding: 0 16px;
-
   &::before {
     display: block;
     content: "";
@@ -131,36 +115,6 @@ import ModuleBox from "@/components/business/moduleBox.vue";
     background: linear-gradient(top, #a9d6ff 0%, #58aeff 100%);
   }
 }
-.info-item {
-  padding: 12px 0;
-  border-bottom: 1px solid #efefef;
-  .flex(flex-start, flex-top);
-  &:last-of-type {
-    border-bottom: 0;
-  }
-  .pre-icon {
-    margin-right: 10px;
-    img {
-      width: 18px;
-      height: auto;
-    }
-  }
-
-  .label {
-    display: inline-block;
-    color: var(--text-color2);
-    width: 90px;
-  }
-
-  .value {
-    flex: 1;
-    .current-place {
-      color: #0277fe;
-      margin-top: 6px;
-    }
-  }
-}
-
 .duty-list {
   position: relative;
   padding: 16px;
@@ -170,9 +124,14 @@ import ModuleBox from "@/components/business/moduleBox.vue";
       font-size: 18px;
       font-weight: bold;
     }
-    .num {
+    .num-box {
       color: var(--text-color2);
+      .num {
+        font-size: 16px;
+        color: var(--text-color1);
+      }
     }
+
   }
 }
 .job-box {

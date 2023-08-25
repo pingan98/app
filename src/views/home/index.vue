@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { reactive } from "vue";
-import MaterialList from "@/views/home/components/materialList.vue";
+import MaterialList from "@/views/caution/components/materialList.vue";
 
 const homeNav = reactive([
   { title: "记分管理", to: "Score" },
-  { title: "警示教育", to: "Score" },
-  { title: "预警管理", to: "Score" }
+  { title: "警示教育", to: "Caution" },
+  { title: "预警管理", to: "Warning" }
 ]);
 </script>
 

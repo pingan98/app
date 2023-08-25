@@ -7,6 +7,7 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    CTab: typeof import('./src/components/business/cTab.vue')['default']
     Describe: typeof import('./src/components/business/describe.vue')['default']
     Distribution: typeof import('./src/components/business/distribution.vue')['default']
     DutyList: typeof import('./src/components/business/dutyList.vue')['default']
@@ -42,7 +43,10 @@ declare module '@vue/runtime-core' {
     VanSpace: typeof import('vant/es')['Space']
     VanSwipe: typeof import('vant/es')['Swipe']
     VanSwipeItem: typeof import('vant/es')['SwipeItem']
+    VanTab: typeof import('vant/es')['Tab']
     VanTabbar: typeof import('vant/es')['Tabbar']
     VanTabbarItem: typeof import('vant/es')['TabbarItem']
+    VanTabs: typeof import('vant/es')['Tabs']
+    VanTextEllipsis: typeof import('vant/es')['TextEllipsis']
   }
 }
