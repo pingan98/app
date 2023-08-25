@@ -1,13 +1,17 @@
 <script  lang="ts" name="Warning" setup>
 import {ref} from "vue";
 import CTab from "@/components/business/cTab.vue";
-import WarningList from "@/views/warning/components/warningList.vue";
-
+import WarningItem from "@/views/warning/components/warningItem.vue";
+// 加载中状态
+const loading = ref(false);
+// 是否完全加载完毕数据
+const finished = ref(false);
 const searchForm = ref({});
 const tabs = [{title:'已审核', value:1},{title:'待审核', value:2}]
 const tabChange = (value:string | number)=>{
   console.log(value)
 }
+const onLoad = async () => {}
 </script>
 
 <template>
@@ -23,7 +27,11 @@ const tabChange = (value:string | number)=>{
     </div>
 
     <div class="mx-[14px] my-[16px]">
-      <warning-list />
+      <van-list v-model:loading="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+        <warning-item />
+        <warning-item />
+        <warning-item />
+      </van-list>
     </div>
   </div>
 </template>

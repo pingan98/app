@@ -148,7 +148,7 @@ const submitFn = () => {
       </van-form>
     </div>
 
-    <div class="bottom-action van-hairline--top">
+    <div class="bottom-action">
       <van-button
         round
         block
@@ -174,13 +174,5 @@ const submitFn = () => {
 .duty-man {
   padding: 10px 16px;
 }
-.bottom-action {
-  box-shadow: 0px -1px 5px #e3e3e3;
-  padding: 14px 16px;
-  width: 100%;
-  position: fixed;
-  left: 0;
-  bottom: 0;
-  background: #ffffff;
-}
+
 </style>

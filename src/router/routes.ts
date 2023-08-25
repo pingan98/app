@@ -28,6 +28,12 @@ const routes: Array<RouteRecordRaw> = [
     meta: { title: "警示教育" }
   },
   {
+    path: "/caution/detail/:id",
+    name: "CautionDetail",
+    component: () => import("@/views/caution/cautionDetail.vue"),
+    meta: { title: "警示教育" }
+  },
+  {
     path: "/warning",
     name: "Warning",
     component: () => import("@/views/warning/index.vue"),

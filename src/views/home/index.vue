@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive } from "vue";
-import MaterialList from "@/views/caution/components/materialList.vue";
+import MaterialItem from "@/views/caution/components/materialItem.vue";
 
 const homeNav = reactive([
   { title: "记分管理", to: "Score" },
@@ -52,13 +52,21 @@ const homeNav = reactive([
             class="w-[34px] h-[34px] pr-[7px]"
           />警示材料
         </h3>
-        <router-link to="/score" class="more"
+        <router-link to="/caution" class="more"
           >更多 <van-icon name="arrow"
         /></router-link>
       </div>
 
       <!-- 列表 -->
-      <material-list />
+      <div class="material-list">
+        <van-list finished-text="没有更多了">
+          <material-item></material-item>
+          <material-item></material-item>
+          <material-item></material-item>
+          <material-item></material-item>
+          <material-item></material-item>
+        </van-list>
+      </div>
     </div>
   </div>
 </template>
@@ -91,9 +99,10 @@ const homeNav = reactive([
 .warning-material {
   margin-top: 10px;
   background: #fff;
-  padding: 12px 16px;
+  padding: 12px 0;
   .head {
     .flex(space-between, center);
+    padding: 0 16px;
     .name {
       .flex(center, center);
       color: var(--text-color3);
@@ -104,5 +113,9 @@ const homeNav = reactive([
       color: var(--text-color2);
     }
   }
+}
+.material-list {
+  background: #ffffff;
+  padding: 0 16px;
 }
 </style>
