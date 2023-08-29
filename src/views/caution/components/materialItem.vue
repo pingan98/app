@@ -1,7 +1,7 @@
 <script setup lang="ts" name="MaterialCard"></script>
 
 <template>
-  <div class="material-card van-hairline--bottom pt-[14px] pb-[10px]" @click="$router.push(`/caution/detail/111`)">
+  <div class="material-card van-hairline--bottom pt-[14px] pb-[10px]">
     <div class="content-box">
       <h3 class="title">
         标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题

@@ -1,24 +1,26 @@
-<script  lang="ts" name="CTab" setup>
-import {ref} from "vue";
-import type { Ref } from 'vue'
-import type {Tabs} from "@/views/warning/type";
+<script lang="ts" name="CTab" setup>
+import { ref } from "vue";
+import type { Ref } from "vue";
+import type { ConstListType } from "@/types";
 
 defineProps<{
-  tabs: Tabs[]
-}>()
+  tabs: ConstListType;
+}>();
 
 defineEmits<{
-  (e: 'tabChange', value: number | string): void
-}>()
+  (e: "tabChange", value: number | string): void;
+}>();
 
-const active : Ref<string | number> = ref('')
-
+const active: Ref<string | number> = ref("");
 </script>
 
 <template>
-  <van-tabs v-model:active="active" @click-tab="$emit('tabChange', $event.name)">
+  <van-tabs
+    v-model:active="active"
+    @click-tab="$emit('tabChange', $event.code)"
+  >
     <template v-for="(item, i) in tabs" :key="i">
-      <van-tab :title="item.title"  :name="item.value"></van-tab>
+      <van-tab :title="item.label" :name="item.code"></van-tab>
     </template>
   </van-tabs>
 </template>
