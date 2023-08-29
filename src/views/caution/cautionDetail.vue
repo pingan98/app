@@ -38,7 +38,7 @@ const bean = ref<any>({
             icon="edit"
             round
             color="linear-gradient(to right, #037CED, #02C2FA)"
-            @click=""
+            @click="$router.push(`/caution/add`)"
           >
             编辑
           </van-button>
@@ -62,6 +62,7 @@ const bean = ref<any>({
           round
           class="w-[50%]"
           color="linear-gradient(to right, #037CED, #02C2FA)"
+          @click="$router.push(`/caution/add`)"
         >
           编辑
         </van-button>
@@ -74,7 +75,7 @@ const bean = ref<any>({
 .caution-detail-page {
   padding: 16px 16px 86px;
   background: #ffffff;
-  min-height: calc(100vh - 86px);
+  min-height: calc(100vh - 64px);
   .title-box {
     font-size: 18px;
     margin-bottom: 8px;
