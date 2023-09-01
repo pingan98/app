@@ -1,14 +1,27 @@
-<script lang="ts" name="ViolateDiscipline" setup></script>
+<script lang="ts" name="ViolateDiscipline" setup>
+import { ref } from "vue";
+import { toList } from "@/utils";
+import { POLICE_TYPE, POLICE_TYPE_TXT } from "@/const";
+const policeType = POLICE_TYPE;
+const activeTab = ref(policeType.min);
+const tabArr = toList(POLICE_TYPE, POLICE_TYPE_TXT);
+</script>
 
 <template>
   <div class="violate-discipline">
     <div class="tab-box">
-      <div class="tab-item min active">
-        <div class="name">民警总记分</div>
-        <div class="num">25</div>
-      </div>
-      <div class="tab-item fu">
-        <div class="name">辅警总记分</div>
+      <div
+        @click="activeTab = item.code"
+        class="tab-item"
+        v-for="(item, ind) in tabArr"
+        :key="`tab_${ind}`"
+        :class="{
+          active: item.code === activeTab,
+          min: item.code === policeType.min,
+          fu: item.code === policeType.fu
+        }"
+      >
+        <div class="name">{{ item.label }}总记分</div>
         <div class="num">25</div>
       </div>
     </div>
@@ -45,6 +58,7 @@
 
 <style scoped lang="less">
 @import "@/styles/mixin.less";
+@import "../style/index.less";
 
 .violate-discipline {
   .tab-box {
@@ -70,10 +84,10 @@
         border-radius: 5px;
         transform: translate(50%, 10px);
       }
-      &.active.min::after {
+      &.min.active::after {
         background: linear-gradient(90deg, #1572f9 0%, #0096ff 100%);
       }
-      &.active.fu::after {
+      &.fu.active::after {
         background: linear-gradient(90deg, #fe871b 0%, #ffcd4e 100%);
       }
       .name {
@@ -84,42 +98,6 @@
         font-size: 26px;
         font-family: DIN;
         font-weight: bold;
-      }
-    }
-  }
-  .score-list {
-    margin-top: 30px;
-    .score-item {
-      .flex(flex-start,flex-start);
-      padding: 10px 0;
-      .left-img-box {
-        .flex(center, center);
-        flex-direction: column;
-        width: 100px;
-        height: 88px;
-        background: url("@/assets/icon1@3x.png") no-repeat center / 65px;
-        color: #ffffff;
-        .num {
-          font-size: 24px;
-          font-family: DIN;
-          font-weight: bold;
-        }
-      }
-      .right-main-box {
-        flex: 1;
-        .kind {
-          font-weight: bold;
-          margin-bottom: 6px;
-          .ellipsisLine(2);
-        }
-        .desc {
-          .label {
-            color: var(--text-color2);
-          }
-        }
-        .desc + .desc {
-          margin-top: 10px;
-        }
       }
     }
   }

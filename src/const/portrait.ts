@@ -30,3 +30,14 @@ export const COMPLETE_TXT = {
   [COMPLETE.yes]: "已办结",
   [COMPLETE.no]: "未办结"
 };
+export const POLICE_TYPE = {
+  // 获取警员接口，所传type区分
+  min: "0",
+  fu: "1"
+};
+
+export const POLICE_TYPE_TXT = {
+  // 获取警员接口，所传type区分
+  [POLICE_TYPE.min]: "民警",
+  [POLICE_TYPE.fu]: "辅警"
+};

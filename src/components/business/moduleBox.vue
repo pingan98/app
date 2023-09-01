@@ -41,7 +41,4 @@ withDefaults(
     }
   }
 }
-.module-box + .module-box {
-  margin-top: 10px;
-}
 </style>

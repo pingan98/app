@@ -1,7 +1,7 @@
 <script lang="ts" name="UnitPortrait" setup>
 import { ref, computed } from "vue";
 import { toList } from "@/utils";
-import { SPECIES, SPECIES_Txt } from "@/views/portrait/const";
+import { SPECIES, SPECIES_Txt } from "@/const/portrait";
 import ViolateDiscipline from "@/views/portrait/components/violateDiscipline.vue";
 import PetitionComplain from "@/views/portrait/components/petitionComplain.vue";
 import DrinkReport from "@/views/portrait/components/drinkReport.vue";
@@ -10,7 +10,7 @@ import HandleCase from "@/views/portrait/components/handleCase.vue";
 const searchForm = ref({});
 const speciesList = toList(SPECIES, SPECIES_Txt);
 const species = SPECIES;
-const activeSpecies = ref<string>(species.drink);
+const activeSpecies = ref<string>(species.wgwj);
 
 const compName = computed(() => {
   const compNames = {

@@ -1,5 +1,5 @@
 <script lang="ts" name="CautionDetail" setup>
-import { CAUTION_STATUS } from "@/views/caution/const";
+import { CAUTION_STATUS } from "@/const/caution";
 import { ref } from "vue";
 
 const cautionStatus = CAUTION_STATUS;

@@ -186,7 +186,7 @@ VITE_ENABLE_ERUDA = "true"
 在路由全局前置守卫中：
 
 ```js
-// src/router/index.ts
+// src/router/caution.ts
 // ...
 router.beforeEach((to: toRouteType, from, next) => {
   // ...

@@ -1,7 +1,7 @@
 <script lang="ts" name="Caution" setup>
 import { ref } from "vue";
 import { toList } from "@/utils";
-import { CAUTION_STATUS, CAUTION_STATUS_Txt } from "@/views/caution/const";
+import { CAUTION_STATUS, CAUTION_STATUS_Txt } from "@/const/caution";
 import MaterialItem from "@/views/caution/components/materialItem.vue";
 
 // 加载中状态
