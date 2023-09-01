@@ -97,10 +97,10 @@
         flex-direction: column;
         width: 100px;
         height: 88px;
-        background: url("@/assets/icon1@3x.png") no-repeat center / 78px;
+        background: url("@/assets/icon1@3x.png") no-repeat center / 65px;
         color: #ffffff;
         .num {
-          font-size: 28px;
+          font-size: 24px;
           font-family: DIN;
           font-weight: bold;
         }
@@ -108,7 +108,6 @@
       .right-main-box {
         flex: 1;
         .kind {
-          font-size: 16px;
           font-weight: bold;
           margin-bottom: 6px;
           .ellipsisLine(2);
