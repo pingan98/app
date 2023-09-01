@@ -1,6 +1,8 @@
 <script lang="ts" name="CautionDetail" setup>
-import { CAUTION_STATUS } from "@/const/caution";
 import { ref } from "vue";
+import { useRoute } from "vue-router";
+const route = useRoute();
+import { CAUTION_STATUS } from "@/const/caution";
 
 const cautionStatus = CAUTION_STATUS;
 const bean = ref<any>({
@@ -10,9 +12,11 @@ const bean = ref<any>({
 
 <template>
   <div class="caution-detail-page">
+    <nav-bar :title="route.meta.title" />
+
     <h3 class="title-box">榆阳公安分局开展“两会”安全保卫工作现场督察活动</h3>
     <div class="view-box flex justify-between">
-      <div><span>汪汪汪</span><span>2023-07-13</span></div>
+      <div><span>汪汪汪</span> <span>2023-07-13</span></div>
       <div>
         <span class="name"><van-icon name="eye-o" /> 1000+</span>
       </div>
@@ -73,7 +77,7 @@ const bean = ref<any>({
 
 <style scoped lang="less">
 .caution-detail-page {
-  padding: 16px 16px 86px;
+  padding: 50px 16px 86px;
   background: #ffffff;
   min-height: calc(100vh - 64px);
   .title-box {

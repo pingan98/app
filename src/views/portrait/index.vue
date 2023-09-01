@@ -1,7 +1,13 @@
-<script lang="ts" name="Portrait" setup></script>
+<script lang="ts" name="Portrait" setup>
+import { useRoute } from "vue-router";
+
+const route = useRoute();
+</script>
 
 <template>
   <div class="portrait-page">
+    <nav-bar :title="route.meta.title" />
+
     <div
       class="person portrait-item"
       @click="$router.push('/portrait/person')"
@@ -17,7 +23,7 @@
 .portrait-page {
   background: #ffffff;
   min-height: calc(100vh - 60px);
-  padding: 16px;
+  padding: 50px 16px 16px;
   .portrait-item {
     width: 100%;
     height: 150px;

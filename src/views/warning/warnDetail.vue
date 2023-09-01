@@ -1,13 +1,21 @@
 <script lang="ts" name="WarnDetail" setup>
+import { useRoute } from "vue-router";
 import ModuleBox from "@/components/business/moduleBox.vue";
+const route = useRoute();
 </script>
 
 <template>
   <div class="warn-detail-page detail-bg bg-[#fff]">
+    <nav-bar :title="route.meta.title" />
+
     <div class="p-[10px]">
       <!--绿色  bg="from-[#d0f7ff] to-[#f7fdff]"-->
       <!--蓝色  bg="from-[#d0eaff] to-[#f9fbff]"-->
-      <module-box bg="from-[#fff0da] to-[#fffefe]" title="预警名称">
+      <module-box
+        class="mb-[20px]"
+        bg="from-[#fff0da] to-[#fffefe]"
+        title="预警名称"
+      >
         <template v-slot:icon>
           <img src="@/assets/risk_icon@3x.png" alt="" />
           <!--<img src="@/assets/norisk_icon@3x.png" alt="" />-->
@@ -60,5 +68,8 @@ import ModuleBox from "@/components/business/moduleBox.vue";
 <style scoped lang="less">
 .label {
   color: var(--text-color2);
+}
+.warn-detail-page {
+  padding-top: 46px;
 }
 </style>

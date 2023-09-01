@@ -1,9 +1,13 @@
 <script lang="ts" name="ScoreDetail" setup>
 import ModuleBox from "@/components/business/moduleBox.vue";
+import { useRoute } from "vue-router";
+const route = useRoute();
 </script>
 
 <template>
   <div class="score-detail-page detail-bg">
+    <nav-bar :title="route.meta.title" />
+
     <div class="base-info-top card info-line-box">
       <div class="info-item">
         <div class="pre-icon"><img src="@/assets/unit_icon@3x.png" /></div>
@@ -96,7 +100,7 @@ import ModuleBox from "@/components/business/moduleBox.vue";
 @import "@/styles/mixin.less";
 .score-detail-page {
   position: relative;
-  padding: 10px;
+  padding: 46px 10px 10px;
 }
 
 .base-info-top {

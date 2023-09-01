@@ -7,6 +7,8 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    CNavBar: typeof import('./src/components/business/cNavBar.vue')['default']
+    CSelectTreeOrgMul: typeof import('./src/components/business/cSelectTreeOrgMul.vue')['default']
     CTab: typeof import('./src/components/business/cTab.vue')['default']
     Describe: typeof import('./src/components/business/describe.vue')['default']
     Distribution: typeof import('./src/components/business/distribution.vue')['default']
@@ -27,6 +29,8 @@ declare module '@vue/runtime-core' {
     VanCheckbox: typeof import('vant/es')['Checkbox']
     VanCheckboxGroup: typeof import('vant/es')['CheckboxGroup']
     VanCol: typeof import('vant/es')['Col']
+    VanCollapse: typeof import('vant/es')['Collapse']
+    VanCollapseItem: typeof import('vant/es')['CollapseItem']
     VanConfigProvider: typeof import('vant/es')['ConfigProvider']
     VanDatePicker: typeof import('vant/es')['DatePicker']
     VanField: typeof import('vant/es')['Field']

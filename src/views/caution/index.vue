@@ -1,9 +1,10 @@
 <script lang="ts" name="Caution" setup>
 import { ref } from "vue";
 import { toList } from "@/utils";
-import { CAUTION_STATUS, CAUTION_STATUS_Txt } from "@/const/caution";
+import { CAUTION_STATUS, CAUTION_STATUS_TXT } from "@/const/caution";
 import MaterialItem from "@/views/caution/components/materialItem.vue";
-
+import { useRoute } from "vue-router";
+const route = useRoute();
 // 加载中状态
 const loading = ref(false);
 // 是否完全加载完毕数据
@@ -17,7 +18,7 @@ const checkAll = ref(false);
 const checkboxGroup = ref(null);
 const checkLists = ref<any>([]);
 const cautionStatus = CAUTION_STATUS;
-const tabs = toList(CAUTION_STATUS, CAUTION_STATUS_Txt);
+const tabs = toList(CAUTION_STATUS, CAUTION_STATUS_TXT);
 const tabChange = (value: string | number) => {
   searchForm.value.status = value;
   batchFlag.value = false;
@@ -34,8 +35,10 @@ const cancelBatch = () => {
 
 <template>
   <div class="caution-page">
+    <nav-bar :title="route.meta.title" />
+
     <!-- 搜索框 -->
-    <div class="page-search mb-[10px]">
+    <div class="page-search">
       <van-search
         v-model="searchForm.dutyPoliceName"
         shape="round"

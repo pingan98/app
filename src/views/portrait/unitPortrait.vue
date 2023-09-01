@@ -1,6 +1,8 @@
 <script lang="ts" name="UnitPortrait" setup>
 import { ref, computed } from "vue";
 import { toList } from "@/utils";
+import { useRoute } from "vue-router";
+
 import { SPECIES, SPECIES_Txt } from "@/const/portrait";
 import ViolateDiscipline from "@/views/portrait/components/violateDiscipline.vue";
 import PetitionComplain from "@/views/portrait/components/petitionComplain.vue";
@@ -11,7 +13,8 @@ const searchForm = ref({});
 const speciesList = toList(SPECIES, SPECIES_Txt);
 const species = SPECIES;
 const activeSpecies = ref<string>(species.wgwj);
-
+const route = useRoute();
+const activeName = ref("1");
 const compName = computed(() => {
   const compNames = {
     [species.wgwj]: ViolateDiscipline,
@@ -25,6 +28,8 @@ const compName = computed(() => {
 
 <template>
   <div class="unit-portrait-page">
+    <nav-bar :title="route.meta.title" />
+
     <!-- 搜索框 -->
     <div class="page-search">
       <van-search
@@ -32,6 +37,14 @@ const compName = computed(() => {
         shape="round"
         placeholder="请输入"
       />
+      <van-collapse v-model="activeName" accordion>
+        <van-collapse-item title="部门" name="1">
+          代码是写出来给人看的，附带能在机器上运行。
+        </van-collapse-item>
+        <van-collapse-item title="时间" name="2">
+          技术无非就是那些开发它的人的共同灵魂。
+        </van-collapse-item>
+      </van-collapse>
     </div>
     <div class="unit-portrait-main">
       <div class="nav-box">
@@ -54,9 +67,10 @@ const compName = computed(() => {
 
 <style scoped lang="less">
 @import "@/styles/mixin.less";
-.page-search {
-  margin-bottom: 10px;
+.unit-portrait-page {
+  padding-top: 46px;
 }
+
 .unit-portrait-main {
   padding: 16px;
   background: #ffffff;

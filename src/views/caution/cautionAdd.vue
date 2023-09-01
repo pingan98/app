@@ -1,7 +1,12 @@
-<script lang="ts" name="CautionAdd" setup></script>
+<script lang="ts" name="CautionAdd" setup>
+import { useRoute } from "vue-router";
+const route = useRoute();
+</script>
 
 <template>
   <div class="caution-add-page">
+    <nav-bar :title="route.meta.title" />
+
     <div class="bottom-action flex justify-between">
       <van-button round class="w-[50%]" plain>取消</van-button>
       <van-button
@@ -17,7 +22,7 @@
 
 <style scoped lang="less">
 .caution-add-page {
-  padding: 16px 16px 86px;
+  padding: 50px 16px 86px;
   background: #ffffff;
   min-height: calc(100vh - 64px);
 }

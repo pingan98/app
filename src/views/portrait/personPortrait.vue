@@ -1,14 +1,18 @@
 <script lang="ts" name="PersonPortrait" setup>
 import { ref } from "vue";
+import { useRoute } from "vue-router";
+
 import avatar from "@/assets/avatar_bg@3x.png";
 const drinkHead = ["饮酒开始时间", "提交报备时间", "是否确认到家"];
 import ModuleBox from "@/components/business/moduleBox.vue";
-
+const route = useRoute();
 const searchForm = ref({});
 </script>
 
 <template>
   <div class="person-portrait-page">
+    <nav-bar :title="route.meta.title" />
+
     <!-- 搜索框 -->
     <div class="page-search">
       <van-search
@@ -157,9 +161,8 @@ const searchForm = ref({});
 <style scoped lang="less">
 @import "@/styles/mixin.less";
 @import "./style/index.less";
-
-.page-search {
-  margin-bottom: 10px;
+.person-portrait-page {
+  padding-top: 46px;
 }
 .person-portrait-main {
   background: #ffffff;

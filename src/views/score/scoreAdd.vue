@@ -1,5 +1,7 @@
 <script lang="ts" name="ScoreAdd" setup>
 import { ref } from "vue";
+import { useRoute } from "vue-router";
+const route = useRoute();
 import TimeSelect from "@/components/business/timeSelect.vue";
 import ModuleBox from "@/components/business/moduleBox.vue";
 
@@ -15,6 +17,8 @@ const submitFn = () => {
 
 <template>
   <div class="score-add-page">
+    <nav-bar :title="route.meta.title" />
+
     <div class="score-form">
       <van-form ref="form">
         <van-cell-group>
@@ -164,6 +168,7 @@ const submitFn = () => {
 <style scoped lang="less">
 .score-add-page {
   padding-bottom: 86px;
+  padding-top: 46px;
 }
 .duty-man {
   padding: 10px 16px;
