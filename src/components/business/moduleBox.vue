@@ -1,13 +1,14 @@
 <script lang="ts" name="ModuleBox" setup>
-import { withDefaults } from 'vue';
+import { withDefaults } from "vue";
 // 使用 withDefaults 设置默认值
 withDefaults(
-    defineProps<{
-      bg: string;
-    }>(),
-    {
-      bg: 'from-[#fff0da] to-[#fffefe]'
-    }
+  defineProps<{
+    bg?: string;
+    title: string;
+  }>(),
+  {
+    bg: "from-[#fff0da] to-[#fffefe]"
+  }
 );
 </script>
 
@@ -15,7 +16,7 @@ withDefaults(
   <div class="module-box">
     <div class="title-box flex items-center bg-gradient-to-r" :class="[bg]">
       <span class="icon"><slot name="icon"></slot></span>
-      <slot name="title"></slot>
+      <span class="name">{{ title }}</span>
     </div>
     <slot></slot>
   </div>

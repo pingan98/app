@@ -29,7 +29,7 @@ const tabbarData = reactive([
   },
   {
     title: "画像",
-    to: { name: "Portrayal" },
+    to: { name: "Portrait" },
     active: getAssetsFile("portrayal_active@3x.png"),
     inactive: getAssetsFile("portrayal@3x.png")
   },

@@ -52,6 +52,18 @@ const routes: Array<RouteRecordRaw> = [
     meta: { title: "预警详情" }
   },
   {
+    path: "/portrait/unit",
+    name: "UnitPortrait",
+    component: () => import("@/views/portrait/unitPortrait.vue"),
+    meta: { title: "单位画像" }
+  },
+  {
+    path: "/portrait/person",
+    name: "PersonPortrait",
+    component: () => import("@/views/portrait/personPortrait.vue"),
+    meta: { title: "个人画像" }
+  },
+  {
     path: "/",
     name: "root",
     component: Layout,
@@ -64,9 +76,9 @@ const routes: Array<RouteRecordRaw> = [
         meta: { title: "首页" }
       },
       {
-        path: "/portrayal",
-        name: "Portrayal",
-        component: () => import("@/views/portrayal/index.vue"),
+        path: "/portrait",
+        name: "Portrait",
+        component: () => import("@/views/portrait/index.vue"),
         meta: { title: "画像" }
       },
       {

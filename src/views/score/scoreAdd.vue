@@ -39,12 +39,9 @@ const submitFn = () => {
         </van-cell-group>
         <div class="duty-man">
           <div class="police-man mb-[10px]">
-            <module-box class="mb-[10px]">
+            <module-box class="mb-[10px]" title="责任民警">
               <template v-slot:icon>
                 <img src="@/assets/police_hat_icon_active@3x.png" alt="" />
-              </template>
-              <template v-slot:title>
-                <span class="name">责任民警</span>
               </template>
               <van-field
                 v-model="formData.police"
@@ -78,12 +75,9 @@ const submitFn = () => {
             >
           </div>
           <div class="police-man">
-            <module-box class="mb-[10px]">
+            <module-box class="mb-[10px]" title="责任辅警">
               <template v-slot:icon>
                 <img src="@/assets/police_hat_icon_active@3x.png" alt="" />
-              </template>
-              <template v-slot:title>
-                <span class="name">责任辅警</span>
               </template>
               <van-field
                 v-model="formData.auxPolice"
@@ -174,5 +168,4 @@ const submitFn = () => {
 .duty-man {
   padding: 10px 16px;
 }
-
 </style>

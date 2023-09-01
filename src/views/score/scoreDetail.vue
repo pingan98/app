@@ -27,12 +27,9 @@ import ModuleBox from "@/components/business/moduleBox.vue";
       </div>
     </div>
     <div class="score-desc card">
-      <module-box>
+      <module-box title="记分描述">
         <template v-slot:icon>
           <img src="@/assets/warning_icon@3x.png" alt="" />
-        </template>
-        <template v-slot:title>
-          <span class="name">记分描述</span>
         </template>
         <div class="p-[10px]">记分描述记分描述记分描述记分描述记分描述</div>
       </module-box>
@@ -131,7 +128,6 @@ import ModuleBox from "@/components/business/moduleBox.vue";
         color: var(--text-color1);
       }
     }
-
   }
 }
 .job-box {
