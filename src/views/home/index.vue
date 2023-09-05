@@ -40,7 +40,7 @@ const onConfirm = async ({ selectedOptions }) => {
     <!-- 测试切换账号 -->
     <template v-if="true">
       <div class="user-sty" @click="showPicker = true">
-        {{ userStore.userInfo.name }}
+        {{ userStore?.userInfo?.name }}
       </div>
       <van-popup v-model:show="showPicker" round position="bottom">
         <van-picker

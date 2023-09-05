@@ -1,13 +1,36 @@
 <script lang="ts" name="Score" setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import ScoreItem from "@/views/score/components/scoreItem.vue";
 import { useRoute } from "vue-router";
+import { toList } from "@/utils";
+import type { Query } from "@/api/scoreManage/types";
+import { POLICE_TYPE, POLICE_TYPE_TXT } from "@/const";
 const route = useRoute();
 // 加载中状态
 const loading = ref(false);
 // 是否完全加载完毕数据
 const finished = ref(false);
-const searchForm = ref({});
+const searchForm = ref<Query>({
+  page: 1,
+  size: 20
+});
+const jobType = ref<any>({});
+onMounted(() => {
+  getDutyList();
+});
+const onTimeChange = val => {
+  console.log(searchForm.value);
+};
+const getDutyList = () => {
+  jobType.value = toList(POLICE_TYPE, POLICE_TYPE_TXT);
+  jobType.value.unshift({
+    label: "全部",
+    code: ""
+  });
+};
+const jobChange = item => {
+  searchForm.value.scoreType = item.code;
+};
 const onLoad = async () => {};
 </script>
 
@@ -21,6 +44,37 @@ const onLoad = async () => {};
         shape="round"
         placeholder="请输入被记分人"
       />
+      <van-dropdown-menu ref="menuRef">
+        <van-dropdown-item title="职务">
+          <drop-panel>
+            <van-radio-group v-model="searchForm.scoreType">
+              <van-cell-group inset>
+                <van-cell
+                  :title="item.label"
+                  :key="ind"
+                  v-for="(item, ind) in jobType"
+                  clickable
+                  @click="jobChange(item)"
+                >
+                  <template #right-icon>
+                    <van-radio :name="item.code" />
+                  </template>
+                </van-cell>
+              </van-cell-group>
+            </van-radio-group>
+          </drop-panel>
+        </van-dropdown-item>
+        <van-dropdown-item title="部门">
+          <drop-panel>
+            <c-select-tree-org v-model="searchForm.dutyOrgId" />
+          </drop-panel>
+        </van-dropdown-item>
+        <van-dropdown-item title="时间">
+          <drop-panel>
+            <c-date-range v-model="searchForm.times"></c-date-range>
+          </drop-panel>
+        </van-dropdown-item>
+      </van-dropdown-menu>
     </div>
 
     <!-- 列表 -->

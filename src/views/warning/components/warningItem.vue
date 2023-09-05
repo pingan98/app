@@ -46,6 +46,9 @@ import ModuleBox from "@/components/business/moduleBox.vue";
   &.bg-no-risk {
     background: url("@/assets/norisk_watermelon@3x.png") no-repeat center / 100%;
   }
+  &.bg-follow {
+    background: url("@/assets/follow_watermelon@3x.png") no-repeat center / 100%;
+  }
   &.bg-record {
     background: url("@/assets/record_watermelon@3x.png") no-repeat center / 100%;
   }

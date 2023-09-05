@@ -14,13 +14,6 @@
         <span class="time">2023-07-30</span>
       </div>
       <div class="flex center-line">
-        <span class="flex justify-start items-center pr-[10px]"
-          ><img
-            src="@/assets/idcard_icon@3x.png"
-            alt=""
-            class="w-[16px] pr-[4px] box-content"
-          />民警</span
-        >
         <span class="flex justify-start items-center"
           ><img
             src="@/assets/dep_icon@3x.png"
@@ -30,10 +23,16 @@
         >
       </div>
       <div class="score-clause">
-        <span class="label">记分条款:</span>
-        <span class="desc">
-          第一条第一款第一项第一条第一款第一项第一条第一款第一项第一条第一款第一项</span
-        >
+        <div class="score-clause-item">
+          <span class="label">记分单位:</span>
+          <span class="desc"> 111</span>
+        </div>
+        <div class="score-clause-item">
+          <span class="label">记分条款:</span>
+          <span class="desc">
+            第一条第一款第一项第一条第一款第一项第一条第一款第一项第一条第一款第一项</span
+          >
+        </div>
       </div>
     </div>
   </div>
@@ -50,7 +49,7 @@
   font-size: 12px;
   margin-bottom: 5px;
 }
-.score-clause {
+.score-clause-item {
   .flex(flex-start, flex-start);
   background: #f8f8f8;
   color: var(--text-color2);
@@ -59,9 +58,10 @@
   border-radius: 5px;
   .label {
     display: inline-block;
-    width: 160px;
+    width: 60px;
   }
   .desc {
+    flex: 1;
     .ellipsisLine(2);
   }
 }
