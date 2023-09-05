@@ -64,6 +64,12 @@ const routes: Array<RouteRecordRaw> = [
     meta: { title: "个人画像" }
   },
   {
+    path: "/mock",
+    name: "Mock",
+    component: () => import("@/views/mock/index.vue"),
+    meta: { title: "mock" }
+  },
+  {
     path: "/",
     name: "root",
     component: Layout,

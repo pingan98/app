@@ -1,38 +1,56 @@
 <script setup lang="ts">
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
+import { useUserStore } from "@/store/modules/user";
+import { showSuccessToast } from "vant";
+const userStore = useUserStore();
 import MaterialItem from "@/views/caution/components/materialItem.vue";
-const DEV_TEST = [
-  { name: "000001", policeNo: "000001" },
+import type { LoginData } from "@/api/auth/types";
+const testRole = [
   { name: "陈俊文", policeNo: "cjw" },
   { name: "李", policeNo: "ldp" },
   { name: "jxdc", policeNo: "jxdc" }
 ];
+const showPicker = ref(false);
+const loginData = ref<LoginData>({
+  username: "",
+  password: "M@123456"
+});
 
 const homeNav = reactive([
   { title: "记分管理", to: "Score" },
   { title: "警示教育", to: "Caution" },
   { title: "预警管理", to: "Warning" }
 ]);
+const onConfirm = async ({ selectedOptions }) => {
+  console.log(selectedOptions);
+  showPicker.value = false;
+  loginData.value.username = selectedOptions[0].policeNo;
+  // 登录
+  userStore.login(loginData.value).then(() => {
+    userStore.getInfo();
+    showSuccessToast("登录成功");
+  });
+
+  showPicker.value = false;
+};
 </script>
 
 <template>
   <div class="home-page">
     <!-- 测试切换账号 -->
-    <!--<template v-if="!isProd">
-      <div class="userSty" @click="showPicker = true">
-        {{ $store.getters.user.name }}
+    <template v-if="true">
+      <div class="user-sty" @click="showPicker = true">
+        {{ userStore.userInfo.name }}
       </div>
-      <van-popup v-model="showPicker" position="bottom">
+      <van-popup v-model:show="showPicker" round position="bottom">
         <van-picker
-          show-toolbar
-          value-key="name"
           :columns="testRole"
-          @confirm="onConfirm2"
-          @cancel="showPicker2 = false"
-        >
-        </van-picker>
+          :columns-field-names="{ text: 'name', value: 'policeNo' }"
+          @cancel="showPicker = false"
+          @confirm="onConfirm"
+        />
       </van-popup>
-    </template>-->
+    </template>
 
     <div class="home-page-head">
       <!-- 轮播图 -->
@@ -96,6 +114,16 @@ const homeNav = reactive([
 
 <style scoped lang="less">
 @import "@/styles/mixin.less";
+.user-sty {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  color: #fff;
+  padding: 20px;
+  background-color: red;
+  z-index: 100;
+}
+
 .home-page {
   min-height: calc(100vh - 50px);
 }

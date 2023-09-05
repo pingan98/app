@@ -2,7 +2,6 @@
 import { ref } from "vue";
 import { useRoute } from "vue-router";
 const route = useRoute();
-import TimeSelect from "@/components/business/timeSelect.vue";
 import ModuleBox from "@/components/business/moduleBox.vue";
 
 const loading = ref(false);
@@ -159,9 +158,7 @@ const submitFn = () => {
     </div>
 
     <!-- 时间选择 -->
-    <van-popup v-model:show="timeShow" position="bottom">
-      <time-select />
-    </van-popup>
+    <van-popup v-model:show="timeShow" position="bottom"> 11 </van-popup>
   </div>
 </template>
 

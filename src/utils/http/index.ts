@@ -5,6 +5,8 @@ import Axios, {
   type AxiosRequestConfig
 } from "axios";
 import { ContentTypeEnum, ResultEnum } from "@/enums/requestEnum";
+import { useUserStore } from "@/store/modules/user";
+
 import NProgress from "../progress";
 import { showFailToast } from "vant";
 import "vant/es/toast/style";
@@ -14,7 +16,7 @@ const configDefault = {
   headers: {
     "Content-Type": ContentTypeEnum.FORM_URLENCODED
   },
-  timeout: 0,
+  timeout: 50000,
   baseURL: import.meta.env.VITE_BASE_API,
   data: {}
 };
@@ -30,10 +32,12 @@ class Http {
     Http.axiosInstance.interceptors.request.use(
       config => {
         NProgress.start();
+
+        const userStore = useUserStore();
         // 发送请求前，可在此携带 token
-        // if (token) {
-        //   config.headers['token'] = token
-        // }
+        if (userStore.accessToken) {
+          config.headers["Access-Token"] = userStore.accessToken;
+        }
         return config;
       },
       (error: AxiosError) => {
@@ -48,8 +52,14 @@ class Http {
     Http.axiosInstance.interceptors.response.use(
       (response: AxiosResponse) => {
         NProgress.done();
-        // 与后端协定的返回字段
-        const { code, message, result } = response.data;
+        const res = response.data;
+        if (res.code === false) {
+          showFailToast(res.msg || "业务失败");
+          return Promise.reject(res);
+        }
+        return res;
+        /*// 与后端协定的返回字段
+        const { code, message, result, ...res } = response.data;
         // 判断请求是否成功
         const isSuccess =
           result &&
@@ -61,7 +71,7 @@ class Http {
           // 处理请求错误
           // showFailToast(message);
           return Promise.reject(response.data);
-        }
+        }*/
       },
       (error: AxiosError) => {
         NProgress.done();

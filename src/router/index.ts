@@ -41,4 +41,11 @@ router.afterEach(() => {
   NProgress.done();
 });
 
+/**
+ * 重置路由
+ */
+export function resetRouter() {
+  router.replace({ path: "/home" });
+}
+
 export default router;
