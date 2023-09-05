@@ -37,7 +37,6 @@ export const POLICE_TYPE = {
 };
 
 export const POLICE_TYPE_TXT = {
-  // 获取警员接口，所传type区分
   [POLICE_TYPE.min]: "民警",
   [POLICE_TYPE.fu]: "辅警"
 };

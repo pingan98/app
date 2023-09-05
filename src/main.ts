@@ -10,6 +10,8 @@ import "./styles/index.less";
 import "./styles/tailwind.css";
 // svg icon
 import "virtual:svg-icons-register";
+// toast 样式
+import "vant/es/toast/style";
 
 import App from "./App.vue";
 import router from "./router";

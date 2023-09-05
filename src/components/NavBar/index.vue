@@ -13,8 +13,10 @@ const props = defineProps<{
 const onClickLeft = () => {
   if (props.back) return props.back();
   if (history.state?.back) {
+    console.log("if");
     router.back();
   } else {
+    console.log("else");
     router.push("/");
   }
 };

@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { reactive } from "vue";
 import MaterialItem from "@/views/caution/components/materialItem.vue";
+const DEV_TEST = [
+  { name: "000001", policeNo: "000001" },
+  { name: "陈俊文", policeNo: "cjw" },
+  { name: "李", policeNo: "ldp" },
+  { name: "jxdc", policeNo: "jxdc" }
+];
 
 const homeNav = reactive([
   { title: "记分管理", to: "Score" },
@@ -11,6 +17,23 @@ const homeNav = reactive([
 
 <template>
   <div class="home-page">
+    <!-- 测试切换账号 -->
+    <!--<template v-if="!isProd">
+      <div class="userSty" @click="showPicker = true">
+        {{ $store.getters.user.name }}
+      </div>
+      <van-popup v-model="showPicker" position="bottom">
+        <van-picker
+          show-toolbar
+          value-key="name"
+          :columns="testRole"
+          @confirm="onConfirm2"
+          @cancel="showPicker2 = false"
+        >
+        </van-picker>
+      </van-popup>
+    </template>-->
+
     <div class="home-page-head">
       <!-- 轮播图 -->
       <div

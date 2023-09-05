@@ -1,16 +1,24 @@
 <script lang="ts" name="UnitPortrait" setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { toList } from "@/utils";
 import { useRoute } from "vue-router";
 
-import { SPECIES, SPECIES_Txt } from "@/const/portrait";
+import {
+  POLICE_TYPE,
+  POLICE_TYPE_TXT,
+  SPECIES,
+  SPECIES_Txt
+} from "@/const/portrait";
 import ViolateDiscipline from "@/views/portrait/components/violateDiscipline.vue";
 import PetitionComplain from "@/views/portrait/components/petitionComplain.vue";
 import DrinkReport from "@/views/portrait/components/drinkReport.vue";
 import HandleCase from "@/views/portrait/components/handleCase.vue";
+import DropPanel from "@/components/business/dropPanel.vue";
+import CSelectTreeOrg from "@/components/business/cSelectTreeOrg.vue";
 
-const searchForm = ref({});
+const searchForm = ref<any>({});
 const speciesList = toList(SPECIES, SPECIES_Txt);
+const jobType = ref<any>({});
 const species = SPECIES;
 const activeSpecies = ref<string>(species.wgwj);
 const route = useRoute();
@@ -24,6 +32,22 @@ const compName = computed(() => {
   };
   return compNames[activeSpecies.value];
 });
+onMounted(() => {
+  getDutyList();
+});
+const onTimeChange = val => {
+  console.log(searchForm.value);
+};
+const getDutyList = () => {
+  jobType.value = toList(POLICE_TYPE, POLICE_TYPE_TXT);
+  jobType.value.unshift({
+    label: "全部",
+    code: ""
+  });
+};
+const jobChange = item => {
+  searchForm.value.scoreType = item.code;
+};
 </script>
 
 <template>
@@ -37,14 +61,40 @@ const compName = computed(() => {
         shape="round"
         placeholder="请输入"
       />
-      <van-collapse v-model="activeName" accordion>
-        <van-collapse-item title="部门" name="1">
-          代码是写出来给人看的，附带能在机器上运行。
-        </van-collapse-item>
-        <van-collapse-item title="时间" name="2">
-          技术无非就是那些开发它的人的共同灵魂。
-        </van-collapse-item>
-      </van-collapse>
+      <van-dropdown-menu ref="menuRef">
+        <van-dropdown-item title="职务">
+          <drop-panel>
+            <van-radio-group v-model="searchForm.scoreType">
+              <van-cell-group inset>
+                <van-cell
+                  :title="item.label"
+                  :key="ind"
+                  v-for="(item, ind) in jobType"
+                  clickable
+                  @click="jobChange(item)"
+                >
+                  <template #right-icon>
+                    <van-radio :name="item.code" />
+                  </template>
+                </van-cell>
+              </van-cell-group>
+            </van-radio-group>
+          </drop-panel>
+        </van-dropdown-item>
+        <van-dropdown-item title="部门">
+          <drop-panel>
+            <c-select-tree-org />
+          </drop-panel>
+        </van-dropdown-item>
+        <van-dropdown-item title="时间">
+          <drop-panel>
+            <c-date-range
+              v-model="searchForm.times"
+              @update:modelValue="onTimeChange"
+            ></c-date-range>
+          </drop-panel>
+        </van-dropdown-item>
+      </van-dropdown-menu>
     </div>
     <div class="unit-portrait-main">
       <div class="nav-box">
