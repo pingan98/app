@@ -1,10 +1,11 @@
 <script lang="ts" name="CDateRange" setup>
 import { onMounted, ref, watch } from "vue";
-import * as dayjs from "dayjs";
+import dayjs from "dayjs";
 import { showFailToast } from "vant";
-const minDate = new Date(2021, 0, 1);
-const maxDate = new Date(2025, 5, 1);
-const formatter = (type: string, option) => {
+import { MIN_DATE, MAX_DATE } from "@/const";
+const minDate = MIN_DATE;
+const maxDate = MAX_DATE;
+const formatter = (type: string, option: any) => {
   if (type === "year") {
     option.text += "年";
   }
@@ -16,8 +17,8 @@ const formatter = (type: string, option) => {
   }
   return option;
 };
-const startTime = ref([]);
-const endTime = ref([]);
+const startTime = ref<string[]>([]);
+const endTime = ref<string[]>([]);
 const emit = defineEmits<{
   (e: "update:modelValue", time: any): void;
 }>();

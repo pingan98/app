@@ -1,16 +1,45 @@
 <script lang="ts" name="ScoreAdd" setup>
-import { ref } from "vue";
+import { onMounted, ref, reactive } from "vue";
 import { useRoute } from "vue-router";
-const route = useRoute();
 import ModuleBox from "@/components/business/moduleBox.vue";
+import type { Form } from "@/api/scoreManage/types";
 
+const route = useRoute();
 const loading = ref(false);
 const timeShow = ref(false);
-const formData = ref({});
+const dutyShow = ref(false);
+const policeShow = ref(false);
+const policeType = ref("-1");
+const formData = reactive<Form>({});
+import { MIN_DATE, MAX_DATE, POLICE_TYPE } from "@/const";
+import CSelectTreeOrg from "@/components/business/cSelectTreeOrg.vue";
+import PolicePopup from "@/components/business/policePopup.vue";
+const minDate = MIN_DATE;
+const maxDate = MAX_DATE;
+const cSelectRef = ref<any>(null);
 
 const submitFn = () => {
   loading.value = true;
   loading.value = false;
+};
+const onConfirmTime = ({ selectedValues }) => {
+  formData.queTime = selectedValues.join("-");
+  timeShow.value = false;
+};
+const addFn = (type: string) => {};
+const dutyConfirmFn = () => {
+  dutyShow.value = false;
+  const { orgId, orgName } = cSelectRef.value!.getCheckedKeys();
+  console.log(cSelectRef.value!.getCheckedKeys());
+  formData.dutyOrgId = orgId;
+  formData.dutyOrgName = orgName;
+};
+const changePolice = (type: string) => {
+  policeType.value = type;
+  policeShow.value = true;
+};
+const onPoliceConfirm = (val: any) => {
+  console.log(val);
 };
 </script>
 
@@ -26,19 +55,59 @@ const submitFn = () => {
             name="queTime"
             label="问题时间"
             placeholder="问题时间"
+            :rules="[{ required: true, message: '请选择时间' }]"
             @click="timeShow = true"
             class="is-required"
             is-link
           />
+          <!-- 时间选择 -->
+          <van-popup v-model:show="timeShow" position="bottom" round>
+            <van-date-picker
+              @confirm="onConfirmTime"
+              @cancel="timeShow = false"
+              :min-date="minDate"
+              :max-date="maxDate"
+            />
+          </van-popup>
           <van-field
-            v-model="formData.dutyOrgId"
+            v-model="formData.dutyOrgName"
             name="dutyOrgId"
             label="责任部门"
             placeholder="责任部门"
-            :rules="[{ required: true, message: '请填写用户名' }]"
+            :rules="[{ required: true, message: '请选择' }]"
             class="is-required"
+            @click="dutyShow = true"
+            readonly
+            clickable
             is-link
           />
+          <van-popup
+            v-model:show="dutyShow"
+            position="bottom"
+            round
+            class="self-pop"
+          >
+            <div class="self-pop-header van-hairline--bottom">
+              <van-button
+                plain
+                type="default"
+                class="cancel-btn"
+                @click="dutyShow = false"
+                >取消</van-button
+              >
+              <van-button
+                plain
+                type="primary"
+                class="confirm-btn"
+                @click="dutyConfirmFn"
+                >确定</van-button
+              >
+            </div>
+            <c-select-tree-org
+              check-type="single"
+              ref="cSelectRef"
+            ></c-select-tree-org>
+          </van-popup>
         </van-cell-group>
         <div class="duty-man">
           <div class="police-man mb-[10px]">
@@ -51,8 +120,10 @@ const submitFn = () => {
                 name="police"
                 label="责任民警"
                 placeholder="责任民警"
-                @click="timeShow = true"
+                @click="changePolice(POLICE_TYPE.min)"
                 class="is-required"
+                readonly
+                clickable
                 is-link
               />
               <van-field
@@ -62,6 +133,8 @@ const submitFn = () => {
                 placeholder="记分条款"
                 @click="timeShow = true"
                 class="is-required"
+                readonly
+                clickable
                 is-link
               />
               <van-field
@@ -73,7 +146,13 @@ const submitFn = () => {
                 class="is-required"
               />
             </module-box>
-            <van-button type="primary" block plain icon="plus"
+
+            <van-button
+              type="primary"
+              block
+              plain
+              icon="plus"
+              @click="addFn(POLICE_TYPE.min)"
               >新增责任民警</van-button
             >
           </div>
@@ -87,8 +166,10 @@ const submitFn = () => {
                 name="police"
                 label="责任辅警"
                 placeholder="责任辅警"
-                @click="timeShow = true"
                 class="is-required"
+                @click="changePolice(POLICE_TYPE.fu)"
+                readonly
+                clickable
                 is-link
               />
               <van-field
@@ -98,6 +179,8 @@ const submitFn = () => {
                 placeholder="记分条款"
                 @click="timeShow = true"
                 class="is-required"
+                readonly
+                clickable
                 is-link
               />
               <van-field
@@ -109,7 +192,12 @@ const submitFn = () => {
                 class="is-required"
               />
             </module-box>
-            <van-button type="primary" block plain icon="plus"
+            <van-button
+              type="primary"
+              block
+              plain
+              icon="plus"
+              @click="addFn(POLICE_TYPE.fu)"
               >新增责任辅警</van-button
             >
           </div>
@@ -122,6 +210,8 @@ const submitFn = () => {
             placeholder="记分时间"
             @click="timeShow = true"
             class="is-required"
+            readonly
+            clickable
             is-link
           />
           <van-field
@@ -131,6 +221,8 @@ const submitFn = () => {
             placeholder="记分单位"
             :rules="[{ required: true, message: '请填写用户名' }]"
             class="is-required"
+            readonly
+            clickable
             is-link
           />
           <van-field
@@ -157,8 +249,13 @@ const submitFn = () => {
       </van-button>
     </div>
 
-    <!-- 时间选择 -->
-    <van-popup v-model:show="timeShow" position="bottom"> 11 </van-popup>
+    <police-popup
+      :show-picker="policeShow"
+      :org-id="formData.dutyOrgId"
+      :police-type="policeType"
+      @onCancel="policeShow = false"
+      @onConfirm="onPoliceConfirm"
+    />
   </div>
 </template>
 

@@ -10,7 +10,7 @@
   <van-radio-group v-model="selectValue">
     <van-tree
       ref="treeRef"
-      :data="data"
+      :data="treeData"
       :show-checkbox="checkType === 'multiple'"
       :default-expand-all="false"
       node-key="id"
@@ -46,6 +46,9 @@
 <script lang="ts" setup>
 import { ref, watch, onMounted } from "vue";
 import { VanTree } from "vangle";
+import { getOrgList } from "@/api/org";
+import { toMap } from "@/utils";
+
 // 文档地址： https://vangleer.github.io/vangle/zh/component/button.html
 interface Tree {
   id: String;
@@ -55,8 +58,8 @@ interface Tree {
 
 const props = defineProps({
   modelValue: {
-    type: [Array, String],
-    required: true
+    type: [Array, String]
+    // required: true
   },
   checkType: {
     type: String,
@@ -74,6 +77,9 @@ const props = defineProps({
 });
 const keyword = ref<string | number>("");
 const treeRef = ref<any>(null);
+// const treeData = ref<Tree[]>();
+const treeData = ref([]);
+const mapTreeData = ref<any>({});
 
 // const setCheckedNodes = () => {
 //   treeRef.value!.setCheckedNodes(
@@ -96,10 +102,25 @@ const setCheckedKeys = () => {
   treeRef.value!.setCheckedKeys(props.modelValue, false);
 };
 onMounted(() => {
+  getInit();
   if (props.modelValue) {
     setCheckedKeys();
   }
 });
+const defData = arr => {
+  arr.forEach(item => {
+    mapTreeData.value[item.id] = { ...item };
+    if (item?.children?.length) {
+      defData(item.children);
+    }
+  });
+};
+const getInit = () => {
+  getOrgList().then(res => {
+    treeData.value = res;
+    defData(res || []);
+  });
+};
 
 // 重置
 const resetChecked = () => {
@@ -108,10 +129,10 @@ const resetChecked = () => {
 
 const defaultProps = {
   children: "children",
-  label: "label"
+  label: "shortName"
 };
 
-const data: Tree[] = [
+/*let treeData: Tree[] = [
   {
     id: "1",
     label: "Level one 1",
@@ -160,8 +181,7 @@ const data: Tree[] = [
       }
     ]
   }
-];
-
+]*/
 const selectValue = ref<any>(undefined);
 // 节点点击事件(单选的情况)
 function handleNodeClick(node: any) {
@@ -200,7 +220,11 @@ const getCheckedNodes = () => {
 };
 // 获取当前选中的节点id数组(向外暴露的方法)单选
 const getCheckedKeys = () => {
-  return selectValue.value;
+  return {
+    orgId: selectValue.value,
+    orgName: mapTreeData.value[selectValue.value].shortName,
+    data: mapTreeData.value[selectValue.value]
+  };
 };
 
 defineExpose({
@@ -208,13 +232,15 @@ defineExpose({
   getCheckedKeys
 });
 </script>
-<style>
+<style lang="less" scoped>
+/deep/.van-tree__node__content {
+  height: 40px;
+}
 .custom-tree-node {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
   font-size: 14px;
-  padding-right: 8px;
 }
 </style>

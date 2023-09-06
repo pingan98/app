@@ -86,10 +86,7 @@ const jobChange = item => {
         </van-dropdown-item>
         <van-dropdown-item title="时间">
           <drop-panel>
-            <c-date-range
-              v-model="searchForm.times"
-              @update:modelValue="onTimeChange"
-            ></c-date-range>
+            <c-date-range v-model="searchForm.times"></c-date-range>
           </drop-panel>
         </van-dropdown-item>
       </van-dropdown-menu>

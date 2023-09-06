@@ -103,3 +103,26 @@ a:hover {
   bottom: 0;
   background: #ffffff;
 }
+// 自定义popup
+.self-pop {
+  min-height: 300px;
+  padding: 10px;
+  .self-pop-header {
+    height: 40px;
+    .flex(space-between);
+    .cancel-btn {
+      border: none;
+      color: var(--van-picker-cancel-action-color);
+      ackground-color: transparent;
+    }
+    .title {
+      font-size: 16px;
+      color: var(--text-color1);
+      font-weight: 500;
+    }
+    .confirm-btn {
+      border: none;
+      ackground-color: transparent;
+    }
+  }
+}

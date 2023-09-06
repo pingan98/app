@@ -28,6 +28,14 @@ export function toList(status: Params, txts: Params) {
     };
   });
 }
+export function toMap(data: any[], idName?: string) {
+  const id = idName || "id";
+  const map = {} as any;
+  data.forEach(function (item) {
+    map[item[id]] = item;
+  });
+  return { ...map };
+}
 // 生成唯一标识符：
 export function generateGuid(format = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx") {
   let d = new Date().getTime();
