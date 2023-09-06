@@ -35,8 +35,7 @@ const jobChange = (item: any) => {
 };
 const onLoad = async () => {
   const res = await getScoreManagePage(searchForm.value);
-  console.log(res);
-  listData.value?.push(...res!.rows);
+  listData.value.push(...res!.rows);
 
   if (listData.value.length === res.total) {
     finished.value = true; // 数据全部加载完成

@@ -10,7 +10,7 @@ const props = defineProps<{
 <template>
   <div
     class="page-list-item flex justify-start items-start van-hairline--bottom van-clearfix"
-    @click="$router.push(`/score/detail/111`)"
+    @click="$router.push(`/score/detail/${item.id}`)"
   >
     <div class="avatar-box rounded-full">
       <img src="@/assets/avatar@3x.png" alt="" />

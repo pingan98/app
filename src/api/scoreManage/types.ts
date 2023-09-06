@@ -4,8 +4,7 @@
 export interface Query extends PageQuery {
   scoreType?: string;
   dutyOrgId?: string | string[];
-  startTime?: number;
-  endTime?: number;
+  times?: string[];
 }
 /**
  * 表单类型
@@ -13,8 +12,16 @@ export interface Query extends PageQuery {
 export interface Form {
   scoreType?: string;
   dutyOrgId?: number;
-  startTime?: number;
-  endTime?: number;
+  dutyPoliceName?: string;
+  scoreBasic?: string;
+  scoreDesc?: string;
+  inputOrgId?: string; // 记分部门
+  inputOrgName?: string; // 记分部门
+  inputTime?: string;
+  queTime?: string;
+  dutyOrgName?: string; // 所在部门
+  scoreTime?: string; // 记分时间
+  detailsList?: string[];
 }
 /**
  * 列表展示
