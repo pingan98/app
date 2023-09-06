@@ -3,7 +3,8 @@ import { onMounted, ref } from "vue";
 import ScoreItem from "@/views/score/components/scoreItem.vue";
 import { useRoute } from "vue-router";
 import { toList } from "@/utils";
-import type { Query } from "@/api/scoreManage/types";
+import { getScoreManagePage } from "@/api/scoreManage";
+import type { Query, List } from "@/api/scoreManage/types";
 import { POLICE_TYPE, POLICE_TYPE_TXT } from "@/const";
 const route = useRoute();
 // 加载中状态
@@ -14,6 +15,7 @@ const searchForm = ref<Query>({
   page: 1,
   size: 20
 });
+const listData = ref<List[]>([]);
 const jobType = ref<any>({});
 onMounted(() => {
   getDutyList();
@@ -28,10 +30,27 @@ const getDutyList = () => {
     code: ""
   });
 };
-const jobChange = item => {
+const jobChange = (item: any) => {
   searchForm.value.scoreType = item.code;
 };
-const onLoad = async () => {};
+const onLoad = async () => {
+  const res = await getScoreManagePage(searchForm.value);
+  console.log(res);
+  listData.value?.push(...res!.rows);
+
+  if (listData.value.length === res.total) {
+    finished.value = true; // 数据全部加载完成
+  } else {
+    searchForm.value.page++;
+  }
+  loading.value = false;
+};
+
+const cSelectRef = ref<any>(null);
+
+function handleConfirm() {
+  console.log(cSelectRef.value!.getCheckedKeys());
+}
 </script>
 
 <template>
@@ -65,8 +84,12 @@ const onLoad = async () => {};
           </drop-panel>
         </van-dropdown-item>
         <van-dropdown-item title="部门">
-          <drop-panel>
-            <c-select-tree-org v-model="searchForm.dutyOrgId" />
+          <drop-panel @onConfirm="handleConfirm">
+            <c-select-tree-org
+              v-model="searchForm.dutyOrgId"
+              checkType="single"
+              ref="cSelectRef"
+            />
           </drop-panel>
         </van-dropdown-item>
         <van-dropdown-item title="时间">
@@ -85,8 +108,11 @@ const onLoad = async () => {};
         finished-text="没有更多了"
         @load="onLoad"
       >
-        <score-item></score-item>
-        <score-item></score-item>
+        <score-item
+          v-for="(item, ind) in listData"
+          :key="ind"
+          :item="item"
+        ></score-item>
       </van-list>
     </div>
 

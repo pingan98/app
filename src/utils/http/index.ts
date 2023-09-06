@@ -5,11 +5,16 @@ import Axios, {
   type AxiosRequestConfig
 } from "axios";
 import { ContentTypeEnum, ResultEnum } from "@/enums/requestEnum";
+declare module "axios" {
+  interface AxiosInstance {
+    (config: AxiosRequestConfig): Promise<any>;
+  }
+}
 import { useUserStore } from "@/store/modules/user";
+import type { LoginData } from "@/api/auth/types";
 
 import NProgress from "../progress";
-import { showFailToast } from "vant";
-import "vant/es/toast/style";
+import { showFailToast, showSuccessToast } from "vant";
 
 // 默认 axios 实例请求配置
 const configDefault = {
@@ -53,7 +58,20 @@ class Http {
       (response: AxiosResponse) => {
         NProgress.done();
         const res = response.data;
-        if (res.code === false) {
+        if (res.status == "20000") {
+          // token过期
+          showFailToast(res.msg);
+
+          const userStore = useUserStore();
+          userStore
+            .login(<LoginData>{
+              username: userStore?.userInfo?.policeNo,
+              password: "M@123456"
+            })
+            .then(() => {
+              userStore.getInfo();
+            });
+        } else if (res.code === false) {
           showFailToast(res.msg || "业务失败");
           return Promise.reject(res);
         }

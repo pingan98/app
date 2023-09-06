@@ -1,7 +1,7 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
 import { loginApi, logoutApi } from "@/api/auth";
-import type { LoginData } from "@/api/auth/types";
+import type { LoginData, LoginResult } from "@/api/auth/types";
 import { getCurrentAccount } from "@/api/user/index";
 import type { UserInfo } from "@/api/user/types";
 import { useStorage } from "@vueuse/core";
@@ -44,6 +44,7 @@ export const useUserStore = defineStore(
       return new Promise<UserInfo>((resolve, reject) => {
         getCurrentAccount()
           .then(({ data }) => {
+            // function test({a} : { a: any}) {}
             if (!data) {
               return reject("Verification failed, please Login again.");
             }

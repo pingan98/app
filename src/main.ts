@@ -12,6 +12,7 @@ import "./styles/tailwind.css";
 import "virtual:svg-icons-register";
 // toast 样式
 import "vant/es/toast/style";
+import "vangle/dist/style.css";
 
 import App from "./App.vue";
 import router from "./router";

@@ -1,153 +1,220 @@
-<script lang="ts" name="CSelectTreeOrg" setup>
-import { reactive, ref, watch } from "vue";
-const emits = defineEmits(["update:modelValue", "change", "confirm"]);
-const props = defineProps({
-  // 绑定值
-  modelValue: {
-    type: Array,
-    default: () => []
-  },
-  listData: {
-    type: Array,
-    default: () => []
-  },
-  // label key
-  labelKey: {
-    type: String,
-    default: "name"
-  },
-  // id key
-  idKey: {
-    type: String,
-    default: "id"
-  },
-  // pid key
-  pidKey: {
-    type: String,
-    default: "pid"
-  },
-  // 是否联动勾选
-  isLink: {
-    type: Boolean,
-    default: true
-  },
-  // 是否多选
-  multiple: {
-    type: Boolean,
-    default: true
-  }
-});
-
-const data = reactive({
-  treeParam: "",
-  treeParamAlready: "", // 已经进行了搜索的参数
-  list: props.listData, // 树数组
-  listObj: {}, // 数组对象
-  selectList: [], // 选中的数据
-  searchSomeDataList: [], // 搜索相同对象数组
-  canCheckList: [], // 能够选择的数据集合
-  canCheckListFixed: [], // 固定的能够选择的数据集合
-  allSelect: false, // 是否全选
-  state: "0", // "" -- 全部   0 -- 在职   1 -- 离职
-  names: ""
-});
-
-const treeSelectRef = ref(null);
-
-const init = type => {
-  if (type) {
-    data.names = "";
-  }
-
-  data.treeParam = "";
-  data.treeParamAlready = "";
-  data.canCheckList = [];
-  data.canCheckListFixed = [];
-};
-const initData = options => {
-  if (options && options.length) {
-    data.list = options;
-    init();
-    data.listObj = setListObj(options);
-  }
-};
-// 将树形数据转为扁平对象
-const setListObj = (list, pid) => {
-  let listObj = {};
-  list.forEach(itm => {
-    if (pid) {
-      itm[props.pidKey] = pid;
-    }
-    data.canCheckList.push(itm);
-    data.canCheckListFixed.push(itm);
-    listObj[itm[props.idKey]] = itm;
-    if (itm.children && itm.children.length) {
-      listObj = {
-        ...listObj,
-        ...setListObj(itm.children, itm[props.idKey])
-      };
-    }
-  });
-  return listObj;
-};
-</script>
-
 <template>
-  <div class="c-select-tree-org">
-    <div
-      class="item"
-      v-for="item in props.list"
-      :key="item[idKey]"
-      v-show="!item.isHide"
-    >
-      <div class="title">
-        <div class="checkbox-box">
-          <van-checkbox
-            v-if="props.multiple"
-            icon-size="16px"
-            shape="square"
-            @click.stop="checkChange(item)"
-            v-model="item.checked"
-            ><span style="font-size: 15px">{{
-              item[labelKey]
-            }}</span></van-checkbox
-          >
-          <p
-            v-else
-            :style="{
-              fontSize: '15px',
-              color: defaultId === item[idKey] ? 'var(--van-primary-color)' : ''
-            }"
-            @click.stop="checkChange(item)"
-          >
-            {{ item[labelKey] }}
-          </p>
-        </div>
-        <div @click.stop="itemClick(item)" class="arrow">
-          <van-icon
-            v-if="item.children && item.children.length"
-            :name="item.isShowChildren ? 'arrow-up' : 'arrow-down'"
-          />
-        </div>
-      </div>
-      <div class="tree" v-show="item.isShowChildren">
-        <c-select-tree-org
-          :labelKey="props.labelKey"
-          :idKey="props.idKey"
-          :pidKey="props.pidKey"
-          :isLink="props.isLink"
-          v-if="item.children && item.children.length"
-          :list="item.children"
-          :listObj="props.listObj"
-          :isFirstFloor="false"
-          :multiple="props.multiple"
-          @confirm="onConfirm"
-          :defaultId="defaultId"
-        >
-        </c-select-tree-org>
-      </div>
-    </div>
+  <div v-if="search">
+    <van-search
+      v-model="keyword"
+      shape="round"
+      placeholder="请输入搜索关键词"
+      @update:model-value="handleFilter"
+    />
   </div>
+  <van-radio-group v-model="selectValue">
+    <van-tree
+      ref="treeRef"
+      :data="data"
+      :show-checkbox="checkType === 'multiple'"
+      :default-expand-all="false"
+      node-key="id"
+      highlight-current
+      :props="defaultProps"
+      :filter-node-method="filterNode"
+      @node-click="handleNodeClick"
+    >
+      <template #default="{ node, data }">
+        <span class="custom-tree-node">
+          <span>{{ node.label }}</span>
+          <span
+            v-if="checkType === 'single'"
+            style="position: relative; z-index: 0"
+          >
+            <van-radio
+              v-if="leafOnly && !data.children?.length"
+              :name="data.id"
+              @click="handleClickRadio"
+            ></van-radio>
+            <van-radio
+              v-else
+              :name="data.id"
+              @click="handleClickRadio"
+            ></van-radio>
+          </span>
+        </span>
+      </template>
+    </van-tree>
+  </van-radio-group>
 </template>
 
-<style scoped></style>
+<script lang="ts" setup>
+import { ref, watch, onMounted } from "vue";
+import { VanTree } from "vangle";
+// 文档地址： https://vangleer.github.io/vangle/zh/component/button.html
+interface Tree {
+  id: String;
+  label: string;
+  children?: Tree[];
+}
+
+const props = defineProps({
+  modelValue: {
+    type: [Array, String],
+    required: true
+  },
+  checkType: {
+    type: String,
+    default: "multiple" // multiple/single
+  },
+  search: {
+    type: Boolean,
+    default: false
+  },
+  // 是否只能选择子节点
+  leafOnly: {
+    type: Boolean,
+    default: false
+  }
+});
+const keyword = ref<string | number>("");
+const treeRef = ref<any>(null);
+
+// const setCheckedNodes = () => {
+//   treeRef.value!.setCheckedNodes(
+//     [
+//       {
+//         id: 5,
+//         label: "Level two 2-1"
+//       },
+//       {
+//         id: 9,
+//         label: "Level three 1-1-1"
+//       }
+//     ],
+//     false
+//   );
+// };
+
+// 回显
+const setCheckedKeys = () => {
+  treeRef.value!.setCheckedKeys(props.modelValue, false);
+};
+onMounted(() => {
+  if (props.modelValue) {
+    setCheckedKeys();
+  }
+});
+
+// 重置
+const resetChecked = () => {
+  treeRef.value!.setCheckedKeys([], false);
+};
+
+const defaultProps = {
+  children: "children",
+  label: "label"
+};
+
+const data: Tree[] = [
+  {
+    id: "1",
+    label: "Level one 1",
+    children: [
+      {
+        id: "4",
+        label: "Level two 1-1",
+        children: [
+          {
+            id: "9",
+            label: "Level three 1-1-1"
+          },
+          {
+            id: "10",
+            label: "Level three 1-1-2"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "2",
+    label: "Level one 2",
+    children: [
+      {
+        id: "5",
+        label: "Level two 2-1"
+      },
+      {
+        id: "6",
+        label: "Level two 2-2"
+      }
+    ]
+  },
+  {
+    id: "3",
+    label: "Level one 3",
+    children: [
+      {
+        id: "7",
+        label: "Level two 3-1"
+      },
+      {
+        id: "8",
+        label: "Level two 3-2"
+      }
+    ]
+  }
+];
+
+const selectValue = ref<any>(undefined);
+// 节点点击事件(单选的情况)
+function handleNodeClick(node: any) {
+  if (node.childNodes?.length) return; // 不是最后一级节点就不操作
+  selectValue.value = node.id;
+}
+
+// 筛选函数
+function filterNode(value: any, data: any) {
+  if (!value) return true;
+  return data.label.includes(value);
+}
+// 输入框的值变化触发筛选
+function handleFilter(val: any) {
+  treeRef.value!.filter(val);
+}
+
+function handleClickRadio(e: any) {
+  if (!props.leafOnly) {
+    e.stopPropagation();
+  } else {
+    e.stopPropagation(true);
+  }
+}
+const emit = defineEmits(["update:modelValue"]);
+watch(
+  () => selectValue.value,
+  (val: any) => {
+    emit("update:modelValue", val);
+  }
+);
+
+// 获取当前选中的节点node数组(向外暴露的方法)多选
+const getCheckedNodes = () => {
+  return treeRef.value!.getCheckedNodes(true, false);
+};
+// 获取当前选中的节点id数组(向外暴露的方法)单选
+const getCheckedKeys = () => {
+  return selectValue.value;
+};
+
+defineExpose({
+  getCheckedNodes,
+  getCheckedKeys
+});
+</script>
+<style>
+.custom-tree-node {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  padding-right: 8px;
+}
+</style>

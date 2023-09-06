@@ -128,6 +128,9 @@ const onConfirm = async ({ selectedOptions }) => {
   min-height: calc(100vh - 50px);
 }
 .home-nav {
+  .van-grid-item {
+    //touch-action: none;
+  }
   .img-box {
     width: 60px;
     height: 60px;

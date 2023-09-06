@@ -18,5 +18,5 @@ export interface LoginResult {
   /**
    * 访问token
    */
-  accessToken?: string;
+  token: string;
 }

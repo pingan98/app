@@ -3,7 +3,7 @@
  */
 export interface Query extends PageQuery {
   scoreType?: string;
-  dutyOrgId?: number;
+  dutyOrgId?: string | string[];
   startTime?: number;
   endTime?: number;
 }
@@ -21,8 +21,15 @@ export interface Form {
  */
 export interface List {
   dutyPoliceName: string;
-  dutyOrgName: string;
   scoreBasic: string;
   inputOrgName: string; // 记分部门
+  dutyOrgName: string; // 所在部门
   scoreTime: string; // 记分时间
+}
+
+/**
+ * 关键字
+ */
+export interface Key {
+  id: string;
 }
