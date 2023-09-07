@@ -5,7 +5,7 @@ export const SPECIES = {
   case: "4"
 };
 
-export const SPECIES_Txt = {
+export const SPECIES_TXT = {
   [SPECIES.wgwj]: "违规违纪",
   [SPECIES.petition]: "信访投诉",
   [SPECIES.drink]: "饮酒报备",
