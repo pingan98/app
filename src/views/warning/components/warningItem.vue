@@ -1,25 +1,66 @@
 <script lang="ts" name="WarningItem" setup>
-import { ref } from "vue";
 import ModuleBox from "@/components/business/moduleBox.vue";
+import riskIcon from "@/assets/risk_icon@3x.png";
+import noriskIcon from "@/assets/norisk_icon@3x.png";
+import defaultIcon from "@/assets/default_rick_icon@3x.png";
+import type { List } from "@/api/tWarnInfo/types";
+import { formatTime } from "@/utils";
+import { WARN_STATUS, QK_TYPE } from "@/const";
+
+const props = defineProps<{
+  item: List;
+}>();
+const getColor = () => {
+  const obj = {
+    [QK_TYPE.true]: "from-[#fff0da] to-[#fffefe]", // 黄色
+    [QK_TYPE.false]: "from-[#d0f7ff] to-[#f7fdff]", // 绿色
+    [QK_TYPE.follow]: "from-[#d0f7ff] to-[#f7fdff]" // 绿色
+  };
+  if (props.item?.dealResult && obj[props.item?.dealResult])
+    return obj[props.item?.dealResult];
+  else return "from-[#d0eaff] to-[#f9fbff]"; // 蓝色
+};
 </script>
 
 <template>
-  <div class="warning-item" @click="$router.push(`/warning/detail/111`)">
-    <!--绿色  bg="from-[#d0f7ff] to-[#f7fdff]"-->
-    <!--蓝色  bg="from-[#d0eaff] to-[#f9fbff]"-->
-    <module-box bg="from-[#fff0da] to-[#fffefe]" title="预警名称">
+  <div class="warning-item" @click="$router.push(`/warning/detail/${item.id}`)">
+    <module-box :bg="getColor()" :title="item.warnName">
       <template v-slot:icon>
-        <img src="@/assets/risk_icon@3x.png" alt="" />
-        <!--<img src="@/assets/norisk_icon@3x.png" alt="" />-->
-        <!--<img src="@/assets/default_rick_icon@3x.png" alt="" />-->
+        <img
+          :src="
+            item.dealResult === QK_TYPE.true
+              ? riskIcon
+              : item.dealResult === QK_TYPE.follow ||
+                item.dealResult === QK_TYPE.false
+              ? noriskIcon
+              : defaultIcon
+          "
+          alt=""
+        />
       </template>
       <!--定位的图标-->
-      <div class="watermark bg-risk"></div>
+      <div
+        class="watermark"
+        :class="{
+          'bg-risk': item.dealResult === QK_TYPE.true,
+          'bg-no-risk': item.dealResult === QK_TYPE.false,
+          'bg-follow': item.dealResult === QK_TYPE.follow,
+          'bg-record': item.warnState === WARN_STATUS.reviewed
+        }"
+      ></div>
       <div class="p-[10px]">
-        <div class="info-line"><span class="label">预警单位：</span>xxx</div>
-        <div class="info-line"><span class="label">预警人员：</span>xxx</div>
-        <div class="info-line"><span class="label">预警时间：</span>xxx</div>
-        <div class="info-line"><span class="label">预警地点：</span>xxx</div>
+        <div class="info-line">
+          <span class="label">预警单位：</span>{{ item.warnOrgName }}
+        </div>
+        <div class="info-line">
+          <span class="label">预警人员：</span>{{ item.warnPoliceName }}
+        </div>
+        <div class="info-line">
+          <span class="label">预警时间：</span>{{ formatTime(item.warnTime) }}
+        </div>
+        <div class="info-line">
+          <span class="label">预警地点：</span>{{ item.warnAddredd }}
+        </div>
       </div>
     </module-box>
   </div>

@@ -41,6 +41,7 @@ export interface Form {
  * 列表展示
  */
 export interface List {
+  id: string;
   dutyPoliceName: string;
   scoreBasic: string;
   inputOrgName: string; // 记分部门

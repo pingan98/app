@@ -17,7 +17,7 @@ const active: Ref<string | number> = ref("");
 <template>
   <van-tabs
     v-model:active="active"
-    @click-tab="$emit('tabChange', $event.code)"
+    @click-tab="$emit('tabChange', $event.name)"
   >
     <template v-for="(item, i) in tabs" :key="i">
       <van-tab :title="item.label" :name="item.code"></van-tab>
