@@ -14,9 +14,17 @@ withDefaults(
 
 <template>
   <div class="module-box">
-    <div class="title-box flex items-center bg-gradient-to-r" :class="[bg]">
-      <span class="icon"><slot name="icon"></slot></span>
-      <span class="name">{{ title }}</span>
+    <div
+      class="title-box flex justify-between items-center bg-gradient-to-r"
+      :class="[bg]"
+    >
+      <div class="flex items-center">
+        <span class="icon"><slot name="icon"></slot></span>
+        <span class="name">{{ title }}</span>
+      </div>
+      <div>
+        <slot name="op"></slot>
+      </div>
     </div>
     <slot></slot>
   </div>

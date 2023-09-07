@@ -15,6 +15,7 @@ import type { LoginData } from "@/api/auth/types";
 
 import NProgress from "../progress";
 import { showFailToast, showSuccessToast } from "vant";
+import { refreshPage } from "@/utils";
 
 // 默认 axios 实例请求配置
 const configDefault = {
@@ -70,6 +71,7 @@ class Http {
             })
             .then(() => {
               userStore.getInfo();
+              // refreshPage();
             });
         } else if (res.code === false) {
           showFailToast(res.msg || "业务失败");

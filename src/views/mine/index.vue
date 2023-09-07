@@ -26,7 +26,7 @@ const compName = computed(() => {
     <nav-bar :title="route.meta.title" />
 
     <div class="avatar-box flex items-center">
-      <div class="w-[48px] h-[48px] pr-[10px] rounded-full">
+      <div class="w-[54px] h-[54px] pr-[10px] rounded-full">
         <img src="@/assets/avatar_bg@3x.png" alt="" />
       </div>
       <div class="name-box">

@@ -13,18 +13,18 @@ export function addScoreManage(data: Form): AxiosPromise {
   });
 }
 // 编辑
-export function editScoreManage(data: Form) {
+export function editScoreManage(data: Form): AxiosPromise {
   return http.request({
-    url: "/ScoreManage/scoreManageEdit",
+    url: prefix + "scoreManageEdit",
     method: "post",
     data
   });
 }
 
 // 删除记分管理
-export function removeScoreManage(data: Key) {
+export function removeScoreManage(data: Key): AxiosPromise {
   return http.request({
-    url: "/ScoreManage/removeScoreManage",
+    url: prefix + "removeScoreManage",
     method: "delete",
     data
   });
@@ -33,7 +33,7 @@ export function removeScoreManage(data: Key) {
 // 分页查询记分管理
 export function getScoreManagePage(data: Query): AxiosPromise {
   return http.request({
-    url: "/ScoreManage/getScoreManagePage",
+    url: prefix + "getScoreManagePage",
     method: "post",
     data: qs.stringify(data)
   });
@@ -42,17 +42,23 @@ export function getScoreManagePage(data: Query): AxiosPromise {
 // 记分管理详情
 export function getScoreManageDetail(data: Key): AxiosPromise {
   return http.request({
-    url: "/ScoreManage/getScoreManageDetail",
+    url: prefix + "getScoreManageDetail",
     method: "post",
     data: qs.stringify(data)
   });
 }
 
 // 记分条款
-export function getTreeList(data: Form) {
+export function getTreeList(): AxiosPromise {
   return http.request({
     url: "/tBusQuestionType/treeList",
-    method: "post",
-    data: qs.stringify(data)
+    method: "post"
+  });
+}
+// 记分条款
+export function getUserConcernTreeList(): AxiosPromise {
+  return http.request({
+    url: "/questionType/treeList",
+    method: "post"
   });
 }

@@ -6,22 +6,36 @@ export interface Query extends PageQuery {
   dutyOrgId?: string | string[];
   times?: string[];
 }
+
+/**
+ *
+ */
+export interface PoliceMan {
+  dutyOrgId: "";
+  dutyOrgName: "";
+  dutyPoliceName: "";
+  dutyPoliceNo: "";
+  idcard: "";
+  scoreNum: "";
+  questionName: "";
+  questionTypeId: "";
+  scoreType?: string;
+}
 /**
  * 表单类型
  */
 export interface Form {
-  scoreType?: string;
-  dutyOrgName?: string; // 所在部门
-  dutyOrgId?: string;
+  dutyOrgName: string; // 所在部门
+  dutyOrgId: string;
   dutyPoliceName?: string;
   scoreBasic?: string;
   scoreDesc?: string;
-  inputOrgId?: string; // 记分部门
-  inputOrgName?: string; // 记分部门
-  inputTime?: string;
-  queTime?: string | Date;
-  scoreTime?: string | Date; // 记分时间
-  detailsList?: string[];
+  inputOrgId: string; // 记分部门
+  inputOrgName: string; // 记分部门
+  queTime: string | Date;
+  scoreTime: string | Date; // 记分时间
+  police?: PoliceMan[];
+  auxPolice?: PoliceMan[];
 }
 /**
  * 列表展示

@@ -16,6 +16,7 @@
       node-key="id"
       highlight-current
       :props="defaultProps"
+      empty-text="暂无数据"
       :filter-node-method="filterNode"
       @node-click="handleNodeClick"
     >
@@ -29,9 +30,9 @@
           >
             <template v-if="leafOnly">
               <van-radio
-                v-if="!data.children?.length"
+                v-if="!data.child.length"
                 :name="data.id"
-                @click="handleClickRadio"
+                @click="handleClickRadio(node, data, $event)"
               ></van-radio>
             </template>
             <template v-else>
@@ -44,11 +45,10 @@
   </van-radio-group>
 </template>
 
-<script lang="ts" setup>
+<script lang="ts" setup name="CQuestionType">
 import { ref, watch, onMounted } from "vue";
 import { VanTree } from "vangle";
-import { getOrgList } from "@/api/org";
-import { toMap } from "@/utils";
+import { getTreeList, getUserConcernTreeList } from "@/api/scoreManage";
 
 // 文档地址： https://vangleer.github.io/vangle/zh/component/button.html
 interface Tree {
@@ -62,9 +62,13 @@ const props = defineProps({
     type: [Array, String]
     // required: true
   },
+  isType: {
+    type: String,
+    default: "userConcernTreeList" // treeList/userConcernTreeList
+  },
   checkType: {
     type: String,
-    default: "multiple" // multiple/single
+    default: "single" // multiple/single
   },
   search: {
     type: Boolean,
@@ -73,30 +77,15 @@ const props = defineProps({
   // 是否只能选择子节点
   leafOnly: {
     type: Boolean,
-    default: false
+    default: true
   }
 });
 const keyword = ref<string | number>("");
 const treeRef = ref<any>(null);
 // const treeData = ref<Tree[]>();
-const treeData = ref<any>([]);
+const treeData = ref([]);
 const mapTreeData = ref<any>({});
-
-// const setCheckedNodes = () => {
-//   treeRef.value!.setCheckedNodes(
-//     [
-//       {
-//         id: 5,
-//         label: "Level two 2-1"
-//       },
-//       {
-//         id: 9,
-//         label: "Level three 1-1-1"
-//       }
-//     ],
-//     false
-//   );
-// };
+const checkedData = ref<any>({});
 
 // 回显
 const setCheckedKeys = () => {
@@ -108,87 +97,53 @@ onMounted(() => {
     setCheckedKeys();
   }
 });
+// 递归数据变成扁平化对象
 const defData = (arr: any) => {
   arr.forEach((item: any) => {
     mapTreeData.value[item.id] = { ...item };
-    if (item?.children?.length) {
-      defData(item.children);
+    if (item?.child?.length) {
+      defData(item.child);
     }
   });
 };
 const getInit = () => {
-  getOrgList().then(res => {
-    treeData.value = res;
-    defData(res || []);
-  });
+  if (props.isType === "userConcernTreeList") {
+    getUserConcernTreeList().then(res => {
+      let str = JSON.stringify(res);
+      str = str.replace(/\[\]/g, '""');
+      treeData.value = JSON.parse(str) || [];
+      // defData(treeData.value);
+    });
+  }
+  if (props.isType === "treeList") {
+    getTreeList().then(({ data }) => {
+      let str = JSON.stringify(data);
+      str = str.replace(/\[\]/g, '""');
+      treeData.value = JSON.parse(str) || [];
+      // defData(treeData.value);
+    });
+  }
 };
 
 // 重置
 const resetChecked = () => {
   selectValue.value = null;
+  checkedData.value = null;
   treeRef.value!.setCheckedKeys([], false);
 };
 
 const defaultProps = {
-  children: "children",
-  label: "shortName"
+  children: "child",
+  label: "name"
 };
 
-/*let treeData: Tree[] = [
-  {
-    id: "1",
-    label: "Level one 1",
-    children: [
-      {
-        id: "4",
-        label: "Level two 1-1",
-        children: [
-          {
-            id: "9",
-            label: "Level three 1-1-1"
-          },
-          {
-            id: "10",
-            label: "Level three 1-1-2"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: "2",
-    label: "Level one 2",
-    children: [
-      {
-        id: "5",
-        label: "Level two 2-1"
-      },
-      {
-        id: "6",
-        label: "Level two 2-2"
-      }
-    ]
-  },
-  {
-    id: "3",
-    label: "Level one 3",
-    children: [
-      {
-        id: "7",
-        label: "Level two 3-1"
-      },
-      {
-        id: "8",
-        label: "Level two 3-2"
-      }
-    ]
-  }
-]*/
 const selectValue = ref<any>(undefined);
 // 节点点击事件(单选的情况)
 function handleNodeClick(node: any) {
   if (node.childNodes?.length) return; // 不是最后一级节点就不操作
+  // console.log(node);
   selectValue.value = node.id;
+  getCheckedKeys(node, node.data);
 }
 
 // 筛选函数
@@ -201,12 +156,16 @@ function handleFilter(val: any) {
   treeRef.value!.filter(val);
 }
 
-function handleClickRadio(e: any) {
+function handleClickRadio(node: Node, data: any, e: any) {
+  console.log(node);
+  // console.log(data);
+  // console.log(e);
   if (!props.leafOnly) {
     e.stopPropagation();
   } else {
     e.stopPropagation(true);
   }
+  getCheckedKeys(node, data);
 }
 const emit = defineEmits(["update:modelValue"]);
 watch(
@@ -216,26 +175,54 @@ watch(
   }
 );
 
-// 获取当前选中的节点node数组(向外暴露的方法)多选
-const getCheckedNodes = () => {
-  return treeRef.value!.getCheckedNodes(true, false);
-};
-// 获取当前选中的节点id数组(向外暴露的方法)单选
-const getCheckedKeys = () => {
-  return {
-    orgId: selectValue.value,
-    orgName: mapTreeData.value[selectValue.value].shortName,
-    data: mapTreeData.value[selectValue.value]
-  };
+let tempObj = {} as any;
+let tempLabels = [] as any[];
+let tempIds = [] as any[];
+// 递归拿到parent信息
+const defGetParent = (node: any, labels: any, ids: any) => {
+  // console.log(node);
+  tempObj = node.parent;
+  labels.unshift(node.label);
+  ids.unshift(node.id);
+
+  if (node.parent) {
+    defGetParent(tempObj, tempLabels, tempIds);
+  }
 };
 
+const getCheckedKeys = (node: any, data: any) => {
+  defGetParent(node?.parent, tempLabels, tempIds);
+
+  tempLabels.push(data.name);
+  tempIds.push(data.id);
+
+  checkedData.value = {
+    labels: tempLabels,
+    labels_txt: tempLabels.join("-"),
+    ids: tempIds,
+    ids_txt: tempIds.join("-"),
+    ...data
+  };
+
+  tempObj = {};
+  tempLabels = [];
+  tempIds = [];
+  // return {
+  //   labels: tempLabels,
+  //   labels_txt: tempLabels.join("-"),
+  //   ids: tempIds,
+  //   ids_txt: tempIds.join("-"),
+  //   ...data
+  // };
+};
+// 向外暴露
 defineExpose({
-  getCheckedNodes,
-  getCheckedKeys,
+  checkedData,
   resetChecked
 });
 </script>
 <style lang="less" scoped>
+@import "@/styles/mixin.less";
 /deep/.van-tree__node__content {
   height: 40px;
 }

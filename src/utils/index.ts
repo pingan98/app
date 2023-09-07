@@ -57,3 +57,7 @@ export const formatTime = (date: any, format = "YYYY-MM-DD hh:mm:ss") => {
     return "";
   }
 };
+// 刷新当前页面
+export function refreshPage(): void {
+  location.reload();
+}
