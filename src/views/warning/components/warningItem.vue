@@ -23,7 +23,12 @@ const getColor = () => {
 </script>
 
 <template>
-  <div class="warning-item" @click="$router.push(`/warning/detail/${item.id}`)">
+  <div
+    class="warning-item"
+    @click="
+      $router.push(`/warning/detail/${item.id}?warnState=${item.warnState}`)
+    "
+  >
     <module-box :bg="getColor()" :title="item.warnName">
       <template v-slot:icon>
         <img

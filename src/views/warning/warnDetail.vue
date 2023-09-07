@@ -8,10 +8,16 @@ import defaultIcon from "@/assets/default_rick_icon@3x.png";
 import type { Form } from "@/api/tWarnInfo/types";
 import { getWarnInfoDetail } from "@/api/tWarnInfo";
 import { formatTime } from "@/utils";
-import { QK_TYPE, QK_TYPE_TXT } from "@/const";
+import { QK_TYPE, QK_TYPE_TXT, WARN_STATUS } from "@/const";
 const route = useRoute();
 const detailData = ref<Form>();
+const isPreview = ref(true);
+const pageTitle = ref("");
 onMounted(async () => {
+  const { warnState } = route.query;
+  pageTitle.value =
+    warnState === WARN_STATUS.audited ? (route.meta.title as string) : "审核";
+  isPreview.value = warnState === WARN_STATUS.audited;
   const res = await getWarnInfoDetail({ id: route.params.id as string });
   detailData.value = { ...res.data };
 });
@@ -29,7 +35,7 @@ const getColor = () => {
 
 <template>
   <div class="warn-detail-page detail-bg bg-[#fff]">
-    <nav-bar :title="route.meta.title" />
+    <nav-bar :title="pageTitle" />
 
     <div class="p-[10px]">
       <module-box
@@ -92,7 +98,7 @@ const getColor = () => {
             alt=""
           />
         </template>
-        <div class="p-[10px]">
+        <div class="p-[10px]" v-if="isPreview">
           <div>
             <span class="label">核查处理结果：</span
             ><span>{{ QK_TYPE_TXT[detailData?.dealResult] }}</span>
@@ -102,6 +108,7 @@ const getColor = () => {
             <div class="desc">{{ detailData?.remark }}</div>
           </div>
         </div>
+        <div v-else>待处理</div>
       </module-box>
     </div>
   </div>
