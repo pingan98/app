@@ -25,6 +25,15 @@ export interface Form extends List {
   remark: string;
 }
 /**
+ * 预警处理
+ */
+export interface WarnDeal {
+  id: string;
+  remark: string;
+  isOrder: string;
+  dealResult: string; // 处理结果
+}
+/**
  * 关键字
  */
 export interface Key {

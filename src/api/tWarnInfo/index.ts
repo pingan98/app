@@ -1,7 +1,7 @@
 import type { AxiosPromise } from "axios";
 import qs from "qs";
 import { http } from "@/utils/http";
-import type { Form, Key, Query } from "@/api/tWarnInfo/types";
+import type { Form, Key, Query, WarnDeal } from "@/api/tWarnInfo/types";
 
 const prefix = "/TWarnInfo/";
 
@@ -22,7 +22,7 @@ export function getWarnInfoDetail(data: Key): AxiosPromise {
   });
 }
 // 预警处理
-export function postWarnDeal(data: Form): AxiosPromise {
+export function postWarnDeal(data: WarnDeal): AxiosPromise {
   return http.request({
     url: prefix + "warnDeal",
     method: "post",

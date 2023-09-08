@@ -35,6 +35,21 @@ const onLoad = async () => {
   }
   loading.value = false;
 };
+const onSearch = () => {
+  listData.value = [];
+  searchForm.value.page = 1;
+  onLoad();
+};
+/**
+ * todo: 清空事件暂不生效
+ */
+const onClear = () => {
+  console.log(111111);
+  searchForm.value.page = 1;
+  searchForm.value.warnName = "";
+  listData.value = [];
+  onLoad();
+};
 </script>
 
 <template>
@@ -43,11 +58,15 @@ const onLoad = async () => {
 
     <!-- 搜索框 -->
     <div class="page-search">
-      <van-search
-        v-model="searchForm.warnName"
-        shape="round"
-        placeholder="请输入"
-      />
+      <form action="/">
+        <van-search
+          v-model="searchForm.warnName"
+          shape="round"
+          placeholder="请输入"
+          @search="onSearch"
+          @clear.prevent.stop="onClear"
+        />
+      </form>
       <c-tab :tabs="tabs" @tabChange="tabChange" />
     </div>
 
