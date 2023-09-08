@@ -2,7 +2,7 @@
  * 查询对象类型
  */
 export interface Query extends PageQuery {
-  warnState: string;
+  state: string;
   warnName?: string;
 }
 /**

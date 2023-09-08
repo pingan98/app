@@ -19,3 +19,16 @@ export const QK_TYPE_TXT = {
   [QK_TYPE.follow]: "作为线索继续跟进",
   [QK_TYPE.false]: "排除问题和风险"
 };
+export const ASSIGN_STATUS = {
+  pending: "0",
+  review: "1",
+  archive: "2",
+  all: "3"
+};
+
+export const ASSIGN_STATUS_TXT = {
+  [ASSIGN_STATUS.pending]: "待处理",
+  [ASSIGN_STATUS.review]: "待审核",
+  [ASSIGN_STATUS.archive]: "已归档",
+  [ASSIGN_STATUS.all]: "汇总"
+};

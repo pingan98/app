@@ -1,9 +1,9 @@
 <script lang="ts" name="AuditRecord" setup>
 import { ref } from "vue";
 import WarningItem from "@/views/warning/components/warningItem.vue";
-import { getTWarnInfoPage } from "@/api/tWarnInfo";
-import type { List, Query } from "@/api/tWarnInfo/types";
-import { WARN_STATUS } from "@/const";
+import type { List, Query } from "@/api/queOrder/types";
+import { ASSIGN_STATUS } from "@/const";
+import { getQueOrderPage } from "@/api/queOrder";
 // 加载中状态
 const loading = ref(false);
 // 是否完全加载完毕数据
@@ -12,10 +12,10 @@ const listData = ref<List[]>([]);
 const searchForm = ref<Query>({
   page: 1,
   size: 20,
-  warnState: WARN_STATUS.audited
+  state: ASSIGN_STATUS.archive
 });
 const onLoad = async () => {
-  const res = await getTWarnInfoPage(searchForm.value);
+  const res = await getQueOrderPage(searchForm.value);
   listData.value.push(...res!.rows);
 
   if (listData.value.length === res.total) {
