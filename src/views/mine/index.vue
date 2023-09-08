@@ -3,11 +3,13 @@ import { useRoute } from "vue-router";
 import { MINE_NAV, MINE_NAV_TXT } from "@/const";
 import { toList } from "@/utils";
 import { computed, ref } from "vue";
+import { useUserStore } from "@/store/modules/user";
 import BrowseHistory from "@/views/mine/components/browseHistory.vue";
 import UploadRecord from "@/views/mine/components/uploadRecord.vue";
 import AuditRecord from "@/views/mine/components/auditRecord.vue";
 
 const route = useRoute();
+const userStore = useUserStore();
 const species = MINE_NAV;
 const activeSpecies = ref<string>(species.audit);
 const speciesList = toList(MINE_NAV, MINE_NAV_TXT);
@@ -30,17 +32,12 @@ const compName = computed(() => {
         <img src="@/assets/avatar_bg@3x.png" alt="" />
       </div>
       <div class="name-box">
-        <div class="name">张国伟</div>
+        <div class="name">{{ userStore?.userInfo?.name }}</div>
         <div class="dep flex">
-          <div class="flex items-center mr-[10px]">
-            <img
-              src="@/assets/dep_icon@3x.png"
-              alt=""
-              class="w-[14px] mr-[4px]"
-            />单位名称单
-          </div>
           <div>
-            <svg-icon name="tree" class="inline-block mr-[4px]" />部门名称部门
+            <svg-icon name="tree" class="inline-block mr-[4px]" />{{
+              userStore?.userInfo?.orgName
+            }}
           </div>
         </div>
       </div>

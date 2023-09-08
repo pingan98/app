@@ -4,8 +4,8 @@ export const WARN_STATUS = {
 };
 
 export const WARN_STATUS_TXT = {
-  [WARN_STATUS.audited]: "已审核",
-  [WARN_STATUS.reviewed]: "待审核"
+  [WARN_STATUS.audited]: "已处理",
+  [WARN_STATUS.reviewed]: "待处理"
 };
 
 export const QK_TYPE = {

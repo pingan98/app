@@ -5,6 +5,10 @@ import { showSuccessToast } from "vant";
 const userStore = useUserStore();
 import MaterialItem from "@/views/caution/components/materialItem.vue";
 import type { LoginData } from "@/api/auth/types";
+import type { Query, List } from "@/api/warnMaterial/types";
+import { getWarnMaterialPage } from "@/api/warnMaterial";
+import { CAUTION_STATUS } from "@/const/warnMaterial";
+import empty from "@/assets/empty@3x.png";
 const testRole = [
   { name: "陈俊文", policeNo: "cjw" },
   { name: "李", policeNo: "ldp" },
@@ -15,7 +19,16 @@ const loginData = ref<LoginData>({
   username: "",
   password: "M@123456"
 });
-
+// 加载中状态
+const loading = ref(false);
+// 是否完全加载完毕数据
+const finished = ref(false);
+const listData = ref<List[]>([]);
+const materialForm = ref<Query>({
+  page: 1,
+  size: 20,
+  warnState: CAUTION_STATUS.listing
+});
 const homeNav = reactive([
   { title: "记分管理", to: "Score" },
   { title: "警示教育", to: "Caution" },
@@ -32,6 +45,23 @@ const onConfirm = async ({ selectedOptions }) => {
   });
 
   showPicker.value = false;
+};
+const getCautionList = async () => {
+  try {
+    const res = await getWarnMaterialPage(materialForm.value);
+    console.log(res);
+    listData.value.push(...res!.rows);
+
+    if (listData.value.length === res.total) {
+      finished.value = true; // 数据全部加载完成
+    } else {
+      materialForm.value.page++;
+    }
+    loading.value = false;
+  } catch (error) {
+    loading.value = false;
+    finished.value = true;
+  }
 };
 </script>
 
@@ -59,13 +89,13 @@ const onConfirm = async ({ selectedOptions }) => {
       >
         <van-swipe indicator-color="#fff" lazy-render>
           <van-swipe-item>
-            <img src="@/assets/ad.png" alt="" />
+            <img src="@/assets/homeSwipe/ad1@3x.png" alt="" />
           </van-swipe-item>
           <van-swipe-item>
-            <img src="@/assets/ad.png" alt="" />
+            <img src="@/assets/homeSwipe/ad2@3x.png" alt="" />
           </van-swipe-item>
           <van-swipe-item>
-            <img src="@/assets/ad.png" alt="" />
+            <img src="@/assets/homeSwipe/ad3@3x.png" alt="" />
           </van-swipe-item>
         </van-swipe>
       </div>
@@ -100,12 +130,24 @@ const onConfirm = async ({ selectedOptions }) => {
 
       <!-- 列表 -->
       <div class="material-list">
-        <van-list finished-text="没有更多了">
-          <material-item></material-item>
-          <material-item></material-item>
-          <material-item></material-item>
-          <material-item></material-item>
-          <material-item></material-item>
+        <van-empty
+          description=""
+          v-if="!listData.length"
+          :image="empty"
+          image-size="100%"
+        >
+        </van-empty>
+        <van-list
+          v-model:loading="loading"
+          :finished="finished"
+          finished-text="没有更多了"
+          @load="getCautionList"
+        >
+          <material-item
+            v-for="(item, ind) in listData"
+            :key="ind"
+            :item="item"
+          ></material-item>
         </van-list>
       </div>
     </div>

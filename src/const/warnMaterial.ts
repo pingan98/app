@@ -1,7 +1,7 @@
 export const CAUTION_STATUS = {
   listing: "1",
-  draft: "2",
-  delist: "3"
+  draft: "0",
+  delist: "2"
 };
 
 export const CAUTION_STATUS_TXT = {

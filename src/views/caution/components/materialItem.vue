@@ -1,15 +1,26 @@
-<script setup lang="ts" name="MaterialCard"></script>
+<script setup lang="ts" name="MaterialCard">
+import type { List } from "@/api/warnMaterial/types";
+import { formatTime } from "@/utils";
+
+const props = defineProps<{
+  item: List;
+}>();
+</script>
 
 <template>
   <div class="material-card van-hairline--bottom pt-[14px] pb-[10px]">
     <div class="content-box">
       <h3 class="title">
-        标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题
+        {{ item?.warnTitle }}
       </h3>
       <div class="desc-box">
-        <span class="name">王伟强</span>
-        <span class="name"><van-icon name="eye-o" /> 1000+</span>
-        <span class="name">2023.07.31</span>
+        <span class="name">{{ item?.createUser }}</span>
+        <span class="name"
+          ><van-icon name="eye-o" /> {{ item?.warnViewNumber }}</span
+        >
+        <span class="name">{{
+          formatTime(item?.upperTime, "YYYY-MM-DD")
+        }}</span>
       </div>
     </div>
     <div class="img-box">
