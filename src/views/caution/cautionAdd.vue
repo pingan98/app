@@ -18,6 +18,7 @@ import { CAUTION_STATUS } from "@/const";
 const route = useRoute();
 const router = useRouter();
 
+const orderId = ref("");
 const timeShow = ref(false);
 const pageType = ref("");
 // 上传图片
@@ -45,18 +46,17 @@ const getTitle = (val: string) => {
 };
 // 图片上传
 const onAfterRead: UploaderAfterRead = item => {
+  console.log(item);
   if (Array.isArray(item)) return;
   if (!item.file) return;
 
   item.status = "uploading";
   item.message = "上传中...";
-  uploadImage(item.file)
+  addFile(item.file)
     .then(res => {
       item.status = "done";
       item.message = undefined;
       item.url = res.data.url;
-      // 同步数据
-      formData.value.pictures?.push(res.data);
     })
     .catch(() => {
       item.status = "failed";
@@ -68,7 +68,17 @@ const onDeleteImg = (item: UploaderFileListItem) => {
     pic => pic.url !== item.url
   );
 };
-const uploadImage = (file: File) => {};
+const addFile = (file: File) => {
+  if (!orderId.value) {
+    showFailToast("上传失败,缺少必要参数");
+    return false;
+  }
+  const sendData = new FormData();
+  sendData.append("moduleId", this.moduleId);
+  sendData.append("orderId", this.orderId);
+  sendData.append("busType", this.busType);
+  sendData.append("file", file.raw, file.name);
+};
 
 const submitFn = (type: string) => {
   formRef.value
@@ -95,7 +105,7 @@ const editFn = () => {
   formRef.value
     ?.validate()
     .then(() => {
-      const { warnTime, warnState, warnTitle, warnContent } = formData.value;
+      const { warnTime, warnTitle, warnContent } = formData.value;
       const serve = {
         id: route.params.id as string,
         warnTime,
@@ -164,15 +174,12 @@ const editFn = () => {
             <van-uploader
               upload-icon="photo-o"
               upload-text="图片/视频"
-              max-count="9"
-              :max-size="5 * 1024 * 1024"
+              max-count="5"
               v-model="fileList"
               :after-read="onAfterRead"
               @delete="onDeleteImg"
             ></van-uploader>
-            <p class="tip" v-if="!fileList.length">
-              图片最多上传X张 视频最多上传X个
-            </p>
+            <p class="tip" v-if="!fileList.length">最多上传5张</p>
           </div>
         </template>
       </van-field>
@@ -236,7 +243,6 @@ const editFn = () => {
         left: -6px;
         top: -6px;
         border-radius: 50%;
-        background-color: var(--cp-primary);
         width: 20px;
         height: 20px;
         &-icon {

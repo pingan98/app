@@ -11,6 +11,7 @@ import {
   removeWarnMaterial
 } from "@/api/warnMaterial";
 import type { List, Query } from "@/api/warnMaterial/types";
+
 const route = useRoute();
 // 加载中状态
 const loading = ref(false);
@@ -36,7 +37,6 @@ const tabChange = (value: string) => {
   listData.value = [];
   onLoad();
 };
-const submitFn = () => {};
 
 const checkAllFn = () => {
   checkboxGroup.value.toggleAll(checkAll.value);
