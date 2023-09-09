@@ -23,6 +23,7 @@ export interface List {
  */
 export interface Form extends List {
   remark: string;
+  warnOrgId?: string;
 }
 /**
  * 预警处理
@@ -38,4 +39,12 @@ export interface WarnDeal {
  */
 export interface Key {
   id: string;
+}
+export interface ReportFrom {
+  connId: string;
+  dutyOrgId: string;
+  dutyOrgName: string;
+  queTime: string;
+  queDesc: string;
+  dutyPeopleName: string;
 }

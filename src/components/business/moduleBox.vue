@@ -4,7 +4,7 @@ import { withDefaults } from "vue";
 withDefaults(
   defineProps<{
     bg?: string;
-    title: string;
+    title?: string;
   }>(),
   {
     bg: "from-[#fff0da] to-[#fffefe]"

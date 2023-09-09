@@ -52,6 +52,18 @@ const routes: Array<RouteRecordRaw> = [
     meta: { title: "预警详情" }
   },
   {
+    path: "/warning/relate/:id",
+    name: "RelateWarn",
+    component: () => import("@/views/warning/relateWarn.vue"),
+    meta: { title: "相关预警信息" }
+  },
+  {
+    path: "/warning/report/:id",
+    name: "ReportWarn",
+    component: () => import("@/views/warning/reportWarn.vue"),
+    meta: { title: "上报" }
+  },
+  {
     path: "/portrait/unit",
     name: "UnitPortrait",
     component: () => import("@/views/portrait/unitPortrait.vue"),

@@ -7,7 +7,7 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
-  modelValue: {
+  orgValue: {
     type: [Array, String]
     // required: true
   },
@@ -69,6 +69,7 @@ watch(
     <c-select-tree-org
       :check-type="props.checkType"
       :leaf-only="props.leafOnly"
+      v-model:model-value="props.orgValue"
       ref="cOrgRef"
     ></c-select-tree-org>
   </van-popup>
