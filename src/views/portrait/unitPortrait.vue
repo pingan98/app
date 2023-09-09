@@ -13,12 +13,13 @@ import ViolateDiscipline from "@/views/portrait/components/violateDiscipline.vue
 import PetitionComplain from "@/views/portrait/components/petitionComplain.vue";
 import DrinkReport from "@/views/portrait/components/drinkReport.vue";
 import HandleCase from "@/views/portrait/components/handleCase.vue";
+import FilterTab from "@/views/portrait/components/filterTab.vue";
 
 const searchForm = ref<any>({});
 const speciesList = toList(SPECIES, SPECIES_TXT);
 const jobType = ref<any>({});
 const species = SPECIES;
-const activeSpecies = ref<string>(species.wgwj);
+const activeSpecies = ref<string | number>(species.wgwj);
 const route = useRoute();
 const activeName = ref("1");
 const compName = computed(() => {
@@ -46,6 +47,10 @@ const getDutyList = () => {
 const jobChange = item => {
   searchForm.value.scoreType = item.code;
 };
+
+function refreshData(param: any) {
+  console.log("param :>> ", param);
+}
 </script>
 
 <template>
@@ -54,42 +59,7 @@ const jobChange = item => {
 
     <!-- 搜索框 -->
     <div class="page-search">
-      <van-search
-        v-model="searchForm.dutyPoliceName"
-        shape="round"
-        placeholder="请输入"
-      />
-      <van-dropdown-menu ref="menuRef">
-        <van-dropdown-item title="职务">
-          <drop-panel>
-            <van-radio-group v-model="searchForm.scoreType">
-              <van-cell-group inset>
-                <van-cell
-                  :title="item.label"
-                  :key="ind"
-                  v-for="(item, ind) in jobType"
-                  clickable
-                  @click="jobChange(item)"
-                >
-                  <template #right-icon>
-                    <van-radio :name="item.code" />
-                  </template>
-                </van-cell>
-              </van-cell-group>
-            </van-radio-group>
-          </drop-panel>
-        </van-dropdown-item>
-        <van-dropdown-item title="部门">
-          <drop-panel>
-            <c-select-tree-org />
-          </drop-panel>
-        </van-dropdown-item>
-        <van-dropdown-item title="时间">
-          <drop-panel>
-            <c-date-range v-model="searchForm.times"></c-date-range>
-          </drop-panel>
-        </van-dropdown-item>
-      </van-dropdown-menu>
+      <filter-tab type="unit" @refresh="refreshData"></filter-tab>
     </div>
     <div class="unit-portrait-main">
       <div class="nav-box">
@@ -113,9 +83,17 @@ const jobChange = item => {
 <style scoped lang="less">
 @import "@/styles/mixin.less";
 .unit-portrait-page {
-  padding-top: 46px;
+  padding-top: 88px;
 }
 
+.page-search {
+  position: fixed;
+  width: 100%;
+  top: 46px;
+  z-index: 10;
+  border-top: 4px solid #e5e7eb;
+  background: #fff;
+}
 .unit-portrait-main {
   padding: 16px;
   background: #ffffff;

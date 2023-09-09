@@ -37,6 +37,7 @@ declare module '@vue/runtime-core' {
     VanActionSheet: typeof import('vant/es')['ActionSheet']
     VanButton: typeof import('vant/es')['Button']
     VanCalendar: typeof import('vant/es')['Calendar']
+    VanCascader: typeof import('vant/es')['Cascader']
     VanCell: typeof import('vant/es')['Cell']
     VanCellGroup: typeof import('vant/es')['CellGroup']
     VanCheckbox: typeof import('vant/es')['Checkbox']
@@ -75,5 +76,6 @@ declare module '@vue/runtime-core' {
     VanTabbarItem: typeof import('vant/es')['TabbarItem']
     VanTabs: typeof import('vant/es')['Tabs']
     VanTextEllipsis: typeof import('vant/es')['TextEllipsis']
+    VanTreeSelect: typeof import('vant/es')['TreeSelect']
   }
 }

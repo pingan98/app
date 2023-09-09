@@ -1,25 +1,32 @@
 <script lang="ts" name="PersonPortrait" setup>
-import { ref } from "vue";
+import ModuleBox from "@/components/business/moduleBox.vue";
+import FilterTab from "@/views/portrait/components/filterTab.vue";
+import { getZJ } from "@/api/personPortrait";
+
 import { useRoute } from "vue-router";
 
 import avatar from "@/assets/avatar_bg@3x.png";
-const drinkHead = ["饮酒开始时间", "提交报备时间", "是否确认到家"];
-import ModuleBox from "@/components/business/moduleBox.vue";
+
 const route = useRoute();
-const searchForm = ref({});
+
+function getData(params: any) {
+  getZJ(params).then(data => {
+    console.log("data :>> ", data);
+  });
+}
+
+function refreshData(param: any) {
+  getData(param);
+}
 </script>
 
 <template>
   <div class="person-portrait-page">
-    <nav-bar :title="route.meta.title" />
+    <nav-bar :title="route?.meta?.title" />
 
     <!-- 搜索框 -->
     <div class="page-search">
-      <van-search
-        v-model="searchForm.dutyPoliceName"
-        shape="round"
-        placeholder="请输入"
-      />
+      <filter-tab @refresh="refreshData"></filter-tab>
     </div>
     <div class="person-portrait-main">
       <div class="all-count-box">
@@ -132,13 +139,9 @@ const searchForm = ref({});
         </template>
         <div class="drink-module">
           <div class="drink-module_row is-header">
-            <div
-              class="drink-module_col"
-              v-for="(item, ind) in drinkHead"
-              :key="`head_col_${ind}`"
-            >
-              {{ item }}
-            </div>
+            <div class="drink-module_col">饮酒开始时间</div>
+            <div class="drink-module_col">提交报备时间</div>
+            <div class="drink-module_col">是否确认到家</div>
           </div>
           <div class="drink-module_table">
             <div class="drink-module_row van-hairline--bottom">
@@ -162,7 +165,16 @@ const searchForm = ref({});
 @import "@/styles/mixin.less";
 @import "./style/index.less";
 .person-portrait-page {
-  padding-top: 46px;
+  padding-top: 88px;
+  // padding-top: 140px;
+}
+.page-search {
+  position: fixed;
+  width: 100%;
+  top: 46px;
+  z-index: 10;
+  border-top: 4px solid #e5e7eb;
+  background: #fff;
 }
 .person-portrait-main {
   background: #ffffff;
