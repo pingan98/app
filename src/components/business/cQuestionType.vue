@@ -48,6 +48,7 @@
 <script lang="ts" setup name="CQuestionType">
 import { ref, watch, onMounted } from "vue";
 import { VanTree } from "vangle";
+import "vangle/dist/style.css";
 import { getTreeList, getUserConcernTreeList } from "@/api/scoreManage";
 
 // 文档地址： https://vangleer.github.io/vangle/zh/component/button.html

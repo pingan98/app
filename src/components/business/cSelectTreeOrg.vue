@@ -49,6 +49,7 @@ import { ref, watch, onMounted } from "vue";
 import { VanTree } from "vangle";
 import { getOrgList } from "@/api/org";
 import { toMap } from "@/utils";
+import "vangle/dist/style.css";
 
 // 文档地址： https://vangleer.github.io/vangle/zh/component/button.html
 interface Tree {

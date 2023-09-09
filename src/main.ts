@@ -4,15 +4,16 @@ import { store } from "./store";
 import "default-passive-events";
 // normalize.css
 import "normalize.css/normalize.css";
+
 // 全局样式
 import "./styles/index.less";
 // tailwindcss
 import "./styles/tailwind.css";
 // svg icon
 import "virtual:svg-icons-register";
-// toast 样式
+// vant 样式
+import "vant/lib/index.css";
 import "vant/es/toast/style";
-import "vangle/dist/style.css";
 
 import App from "./App.vue";
 import router from "./router";

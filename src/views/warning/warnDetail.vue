@@ -236,13 +236,4 @@ const submitFn = (isOrder: string) => {
     }
   }
 }
-.must {
-  :deep(.van-cell__title) {
-    &::before {
-      content: "*";
-      color: red;
-      margin-right: 4px;
-    }
-  }
-}
 </style>
