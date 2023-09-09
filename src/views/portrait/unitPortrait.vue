@@ -9,6 +9,7 @@ import {
   SPECIES,
   SPECIES_TXT
 } from "@/const/portrait";
+
 import ViolateDiscipline from "@/views/portrait/components/violateDiscipline.vue";
 import PetitionComplain from "@/views/portrait/components/petitionComplain.vue";
 import DrinkReport from "@/views/portrait/components/drinkReport.vue";
@@ -21,7 +22,6 @@ const jobType = ref<any>({});
 const species = SPECIES;
 const activeSpecies = ref<string | number>(species.wgwj);
 const route = useRoute();
-const activeName = ref("1");
 const compName = computed(() => {
   const compNames = {
     [species.wgwj]: ViolateDiscipline,
@@ -34,9 +34,7 @@ const compName = computed(() => {
 onMounted(() => {
   getDutyList();
 });
-const onTimeChange = val => {
-  console.log(searchForm.value);
-};
+
 const getDutyList = () => {
   jobType.value = toList(POLICE_TYPE, POLICE_TYPE_TXT);
   jobType.value.unshift({
@@ -44,12 +42,9 @@ const getDutyList = () => {
     code: ""
   });
 };
-const jobChange = item => {
-  searchForm.value.scoreType = item.code;
-};
 
-function refreshData(param: any) {
-  console.log("param :>> ", param);
+function refreshData(params: any) {
+  searchForm.value = params;
 }
 </script>
 
@@ -74,7 +69,7 @@ function refreshData(param: any) {
         </span>
       </div>
       <transition name="van-fade">
-        <component :is="compName" />
+        <component :params="searchForm" :is="compName" />
       </transition>
     </div>
   </div>

@@ -2,7 +2,7 @@
  * @Description:
  * @Author: 辰月
  * @Date: 2023-09-08 22:58:13
- * @LastEditTime: 2023-09-09 09:14:23
+ * @LastEditTime: 2023-09-09 10:53:17
  * @LastEditors: 辰月
  */
 import type { AxiosPromise } from "axios";
@@ -31,6 +31,24 @@ export function getDWHX(params: any): AxiosPromise {
 export function getZJ(params: any): AxiosPromise {
   return http.request({
     url: "/secondaryScreen/getZJ",
+    method: "get",
+    params
+  });
+}
+
+// 个人画像 记分
+export function getPerScoreList(params: any): AxiosPromise {
+  return http.request({
+    url: "/secondaryScreen/getPerScoreList",
+    method: "get",
+    params
+  });
+}
+
+// 单位画像 违规违纪
+export function getBreakRuleScore(params: any): AxiosPromise {
+  return http.request({
+    url: "/secondaryScreen/getBreakRuleScore",
     method: "get",
     params
   });

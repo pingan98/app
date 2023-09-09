@@ -1,7 +1,8 @@
 <script lang="ts" name="PersonPortrait" setup>
+import { ref } from "vue";
 import ModuleBox from "@/components/business/moduleBox.vue";
 import FilterTab from "@/views/portrait/components/filterTab.vue";
-import { getZJ } from "@/api/personPortrait";
+import { getZJ, getPerScoreList } from "@/api/personPortrait";
 
 import { useRoute } from "vue-router";
 
@@ -9,9 +10,16 @@ import avatar from "@/assets/avatar_bg@3x.png";
 
 const route = useRoute();
 
+const bean = ref<any>({});
+const scoreBean = ref<any>({});
+
 function getData(params: any) {
   getZJ(params).then(data => {
-    console.log("data :>> ", data);
+    bean.value = data || {};
+    console.log("bean.value :>> ", bean.value);
+  });
+  getPerScoreList(params).then(data => {
+    scoreBean.value = data;
   });
 }
 
@@ -28,42 +36,46 @@ function refreshData(param: any) {
     <div class="page-search">
       <filter-tab @refresh="refreshData"></filter-tab>
     </div>
-    <div class="person-portrait-main">
+    <van-empty v-if="!bean.police?.jyname" description="暂无数据" />
+    <div class="person-portrait-main" v-else>
       <div class="all-count-box">
         <div class="all-count-item left-box van-hairline--right">
-          <van-image :src="avatar" width="50px" />
+          <van-image :src="bean.police?.photoPath || avatar" width="50px" />
           <div>
-            <div class="name">张XX</div>
-            <div>XX部门</div>
+            <div class="name">{{ bean.police?.jyname || "" }}</div>
+            <div>{{ bean.orgName || "" }}</div>
           </div>
         </div>
         <div class="all-count-item right-box">
           <div class="name">记分总分</div>
-          <div><span class="num">27</span>分</div>
+          <div>
+            <span class="num">{{ scoreBean.totalScoreNum || 0 }}</span
+            >分
+          </div>
         </div>
       </div>
 
-      <div class="score-list">
-        <div class="score-item van-hairline--bottom">
+      <div class="score-list" v-if="scoreBean.rtnList">
+        <div
+          class="score-item van-hairline--bottom"
+          v-for="(item, ind) in scoreBean.rtnList"
+          :key="ind"
+        >
           <div class="left-img-box">
-            <div><span class="num">3</span>分</div>
+            <div>
+              <span class="num">{{ item.scoreNum || 0 }}</span
+              >分
+            </div>
             <div>记分分值</div>
           </div>
           <div class="right-main-box">
-            <div class="kind">记分条款记分条款记分条款记分条款</div>
-            <div class="desc"><span class="label">记分类型：</span>xxx记分</div>
-            <div class="desc"><span class="label">记分时间：</span>xxx记分</div>
-          </div>
-        </div>
-        <div class="score-item van-hairline--bottom">
-          <div class="left-img-box">
-            <div><span class="num">3</span>分</div>
-            <div>记分分值</div>
-          </div>
-          <div class="right-main-box">
-            <div class="kind">记分条款记分条款记分条款记分条款</div>
-            <div class="desc"><span class="label">记分类型：</span>xxx记分</div>
-            <div class="desc"><span class="label">记分时间：</span>xxx记分</div>
+            <div class="kind">{{ item.queType || "" }}</div>
+            <div class="desc">
+              <span class="label">记分类型：</span>{{ item.scoreType || "" }}
+            </div>
+            <div class="desc">
+              <span class="label">记分时间：</span>{{ item.createTime || "" }}
+            </div>
           </div>
         </div>
       </div>
@@ -80,11 +92,17 @@ function refreshData(param: any) {
           <div class="count-box">
             <div class="count-item van-hairline--right">
               <div class="name">出差次数</div>
-              <div><span class="num">27</span>次</div>
+              <div>
+                <span class="num">{{ bean.cccs || 0 }}</span
+                >次
+              </div>
             </div>
             <div class="count-item">
               <div class="name">出差时长</div>
-              <div><span class="num">27</span>小时</div>
+              <div>
+                <span class="num">{{ bean.ccsc || 0 }}</span
+                >小时
+              </div>
             </div>
           </div>
         </module-box>
@@ -99,11 +117,17 @@ function refreshData(param: any) {
           <div class="count-box">
             <div class="count-item van-hairline--right">
               <div class="name">信访数</div>
-              <div><span class="num">27</span>件</div>
+              <div>
+                <span class="num">{{ scoreBean.xfNum || 0 }}</span
+                >件
+              </div>
             </div>
             <div class="count-item">
               <div class="name">投诉数</div>
-              <div><span class="num">27</span>件</div>
+              <div>
+                <span class="num">{{ scoreBean.tsNum || 0 }}</span
+                >件
+              </div>
             </div>
           </div>
         </module-box>
@@ -120,20 +144,21 @@ function refreshData(param: any) {
         <div class="count-box">
           <div class="count-item van-hairline--right">
             <div class="name">办理刑事案件数</div>
-            <div><span class="num">27</span>起</div>
+            <div><span class="num">0</span>起</div>
           </div>
           <div class="count-item van-hairline--right">
             <div class="name">办理行政案件数</div>
-            <div><span class="num">27</span>起</div>
+            <div><span class="num">0</span>起</div>
           </div>
           <div class="count-item">
             <div class="name">接处警数</div>
-            <div><span class="num">27</span>起</div>
+            <div><span class="num">0</span>起</div>
           </div>
         </div>
       </module-box>
 
-      <module-box title="饮酒报备次数：2" class="mt-[18px]">
+      <!-- TODO: 此处没找到相关接口 -->
+      <module-box title="饮酒报备次数：2" class="mt-[18px]" v-if="false">
         <template v-slot:icon>
           <img src="@/assets/sort_icon1@3x.png" alt="" />
         </template>

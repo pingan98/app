@@ -1,9 +1,37 @@
 <script lang="ts" name="ViolateDiscipline" setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { toList } from "@/utils";
 import { POLICE_TYPE, POLICE_TYPE_TXT } from "@/const";
+
+import { getBreakRuleScore } from "@/api/personPortrait";
+
+const props = defineProps({
+  params: {
+    type: Object,
+    default: () => {}
+  }
+});
+
+const bean = ref<any>({});
+
+const getData = (params: any) => {
+  getBreakRuleScore(params).then(data => {
+    bean.value = data || {};
+  });
+};
+
+watch(
+  () => props.params,
+  newValue => {
+    if (newValue.db33) {
+      getData(props.params);
+    }
+  },
+  { immediate: true, deep: true }
+);
+
 const policeType = POLICE_TYPE;
-const activeTab = ref(policeType.min);
+const activeTab = ref<string | number>(policeType.min);
 const tabArr = toList(POLICE_TYPE, POLICE_TYPE_TXT);
 </script>
 
@@ -22,7 +50,13 @@ const tabArr = toList(POLICE_TYPE, POLICE_TYPE_TXT);
         }"
       >
         <div class="name">{{ item.label }}总记分</div>
-        <div class="num">25</div>
+        <div class="num">
+          {{
+            item.code === policeType.min
+              ? bean.mjTotalScore
+              : bean.fjTotalScore || 0
+          }}
+        </div>
       </div>
     </div>
     <div class="score-list">
