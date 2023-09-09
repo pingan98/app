@@ -62,7 +62,7 @@ const props = defineProps<{
         width: 0;
       }
       .time {
-        width: 62px;
+        width: 67px;
         color: var(--text-color2);
         font-size: 12px;
         flex-shrink: 0;

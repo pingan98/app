@@ -5,8 +5,8 @@ import "default-passive-events";
 // normalize.css
 import "normalize.css/normalize.css";
 // vant 样式
-import "vant/lib/index.css";
 import "vant/es/toast/style";
+import "vant/lib/index.css";
 // 全局样式
 import "./styles/index.less";
 // tailwindcss

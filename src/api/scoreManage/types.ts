@@ -5,6 +5,7 @@ export interface Query extends PageQuery {
   scoreType?: string;
   dutyOrgId?: string | string[];
   times?: string[];
+  dutyPoliceName?: string;
 }
 
 /**

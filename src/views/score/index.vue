@@ -6,6 +6,7 @@ import { toList } from "@/utils";
 import { getScoreManagePage } from "@/api/scoreManage";
 import type { Query, List } from "@/api/scoreManage/types";
 import { POLICE_TYPE, POLICE_TYPE_TXT } from "@/const";
+import FilterTab from "@/views/score/components/filterTab.vue";
 const route = useRoute();
 // 加载中状态
 const loading = ref(false);
@@ -15,14 +16,12 @@ const searchForm = ref<Query>({
   page: 1,
   size: 20
 });
+const filterRef = ref<any>(null);
 const listData = ref<List[]>([]);
 const jobType = ref<any>({});
 onMounted(() => {
   getDutyList();
 });
-const onTimeChange = val => {
-  console.log(searchForm.value);
-};
 const getDutyList = () => {
   jobType.value = toList(POLICE_TYPE, POLICE_TYPE_TXT);
   jobType.value.unshift({
@@ -30,11 +29,8 @@ const getDutyList = () => {
     code: ""
   });
 };
-const jobChange = (item: any) => {
-  searchForm.value.scoreType = item.code;
-};
-const onLoad = async () => {
-  const res = await getScoreManagePage(searchForm.value);
+const onLoad = async (data?: any) => {
+  const res = await getScoreManagePage({ ...searchForm.value, ...data });
   listData.value.push(...res!.rows);
 
   if (listData.value.length === res.total) {
@@ -44,12 +40,27 @@ const onLoad = async () => {
   }
   loading.value = false;
 };
+const onSearch = (data: any) => {
+  listData.value = [];
+  searchForm.value.page = 1;
 
-const cSelectRef = ref<any>(null);
-
-function handleConfirm() {
-  console.log(cSelectRef.value!.getCheckedKeys());
-}
+  onLoad(data);
+};
+const onClear = () => {
+  searchForm.value.page = 1;
+  searchForm.value.dutyPoliceName = "";
+  listData.value = [];
+  onLoad();
+};
+const onCancel = () => {
+  searchForm.value = {
+    page: 1,
+    size: 20
+  };
+  listData.value = [];
+  filterRef.value!.resetTab();
+  onLoad();
+};
 </script>
 
 <template>
@@ -57,46 +68,19 @@ function handleConfirm() {
     <nav-bar :title="route.meta.title" />
     <!-- 搜索框 -->
     <div class="page-search">
-      <van-search
-        v-model="searchForm.dutyPoliceName"
-        shape="round"
-        placeholder="请输入被记分人"
-      />
-      <van-dropdown-menu ref="menuRef">
-        <van-dropdown-item title="职务">
-          <drop-panel>
-            <van-radio-group v-model="searchForm.scoreType">
-              <van-cell-group inset>
-                <van-cell
-                  :title="item.label"
-                  :key="ind"
-                  v-for="(item, ind) in jobType"
-                  clickable
-                  @click="jobChange(item)"
-                >
-                  <template #right-icon>
-                    <van-radio :name="item.code" />
-                  </template>
-                </van-cell>
-              </van-cell-group>
-            </van-radio-group>
-          </drop-panel>
-        </van-dropdown-item>
-        <van-dropdown-item title="部门">
-          <drop-panel @onConfirm="handleConfirm">
-            <c-select-tree-org
-              v-model="searchForm.dutyOrgId"
-              checkType="single"
-              ref="cSelectRef"
-            />
-          </drop-panel>
-        </van-dropdown-item>
-        <van-dropdown-item title="时间">
-          <drop-panel>
-            <c-date-range v-model="searchForm.times"></c-date-range>
-          </drop-panel>
-        </van-dropdown-item>
-      </van-dropdown-menu>
+      <form action="/">
+        <van-search
+          v-model="searchForm.dutyPoliceName"
+          shape="round"
+          show-action
+          action-text="重置"
+          placeholder="请输入被记分人"
+          @search="onSearch"
+          @clear="onClear"
+          @cancel="onCancel"
+        />
+      </form>
+      <filter-tab @onSearch="onSearch" ref="filterRef" />
     </div>
 
     <!-- 列表 -->

@@ -31,7 +31,7 @@ export function removeScoreManage(data: Key): AxiosPromise {
 }
 
 // 分页查询记分管理
-export function getScoreManagePage(data: Query): AxiosPromise {
+export function getScoreManagePage(data: any): AxiosPromise {
   return http.request({
     url: prefix + "getScoreManagePage",
     method: "post",
