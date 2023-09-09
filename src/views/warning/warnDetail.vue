@@ -14,7 +14,7 @@ import { QK_TYPE, QK_TYPE_TXT, WARN_STATUS } from "@/const";
 const route = useRoute();
 const router = useRouter();
 const detailData = ref<Form>();
-const isPreview = ref(true);
+const isEdit = ref(false);
 const pageTitle = ref("");
 const qkArr = toList(QK_TYPE, QK_TYPE_TXT);
 const IS_ORDER = "0";
@@ -30,8 +30,8 @@ const getInit = async () => {
   const { warnState } = route.query;
   console.log(warnState);
   pageTitle.value =
-    warnState === WARN_STATUS.audited ? (route.meta.title as string) : "审核";
-  isPreview.value = warnState === WARN_STATUS.audited;
+    warnState === WARN_STATUS.reviewed ? "审核" : (route.meta.title as string);
+  isEdit.value = warnState === WARN_STATUS.reviewed;
   const res = await getWarnInfoDetail({ id: route.params.id as string });
   detailData.value = { ...res.data };
 };
@@ -46,6 +46,17 @@ const getColor = () => {
   else return "from-[#d0eaff] to-[#f9fbff]"; // 蓝色
 };
 const submitFn = (isOrder: string) => {
+  if (isOrder === IS_ORDER) {
+    // const { dealResult, remark } = detailData.value;
+    const { dealResult, remark } = formData.value;
+    router.push(
+      `/warning/report/${
+        detailData.value?.id
+      }?dealResult=${dealResult}&remark=${encodeURIComponent(remark)}`
+    );
+    return;
+  }
+
   formRef.value
     ?.validate()
     .then(() => {
@@ -56,22 +67,16 @@ const submitFn = (isOrder: string) => {
         remark,
         isOrder
       };
+      console.log(server);
       if (isOrder === IS_ORDER) {
-        // const tmp = {
-        //   connId: this.bean.id,
-        //   dutyOrgId: this.bean.warnOrgId,
-        //   dutyOrgName: this.bean.warnOrgName,
-        //   queTime: this.bean.warnTime,
-        //   queDesc: remark,
-        //   dutyPeopleName: this.bean.warnPoliceName
-        // };
+        router.push(`/warning/report/${detailData.value?.id}`);
         return;
       }
 
       postWarnDeal(server).then(res => {
         if (res?.code) {
           showSuccessToast("已提交");
-          isPreview.value = true;
+          isEdit.value = false;
           router.push(`/warning/detail/${server.id}`);
         }
       });
@@ -131,6 +136,23 @@ const submitFn = (isOrder: string) => {
             <label class="label">预警地点</label>
             <span>{{ detailData?.warnAddredd }}</span>
           </div>
+          <div class="info-item">
+            <van-button
+              round
+              block
+              size="small"
+              icon-position="right"
+              icon="arrow"
+              color="linear-gradient(to right, #037CED, #02C2FA)"
+              @click="
+                $router.push(
+                  `/warning/relate/${detailData?.id}?warnModelId=${detailData?.warnModelId}`
+                )
+              "
+            >
+              查看相关预警信息
+            </van-button>
+          </div>
         </div>
       </module-box>
 
@@ -148,17 +170,7 @@ const submitFn = (isOrder: string) => {
             alt=""
           />
         </template>
-        <div class="p-[10px]" v-if="isPreview">
-          <div>
-            <span class="label">核查处理结果：</span
-            ><span>{{ QK_TYPE_TXT[detailData?.dealResult] }}</span>
-          </div>
-          <div class="remark-box">
-            <div class="label">核查情况反馈：</div>
-            <div class="desc">{{ detailData?.remark }}</div>
-          </div>
-        </div>
-        <van-form v-else ref="formRef">
+        <van-form v-if="isEdit" ref="formRef">
           <van-field
             class="must"
             label-align="top"
@@ -194,18 +206,23 @@ const submitFn = (isOrder: string) => {
             </template>
           </van-field>
         </van-form>
+        <div class="p-[10px]" v-else>
+          <div>
+            <span class="label">核查处理结果：</span
+            ><span>{{ QK_TYPE_TXT[detailData?.dealResult] }}</span>
+          </div>
+          <div class="remark-box">
+            <div class="label">核查情况反馈：</div>
+            <div class="desc">{{ detailData?.remark }}</div>
+          </div>
+        </div>
       </module-box>
     </div>
 
-    <div class="bottom-action flex justify-between" v-if="!isPreview">
-      <van-button
-        round
-        block
-        @click="submitFn('0')"
-        v-if="formData.dealResult === QK_TYPE.true"
-      >
-        上 报
-      </van-button>
+    <!--v-if="isEdit"-->
+    <div class="bottom-action flex justify-between">
+      <!-- v-if="formData.dealResult === QK_TYPE.true"-->
+      <van-button round block @click="submitFn('0')"> 上 报 </van-button>
       <van-button
         round
         block
@@ -222,7 +239,7 @@ const submitFn = (isOrder: string) => {
 .warn-detail-page {
   padding-top: 46px;
   padding-bottom: 86px;
-  min-height: calc(100vh - 64px);
+  min-height: 100vh;
   .label {
     color: var(--text-color2);
   }
