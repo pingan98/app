@@ -1,8 +1,8 @@
 <script lang="ts" name="CautionAdd" setup>
 import { onMounted, ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
 import type { Form } from "@/api/warnMaterial/types";
 import type { FormInstance } from "vant";
+import { generateGuid } from "@/utils";
 import { showFailToast, showSuccessToast } from "vant";
 import {
   addWarnMaterial,
@@ -11,12 +11,9 @@ import {
 } from "@/api/warnMaterial";
 import { CAUTION_STATUS } from "@/const";
 import CFile from "@/components/business/cFile.vue";
-import { generateGuid } from "@/utils";
-const route = useRoute();
-const router = useRouter();
 
+const visible = ref(false);
 const timeShow = ref(false);
-const pageType = ref("");
 const formRef = ref<FormInstance>();
 const formData = ref<Form>({
   warnTitle: "",
@@ -24,15 +21,21 @@ const formData = ref<Form>({
   warnContent: "",
   warnState: ""
 });
-onMounted(async () => {
-  pageType.value = route.query.type as string;
-  const id = route.params.id as string;
-  if (id) {
-    const res = await warnMaterialDetail({ id });
-    formData.value = { ...res.data };
+const props = defineProps({
+  popType: {
+    type: String,
+    default: ""
+  },
+  cautionId: {
+    type: String,
+    default: ""
   }
-  formData.value.id = id ? id : generateGuid();
 });
+const emit = defineEmits<{
+  (e: "onCancel"): void;
+  (e: "refresh"): void;
+}>();
+
 const getTitle = (val: "add" | "edit") => {
   const temp = {
     add: "新增",
@@ -40,22 +43,37 @@ const getTitle = (val: "add" | "edit") => {
   };
   return temp[val];
 };
+onMounted(async () => {
+  visible.value = true;
 
+  if (props.cautionId) {
+    const res = await warnMaterialDetail({ id: props.cautionId as string });
+    formData.value = { ...res.data };
+  }
+  formData.value.id = props.cautionId ? props.cautionId : generateGuid();
+});
+
+const onCancel = () => {
+  visible.value = false;
+  emit("onCancel");
+};
+const onRefresh = () => {
+  visible.value = false;
+  emit("refresh");
+};
 const submitFn = (type: string) => {
   formRef.value
     ?.validate()
     .then(() => {
-      const { warnTime, ...form } = formData.value;
       const serve = {
-        ...form,
-        warnState: type,
-        warnTime: warnTime + " 00:00:00"
+        ...formData.value,
+        warnState: type
       };
       console.log(serve);
       addWarnMaterial(serve).then(res => {
         console.log(res);
         showSuccessToast("已提交");
-        router.push("/caution");
+        onRefresh();
       });
     })
     .catch(error => {
@@ -66,17 +84,17 @@ const editFn = () => {
   formRef.value
     ?.validate()
     .then(() => {
-      const { warnTime, warnTitle, warnContent } = formData.value;
+      const { warnTime, warnTitle, warnContent, id } = formData.value;
       const serve = {
-        id: route.params.id as string,
+        id,
         warnTime,
         warnTitle,
         warnContent
       };
       updateWarnMaterial(serve).then(res => {
         console.log(res);
-        showSuccessToast("已提交");
-        router.push("/caution");
+        showSuccessToast("修改成功");
+        onRefresh();
       });
     })
     .catch(error => {
@@ -86,8 +104,13 @@ const editFn = () => {
 </script>
 
 <template>
-  <div class="caution-add-page">
-    <nav-bar :title="getTitle(route.query?.type || '')" />
+  <van-popup
+    v-model:show="visible"
+    position="right"
+    :style="{ width: '100%', height: '100%', 'padding-top': '46px' }"
+    @closed="onCancel"
+  >
+    <nav-bar :title="getTitle(props.popType)" :back="() => (visible = false)" />
 
     <van-form ref="formRef">
       <van-field
@@ -141,7 +164,7 @@ const editFn = () => {
     </van-form>
 
     <div class="bottom-action flex justify-between">
-      <template v-if="pageType === 'add'">
+      <template v-if="popType === 'add'">
         <van-button
           round
           class="w-[50%]"
@@ -176,13 +199,7 @@ const editFn = () => {
       @onCancel="timeShow = false"
       @onConfirm="val => (formData.warnTime = val)"
     />
-  </div>
+  </van-popup>
 </template>
 
-<style scoped lang="less">
-.caution-add-page {
-  padding: 50px 16px 86px;
-  background: #ffffff;
-  min-height: calc(100vh - 64px);
-}
-</style>
+<style scoped></style>

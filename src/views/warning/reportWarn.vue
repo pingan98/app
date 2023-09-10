@@ -7,17 +7,12 @@ import { addQueOrder } from "@/api/queOrder";
 import type { FormInstance } from "vant";
 import dayjs from "dayjs";
 import { showFailToast, showSuccessToast } from "vant";
-import type { Image } from "@/api/warnMaterial/types";
 import { QK_TYPE } from "@/const";
-import {
-  UploaderAfterRead,
-  UploaderFileListItem
-} from "vant/lib/uploader/types";
+import CFile from "@/components/business/cFile.vue";
 
 const route = useRoute();
 const router = useRouter();
 const IS_ORDER = "0";
-const fileList = ref<Image[]>([]);
 const loading = ref(false);
 const formRef = ref<FormInstance>();
 const orgShow = ref(false);
@@ -79,32 +74,6 @@ const submitFn = () => {
       showFailToast("请正确填写信息");
     });
 };
-// 图片上传
-const onAfterRead: UploaderAfterRead = item => {
-  if (Array.isArray(item)) return;
-  if (!item.file) return;
-
-  item.status = "uploading";
-  item.message = "上传中...";
-  uploadImage(item.file)
-    .then(res => {
-      item.status = "done";
-      item.message = undefined;
-      item.url = res.data.url;
-      // 同步数据
-      formData.value.pictures?.push(res.data);
-    })
-    .catch(() => {
-      item.status = "failed";
-      item.message = "上传失败";
-    });
-};
-const onDeleteImg = (item: UploaderFileListItem) => {
-  formData.value.pictures = formData.value.pictures?.filter(
-    pic => pic.url !== item.url
-  );
-};
-const uploadImage = (file: File) => {};
 </script>
 
 <template>
@@ -150,16 +119,11 @@ const uploadImage = (file: File) => {};
       />
       <van-field name="uploader">
         <template #input>
-          <div class="illness-img">
-            <van-uploader
-              upload-icon="photo-o"
-              upload-text="上传"
-              max-count="9"
-              v-model="fileList"
-              :after-read="onAfterRead"
-              @delete="onDeleteImg"
-            ></van-uploader>
-          </div>
+          <c-file
+            :order-id="formData.connId"
+            bus-type="上报预览"
+            module-id="assignAdd"
+          />
         </template>
       </van-field>
     </van-form>

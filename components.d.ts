@@ -7,6 +7,7 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    CFile: typeof import('./src/components/business/cFile.vue')['default']
     CQuestionType: typeof import('./src/components/business/cQuestionType.vue')['default']
     CSelectPolice: typeof import('./src/components/business/cSelectPolice.vue')['default']
     CSelectTreeOrg: typeof import('./src/components/business/cSelectTreeOrg.vue')['default']

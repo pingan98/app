@@ -1,14 +1,15 @@
 <script lang="ts" name="CFile" setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import type { Image } from "@/api/warnMaterial/types";
 import type {
   UploaderAfterRead,
   UploaderFileListItem
 } from "vant/lib/uploader/types";
-import { showConfirmDialog, showFailToast } from "vant";
-import { getFiles } from "@/api/common";
+import { showConfirmDialog, showFailToast, showSuccessToast } from "vant";
+import { getFiles, uploadFile, delFile } from "@/api/common";
 
 const fileList = ref<Image[]>([]);
+const viewList = ref<Image[]>([]);
 
 const props = defineProps({
   btnTxt: {
@@ -41,57 +42,80 @@ const props = defineProps({
   }
 });
 
+watch(
+  () => props.orderId,
+  () => {
+    getFileList();
+  },
+  { immediate: true }
+);
+const emit = defineEmits<{
+  (e: "refresh"): void;
+}>();
+
 // 图片上传
 const onAfterRead: UploaderAfterRead = item => {
-  console.log(item);
+  if (!props.orderId) {
+    showFailToast("上传失败,缺少必要参数");
+    return false;
+  }
+
+  // console.log(item);
   if (Array.isArray(item)) return;
   if (!item.file) return;
 
   item.status = "uploading";
   item.message = "上传中...";
-  addFile(item.file)
-    .then(res => {
+
+  const sendData = new FormData();
+  sendData.append("moduleId", props.moduleId);
+  sendData.append("orderId", props.orderId);
+  sendData.append("busType", props.busType);
+  sendData.append("file", item.file);
+  uploadFile(sendData)
+    .then((res: any) => {
+      console.log(res);
       item.status = "done";
       item.message = undefined;
-      item.url = res.data.url;
+      item.url = res.data[0].attachFullPath;
+      emit("refresh");
+      getFileList();
     })
     .catch(() => {
       item.status = "failed";
       item.message = "上传失败";
     });
 };
-const onDeleteImg = (item: UploaderFileListItem) => {
+const onDelete = (item: Image) => {
   showConfirmDialog({
     title: "温馨提示",
     message: `您确认删除此数据吗？`
   })
     .then(() => {
-      formData.value.pictures = formData.value.pictures?.filter(
-        pic => pic.url !== item.url
-      );
+      delFile({ attachId: item.id }).then(() => {
+        showSuccessToast("删除成功");
+        getFileList();
+      });
     })
     .catch(err => {
       console.log(err);
     });
 };
-const addFile = (file: File) => {
-  if (!props.orderId) {
-    showFailToast("上传失败,缺少必要参数");
-    return false;
-  }
-  const sendData = new FormData();
-  sendData.append("moduleId", props.moduleId);
-  sendData.append("orderId", props.orderId);
-  sendData.append("busType", props.busType);
-  // sendData.append("file", file.raw, file.name);
-};
 function getFileList() {
   if (props.orderId) {
+    viewList.value = [];
     fileList.value = [];
     getFiles({ orderId: props.orderId, busType: props.busType }).then(
       ({ data }) => {
         console.log(data, "data");
         fileList.value = fileList.value.concat(data || []);
+        viewList.value = fileList.value.map((v: any) => {
+          return {
+            id: v.id,
+            name: v.attachName,
+            url: v.attachFullPath
+          };
+        });
       }
     );
   }
@@ -105,11 +129,12 @@ function getFileList() {
         upload-icon="photo-o"
         :upload-text="btnTxt"
         :max-count="maxCount"
-        v-model="fileList"
+        v-model="viewList"
         :after-read="onAfterRead"
-        @delete="onDeleteImg"
-      ></van-uploader>
-      <p class="tip" v-if="showTip && !fileList.length">
+        @delete="onDelete"
+      >
+      </van-uploader>
+      <p class="tip" v-if="showTip && !viewList.length">
         最多上传{{ maxCount }}张
       </p>
     </div>
@@ -148,5 +173,16 @@ function getFileList() {
       color: var(--cp-text3);
     }
   }
+}
+.preview-cover {
+  position: absolute;
+  bottom: 0;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 4px;
+  color: #fff;
+  font-size: 12px;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.3);
 }
 </style>

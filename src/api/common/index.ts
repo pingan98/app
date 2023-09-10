@@ -1,10 +1,15 @@
 import type { AxiosPromise } from "axios";
 import { http } from "@/utils/http";
+import { ContentTypeEnum } from "@/enums/requestEnum";
 const prefix = "/view/minio/"; // 前缀
 export function uploadFile(data: any) {
   return http.request({
     url: prefix + "upload",
-    method: "post"
+    method: "post",
+    data,
+    headers: {
+      "Content-Type": ContentTypeEnum.FORM_DATA
+    }
   });
 }
 

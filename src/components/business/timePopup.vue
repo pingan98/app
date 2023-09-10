@@ -40,7 +40,7 @@ const onConfirm = () => {
   visible.value = false;
   emit(
     "onConfirm",
-    currentDate.value.join("-") + " " + currentTime.value.join("-") + ":00"
+    currentDate.value.join("-") + " " + currentTime.value.join(":") + ":00"
   );
 };
 const onCancel = () => {
