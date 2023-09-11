@@ -37,7 +37,7 @@ class Http {
   private httpInterceptorsRequest(): void {
     Http.axiosInstance.interceptors.request.use(
       config => {
-        NProgress.start();
+        // NProgress.start();
 
         const userStore = useUserStore();
         // 发送请求前，可在此携带 token
@@ -57,7 +57,7 @@ class Http {
   private httpInterceptorsResponse(): void {
     Http.axiosInstance.interceptors.response.use(
       (response: AxiosResponse) => {
-        NProgress.done();
+        // NProgress.done();
         const res = response.data;
         if (res.status == "20000") {
           // token过期
@@ -94,7 +94,7 @@ class Http {
         }*/
       },
       (error: AxiosError) => {
-        NProgress.done();
+        // NProgress.done();
         // 处理 HTTP 网络错误
         let message = "";
         // HTTP 状态码
