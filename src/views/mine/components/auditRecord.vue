@@ -4,6 +4,10 @@ import defaultIcon from "@/assets/default_rick_icon@3x.png";
 import type { List, Query } from "@/api/queOrder/types";
 import { ASSIGN_STATUS } from "@/const";
 import { getQueOrderPage } from "@/api/queOrder";
+import { useUserStore } from "@/store/modules/user";
+
+const userStore = useUserStore();
+
 // 加载中状态
 const loading = ref(false);
 // 是否完全加载完毕数据
@@ -20,9 +24,11 @@ const sourceName = {
 const searchForm = ref<Query>({
   page: 1,
   size: 20,
-  state: ASSIGN_STATUS.archive
+  state: ASSIGN_STATUS.archive,
+  dutyPeopleName: userStore?.userInfo?.name
 });
 const onLoad = async () => {
+  console.log(111);
   const res = await getQueOrderPage(searchForm.value);
   listData.value.push(...res!.rows);
 

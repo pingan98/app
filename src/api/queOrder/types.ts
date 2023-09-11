@@ -4,6 +4,7 @@
 export interface Query extends PageQuery {
   state: string;
   warnName?: string;
+  dutyPeopleName?: string;
 }
 /**
  * 列表展示

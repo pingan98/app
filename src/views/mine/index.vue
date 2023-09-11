@@ -28,7 +28,7 @@ const compName = computed(() => {
     <nav-bar :title="route.meta.title" />
 
     <div class="avatar-box flex items-center">
-      <div class="w-[54px] h-[54px] pr-[10px] rounded-full">
+      <div class="w-[64px] h-[54px] pr-[10px] rounded-full">
         <img src="@/assets/avatar_bg@3x.png" alt="" />
       </div>
       <div class="name-box">
@@ -56,9 +56,9 @@ const compName = computed(() => {
       </div>
     </div>
 
-    <transition name="van-fade">
-      <component :is="compName" />
-    </transition>
+    <!--<transition name="van-fade">-->
+    <component :is="compName" />
+    <!--</transition>-->
   </div>
 </template>
 
@@ -79,6 +79,7 @@ const compName = computed(() => {
       .name {
         font-weight: bold;
         font-size: 18px;
+        margin-bottom: 5px;
       }
       .dep {
         color: var(--text-color2);

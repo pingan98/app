@@ -4,10 +4,11 @@ import { batchUpdateWarnMaterial } from "@/api/warnMaterial/index";
  * 查询对象类型
  */
 export interface Query extends PageQuery {
-  warnState: string;
+  warnState?: string;
   warnTitle?: string;
   upperUser?: string;
   times?: string[];
+  createUser?: string;
 }
 // 图片列表
 export type Image = {
