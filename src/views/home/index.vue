@@ -9,6 +9,10 @@ import type { Query, List } from "@/api/warnMaterial/types";
 import { getWarnMaterialPage } from "@/api/warnMaterial";
 import { CAUTION_STATUS } from "@/const/warnMaterial";
 import empty from "@/assets/empty@3x.png";
+import homeBanner1 from "@/assets/homeSwipe/ad1@3x.png";
+import homeBanner2 from "@/assets/homeSwipe/ad2@3x.png";
+import homeBanner3 from "@/assets/homeSwipe/ad3@3x.png";
+const images = [homeBanner1, homeBanner2, homeBanner3];
 const testRole = [
   { name: "陈俊文", policeNo: "cjw" },
   { name: "李", policeNo: "ldp" },
@@ -85,17 +89,11 @@ const getCautionList = async () => {
     <div class="home-page-head">
       <!-- 轮播图 -->
       <div
-        class="home-banner px-[16px] bg-gradient-to-t from-[#ffffff] to-[#8dc2ff] w-screen h-[200px] flex items-center"
+        class="home-banner px-[16px] bg-gradient-to-t from-[#ffffff] to-[#8dc2ff] w-screen h-[200px] pt-[20px]"
       >
-        <van-swipe indicator-color="#fff" lazy-render>
-          <van-swipe-item>
-            <img src="@/assets/homeSwipe/ad1@3x.png" alt="" />
-          </van-swipe-item>
-          <van-swipe-item>
-            <img src="@/assets/homeSwipe/ad2@3x.png" alt="" />
-          </van-swipe-item>
-          <van-swipe-item>
-            <img src="@/assets/homeSwipe/ad3@3x.png" alt="" />
+        <van-swipe indicator-color="#fff" :autoplay="3000">
+          <van-swipe-item v-for="image in images" :key="image">
+            <img :src="image" />
           </van-swipe-item>
         </van-swipe>
       </div>
@@ -144,6 +142,7 @@ const getCautionList = async () => {
           @load="getCautionList"
         >
           <material-item
+            @click="$router.push(`/caution/detail/${item.id}`)"
             v-for="(item, ind) in listData"
             :key="ind"
             :item="item"

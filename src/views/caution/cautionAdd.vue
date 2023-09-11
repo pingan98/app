@@ -172,9 +172,10 @@ const editFn = () => {
 
     <!-- 时间 -->
     <time-popup
+      v-if="timeShow"
+      v-model:model-value="formData.warnTime"
       :show-picker="timeShow"
       @onCancel="timeShow = false"
-      @onConfirm="val => (formData.warnTime = val)"
     />
   </div>
 </template>

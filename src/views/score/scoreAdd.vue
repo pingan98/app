@@ -13,7 +13,7 @@ const loading = ref(false);
 const timeShow = ref(false);
 const timeKey = ref<"queTime" | "scoreTime">();
 const orgShow = ref(false);
-const orgKey = ref<"dutyOrgName" | "inputOrgName">();
+const orgKey = ref<"dutyOrgId" | "inputOrgId">();
 const policeShow = ref(false);
 const questionShow = ref(false);
 const policeIndex = ref<number>(0);
@@ -151,17 +151,18 @@ const addFn = (type: "police" | "auxPolice") => {
 const delFn = (type: "police" | "auxPolice", index: number) => {
   policeForm[type].splice(index, 1);
 };
-const changeOrgPop = (key: "dutyOrgName" | "inputOrgName") => {
+const changeOrgPop = (key: "dutyOrgId" | "inputOrgId") => {
   orgKey.value = key;
   orgShow.value = true;
 };
 const onConfirmOrg = (val: any) => {
   orgShow.value = false;
   const { orgId, orgName } = val;
-  if (orgKey.value === "dutyOrgName") {
+  console.log(val);
+  if (orgKey.value === "dutyOrgId") {
     formData.dutyOrgId = orgId;
     formData.dutyOrgName = orgName;
-  } else if (orgKey.value === "inputOrgName") {
+  } else if (orgKey.value === "inputOrgId") {
     formData.inputOrgId = orgId;
     formData.inputOrgName = orgName;
   }
@@ -244,7 +245,7 @@ const onConfirmTime = (time: Date, key: "queTime" | "scoreTime") => {
             :rules="[{ required: true, message: '请选择' }]"
             placeholder="责任部门"
             class="is-required"
-            @click="changeOrgPop('dutyOrgName')"
+            @click="changeOrgPop('dutyOrgId')"
             readonly
             clickable
             is-link
@@ -382,7 +383,7 @@ const onConfirmTime = (time: Date, key: "queTime" | "scoreTime") => {
             label="记分单位"
             placeholder="记分单位"
             :rules="[{ required: true, message: '请选择' }]"
-            @click="changeOrgPop('inputOrgName')"
+            @click="changeOrgPop('inputOrgId')"
             class="is-required"
             readonly
             clickable
@@ -422,13 +423,16 @@ const onConfirmTime = (time: Date, key: "queTime" | "scoreTime") => {
     />
     <!-- 时间 -->
     <time-popup
+      v-if="timeShow"
+      v-model:model-value="formData[timeKey]"
       :show-picker="timeShow"
       @onCancel="timeShow = false"
-      @onConfirm="val => onConfirmTime(val, timeKey)"
     />
     <!-- 部门 -->
     <org-popup
+      v-if="orgShow"
       :show-picker="orgShow"
+      v-model:model-value="formData[orgKey]"
       @onCancel="orgShow = false"
       @onConfirm="onConfirmOrg"
     />

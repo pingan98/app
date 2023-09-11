@@ -42,9 +42,16 @@ onMounted(async () => {
 });
 const onConfirmOrg = (val: any) => {
   orgShow.value = false;
-  const { orgId, orgName } = val;
-  formData.value!.dutyOrgId = orgId;
-  formData.value!.dutyOrgName = orgName;
+  // console.log("执行", val);
+  if (Array.isArray(val)) {
+    // console.log("回显", val);
+    formData.value!.dutyOrgId = val.map((item: any) => item.id).join(",");
+    formData.value!.dutyOrgName = val.map((item: any) => item.label).join(",");
+  } else {
+    const { orgId, orgName } = val;
+    formData.value!.dutyOrgId = orgId;
+    formData.value!.dutyOrgName = orgName;
+  }
 };
 const submitFn = () => {
   formRef.value
@@ -142,8 +149,10 @@ const submitFn = () => {
 
     <!-- 部门 -->
     <org-popup
+      v-if="orgShow"
       :show-picker="orgShow"
-      :org-value="formData.dutyOrgId"
+      check-type="single"
+      v-model:model-value="formData.dutyOrgId"
       @onCancel="orgShow = false"
       @onConfirm="onConfirmOrg"
     />

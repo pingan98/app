@@ -1,5 +1,5 @@
 <script lang="ts" name="OrgPopup" setup>
-import { ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 const visible = ref(false);
 const cOrgRef = ref<any>(null);
 const props = defineProps({
@@ -7,8 +7,8 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
-  orgValue: {
-    type: [Array, String]
+  modelValue: {
+    type: [Array as any, String]
     // required: true
   },
   checkType: {
@@ -25,28 +25,44 @@ const props = defineProps({
     default: false
   }
 });
+onMounted(() => {
+  visible.value = true;
+});
 const emit = defineEmits<{
   (e: "onCancel"): void;
+  (e: "update:modelValue", val: any): void;
   (e: "onConfirm", val: any): void;
 }>();
 const confirmFn = () => {
-  visible.value = false;
   // console.log(cOrgRef.value!.getCheckedKeys());
-  emit("onConfirm", cOrgRef.value!.getCheckedKeys());
-  cOrgRef.value!.resetChecked();
+  emit(
+    "onConfirm",
+    props.checkType === "single"
+      ? cOrgRef.value!.getCheckedKeys()
+      : cOrgRef.value!.getCheckedNodes()
+  );
+  visible.value = false;
+  // cOrgRef.value!.resetChecked();
 };
 const cancelFn = () => {
   visible.value = false;
-  cOrgRef.value!.resetChecked();
+  // cOrgRef.value!.resetChecked();
   emit("onCancel");
 };
+
+const checkedNode = ref<any>(null);
 watch(
-  () => props.showPicker,
+  () => checkedNode.value,
   val => {
-    if (val) {
-      visible.value = val;
-    }
+    emit("update:modelValue", val);
   }
+);
+watch(
+  () => props.modelValue,
+  val => {
+    checkedNode.value = Array.isArray(props.modelValue) ? val : val?.split(",");
+  },
+  { immediate: true }
 );
 </script>
 
@@ -69,7 +85,7 @@ watch(
     <c-select-tree-org
       :check-type="props.checkType"
       :leaf-only="props.leafOnly"
-      v-model:model-value="props.orgValue"
+      v-model:model-value="checkedNode"
       ref="cOrgRef"
     ></c-select-tree-org>
   </van-popup>

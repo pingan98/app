@@ -53,14 +53,14 @@ import "vangle/dist/style.css";
 
 // 文档地址： https://vangleer.github.io/vangle/zh/component/button.html
 interface Tree {
-  id: String;
+  id: string;
   label: string;
   children?: Tree[];
 }
 
 const props = defineProps({
   modelValue: {
-    type: [Array, String]
+    type: [Array as any, String]
     // required: true
   },
   checkType: {
@@ -100,13 +100,23 @@ const mapTreeData = ref<any>({});
 // };
 
 // 回显
-const setCheckedKeys = () => {
-  treeRef.value!.setCheckedKeys(props.modelValue, false);
+const setCheckedNodes = () => {
+  if (JSON.stringify(mapTreeData.value) !== "{}") {
+    const arr = props.modelValue?.map((item: any) => {
+      console.log(item);
+      return mapTreeData.value[item];
+    });
+    treeRef.value!.setCheckedNodes(arr);
+  }
 };
-onMounted(() => {
-  getInit();
+onMounted(async () => {
+  await getInit();
   if (props.modelValue) {
-    setCheckedKeys();
+    if (props.checkType === "multiple") {
+      setCheckedNodes();
+    } else {
+      selectValue.value = props.modelValue[0];
+    }
   }
 });
 const defData = (arr: any) => {
@@ -117,11 +127,10 @@ const defData = (arr: any) => {
     }
   });
 };
-const getInit = () => {
-  getOrgList().then(res => {
-    treeData.value = res;
-    defData(res || []);
-  });
+const getInit = async () => {
+  const res = await getOrgList();
+  treeData.value = res;
+  defData(res || []);
 };
 
 // 重置
@@ -189,6 +198,7 @@ const selectValue = ref<any>(undefined);
 // 节点点击事件(单选的情况)
 function handleNodeClick(node: any) {
   if (node.childNodes?.length) return; // 不是最后一级节点就不操作
+  if (props.checkType === "multiple") return; // 多选模式下也不操作
   selectValue.value = node.id;
 }
 
