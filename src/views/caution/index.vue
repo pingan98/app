@@ -57,6 +57,10 @@ const getType = (type: string) => {
 const onLoad = async () => {
   try {
     const res = await getWarnMaterialPage(searchForm.value);
+    res!.rows.forEach((item: any) => {
+      item.battchJson = item?.battchJson ? JSON.parse(item?.battchJson) : [];
+      item.coverImg = item.battchJson?.[0]?.attachFullPath;
+    });
     listData.value.push(...res!.rows);
 
     if (listData.value.length === res.total) {

@@ -1,5 +1,6 @@
 <script setup lang="ts" name="MaterialCard">
 import type { List } from "@/api/warnMaterial/types";
+import defaultImage from "@/assets/default_fm.png";
 import { formatTime } from "@/utils";
 
 const props = defineProps<{
@@ -24,7 +25,15 @@ const props = defineProps<{
       </div>
     </div>
     <div class="img-box">
-      <img src="@/assets/ad.png" alt="" />
+      <img
+        :src="item?.coverImg || defaultImage"
+        alt=""
+        @error="
+          e => {
+            e.target.src = defaultImage;
+          }
+        "
+      />
     </div>
   </div>
 </template>
@@ -54,7 +63,7 @@ const props = defineProps<{
     width: 106px;
     height: 76px;
     margin-left: 15px;
-    background: rgba(140, 144, 255, 0.39);
+    //background: rgba(140, 144, 255, 0.39);
     opacity: 1;
     border-radius: 5px;
     img {

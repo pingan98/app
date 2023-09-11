@@ -28,15 +28,19 @@ export interface List {
   upperUser: string;
   upperTime?: string;
   createUser?: string;
+  battchJson?: any;
+  coverImg?: string;
 }
 // Partial<T> 把一个对象的属性转换成可选
 // Required<T> 把一个对象的属性转换成必选
-type PartialList = Partial<List>;
-export interface Form extends PartialList {
+// type PartialList = Partial<List>;
+export interface Form {
   id?: string;
   warnContent: string;
   warnTime: string;
-  // pictures
+  warnTitle: string;
+  battchJson?: any;
+  warnState?: string;
 }
 /**
  * 关键字

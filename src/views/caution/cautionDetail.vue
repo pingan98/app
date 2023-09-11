@@ -16,6 +16,9 @@ const router = useRouter();
 const detailData = ref<Form>();
 onMounted(async () => {
   const res = await warnMaterialDetail({ id: route.params.id as string });
+  res.data.battchJson = res.data?.battchJson
+    ? JSON.parse(res.data?.battchJson)
+    : [];
   detailData.value = { ...res.data };
 });
 const batchUpdate = async () => {
@@ -66,7 +69,15 @@ const removeFn = async () => {
       </div>
     </div>
     <div class="desc-box">{{ detailData?.warnContent }}</div>
-    <div class="">图片</div>
+    <div class="img-con" v-if="detailData?.battchJson?.length">
+      <div
+        class="img-box"
+        v-for="(item, ind) in detailData?.battchJson"
+        :key="ind"
+      >
+        <img :src="item.attachFullPath" alt="" />
+      </div>
+    </div>
     <div class="bottom-action flex justify-between">
       <template v-if="detailData?.warnState === CAUTION_STATUS.draft">
         <div class="flex flex-col items-center" @click="removeFn">
@@ -118,6 +129,7 @@ const removeFn = async () => {
 </template>
 
 <style scoped lang="less">
+@import "@/styles/mixin.less";
 .van-button + .van-button {
   margin-left: 10px;
 }
@@ -136,6 +148,16 @@ const removeFn = async () => {
   .desc-box {
     color: var(--text-color4);
     margin: 20px 0;
+  }
+  .img-con {
+    .img-box {
+      .flex(center, center);
+      width: 100%;
+      margin-bottom: 20px;
+      img {
+        max-width: 100%;
+      }
+    }
   }
 }
 </style>
