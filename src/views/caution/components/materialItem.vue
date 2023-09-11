@@ -1,4 +1,4 @@
-<script setup lang="ts" name="MaterialCard">
+<script setup lang="ts" name="MaterialItem">
 import type { List } from "@/api/warnMaterial/types";
 import defaultImage from "@/assets/default_fm.png";
 import { formatTime } from "@/utils";
