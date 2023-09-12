@@ -1,9 +1,36 @@
 <script lang="ts" name="DrinkReport" setup>
+import { ref, watch } from "vue";
+
+import { getYJBBDW } from "@/api/personPortrait";
+
 import ModuleBox from "@/components/business/moduleBox.vue";
 import avatar from "@/assets/avatar@3x.png";
 import HorizontalLine from "@/views/portrait/charts/horizontalLine.vue";
 
-const drinkHead = ["姓名", "饮酒开始时间", "提交报备时间", "是否确认到家"];
+const props = defineProps({
+  params: {
+    type: Object,
+    default: () => {}
+  }
+});
+
+const drinkInfo = ref<any>({});
+
+const getData = (params: any) => {
+  getYJBBDW({ db33: params?.db33 }).then(data => {
+    drinkInfo.value = data || {};
+  });
+};
+
+watch(
+  () => props.params,
+  newValue => {
+    if (newValue.db33) {
+      getData(props.params);
+    }
+  },
+  { immediate: true, deep: true }
+);
 </script>
 
 <template>
@@ -11,24 +38,43 @@ const drinkHead = ["姓名", "饮酒开始时间", "提交报备时间", "是否
     <div class="all-count-grid">
       <div class="grid-item-box top-item drink">
         <div class="name">饮酒报备总人数</div>
-        <div class="num-box"><span class="num">11</span>人次</div>
+        <div class="num-box">
+          <span class="num">
+            {{ drinkInfo.zrc ? drinkInfo.zrc.length : 0 }} </span
+          >人次
+        </div>
       </div>
       <div class="grid-item-box top-item now-time">
         <div class="name">当日报备</div>
-        <div class="num-box"><span class="num">11</span>人次</div>
+        <div class="num-box">
+          <span class="num">{{
+            drinkInfo.bbrc ? drinkInfo.bbrc.length : 0
+          }}</span
+          >人次
+        </div>
       </div>
       <div class="grid-item-box bottom-item day_6">
         <div class="img-box"></div>
         <div class="info-box">
           <div class="name">近30日报备超6次</div>
-          <div class="num-box"><span class="num">11</span>人次</div>
+          <div class="num-box">
+            <span class="num">{{
+              drinkInfo.totalCount ? drinkInfo.totalCount.length : 0
+            }}</span
+            >人次
+          </div>
         </div>
       </div>
       <div class="grid-item-box bottom-item day_30">
         <div class="img-box"></div>
         <div class="info-box">
           <div class="name">近30日无报备记录</div>
-          <div class="num-box"><span class="num">11</span>人次</div>
+          <div class="num-box">
+            <span class="num">{{
+              drinkInfo.approvedCount ? drinkInfo.approvedCount.length : 0
+            }}</span
+            >人次
+          </div>
         </div>
       </div>
     </div>
@@ -38,44 +84,47 @@ const drinkHead = ["姓名", "饮酒开始时间", "提交报备时间", "是否
       class="mb-[20px]"
       title="饮酒报备"
       bg="from-[#d0eaff] to-[#f9fbff]"
+      v-if="drinkInfo.zrc && drinkInfo.zrc.length"
     >
       <template v-slot:icon>
         <img src="@/assets/sort_icon3@3x.png" alt="" />
       </template>
       <div class="drink-module">
         <div class="drink-module_row is-header">
-          <div
-            class="drink-module_col"
-            v-for="(item, ind) in drinkHead"
-            :key="`head_col_${ind}`"
-          >
-            {{ item }}
-          </div>
+          <div class="drink-module_col">姓名</div>
+          <div class="drink-module_col">饮酒开始时间</div>
+          <div class="drink-module_col">提交报备时间</div>
+          <div class="drink-module_col">是否确认到家</div>
         </div>
         <div class="drink-module_table">
-          <div class="drink-module_row van-hairline--bottom">
-            <div class="drink-module_col">王建辉</div>
-            <div class="drink-module_col">2023-08-23 15:47:36</div>
-            <div class="drink-module_col">2023-08-23 15:47:36</div>
-            <div class="drink-module_col">是</div>
-          </div>
-          <div class="drink-module_row van-hairline--bottom">
-            <div class="drink-module_col">王建辉</div>
-            <div class="drink-module_col">2023-08-23 15:47:36</div>
-            <div class="drink-module_col">2023-08-23 15:47:36</div>
-            <div class="drink-module_col">是</div>
+          <div
+            class="drink-module_row van-hairline--bottom"
+            v-for="(item, ind) in drinkInfo.zrc"
+            :key="ind"
+          >
+            <div class="drink-module_col">{{ item.name || "" }}</div>
+            <div class="drink-module_col">{{ item.createTime || "" }}</div>
+            <div class="drink-module_col">{{ item.createTime || "" }}</div>
+            <div class="drink-module_col">
+              {{ item.goHome === 0 ? "否" : "是" }}
+            </div>
           </div>
         </div>
       </div>
     </module-box>
 
     <!-- 近30日报备超6次 -->
-    <module-box class="report-6 mb-[20px]" title="近30日报备超6次">
+
+    <module-box
+      class="report-6 mb-[20px]"
+      title="近30日报备超6次"
+      v-if="drinkInfo.totalCount && drinkInfo.totalCount.length"
+    >
       <template v-slot:icon>
         <img src="@/assets/sort_icon1@3x.png" alt="" />
       </template>
       <div class="chart-box">
-        <horizontal-line />
+        <horizontal-line :bean="drinkInfo.totalCount" />
       </div>
     </module-box>
 
@@ -84,14 +133,18 @@ const drinkHead = ["姓名", "饮酒开始时间", "提交报备时间", "是否
       class="mb-[20px]"
       title="近30日无报备记录"
       bg="from-[#cff7ff] to-[#fbfeff]"
+      v-if="drinkInfo.approvedCount && drinkInfo.approvedCount.length"
     >
       <template v-slot:icon>
         <img src="@/assets/sort_icon4@3x.png" alt="" />
       </template>
       <van-grid :column-num="5" :border="false">
-        <van-grid-item v-for="value in 6" :key="value">
+        <van-grid-item
+          v-for="(item, ind) in drinkInfo.approvedCount"
+          :key="ind"
+        >
           <van-image :src="avatar" width="38px" />
-          <div>xxx</div>
+          <div>{{ item.name }}</div>
         </van-grid-item>
       </van-grid>
     </module-box>

@@ -2,7 +2,7 @@
  * @Description:
  * @Author: 辰月
  * @Date: 2023-09-08 11:20:00
- * @LastEditTime: 2023-09-09 09:27:04
+ * @LastEditTime: 2023-09-12 14:30:47
  * @LastEditors: 辰月
  */
 export interface ISearchForm {
@@ -12,9 +12,9 @@ export interface ISearchForm {
 export interface IPersonPortraitParam {
   db33?: string;
   db33Txt?: string;
-  startTime?: string;
-  endTime?: string;
-  policeHandlingCase?: string;
+  startTime: string;
+  endTime: string;
+  policeHandlingCase: string;
 }
 
 export interface IPersonPortraitUnit {

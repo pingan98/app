@@ -12,12 +12,42 @@ const props = defineProps({
   }
 });
 
-const bean = ref<any>({});
+let beanLocal: { [key: string]: any } = {};
+
+const bean = ref<{
+  score: string;
+  list: Array<any>;
+}>({
+  score: "",
+  list: []
+});
+
+const policeType = POLICE_TYPE;
+const activeTab = ref<string | number>(policeType.min);
+const tabArr = toList(POLICE_TYPE, POLICE_TYPE_TXT);
+
+const setBeanData = () => {
+  const mapParam = {
+    [POLICE_TYPE.fu]: ["fjList", "fjTotalScore"],
+    [POLICE_TYPE.min]: ["mjList", "mjTotalScore"]
+  };
+  const tmp = mapParam[activeTab.value];
+  bean.value = {
+    score: beanLocal[tmp[1]],
+    list: beanLocal[tmp[0]]
+  };
+};
 
 const getData = (params: any) => {
   getBreakRuleScore(params).then(data => {
-    bean.value = data || {};
+    beanLocal = data || {};
+    setBeanData();
   });
+};
+
+const changeTab = (item: any) => {
+  activeTab.value = item.code;
+  setBeanData();
 };
 
 watch(
@@ -29,17 +59,13 @@ watch(
   },
   { immediate: true, deep: true }
 );
-
-const policeType = POLICE_TYPE;
-const activeTab = ref<string | number>(policeType.min);
-const tabArr = toList(POLICE_TYPE, POLICE_TYPE_TXT);
 </script>
 
 <template>
   <div class="violate-discipline">
     <div class="tab-box">
       <div
-        @click="activeTab = item.code"
+        @click="changeTab(item)"
         class="tab-item"
         v-for="(item, ind) in tabArr"
         :key="`tab_${ind}`"
@@ -51,39 +77,33 @@ const tabArr = toList(POLICE_TYPE, POLICE_TYPE_TXT);
       >
         <div class="name">{{ item.label }}总记分</div>
         <div class="num">
-          {{
-            item.code === policeType.min
-              ? bean.mjTotalScore
-              : bean.fjTotalScore || 0
-          }}
+          {{ bean.score || 0 }}
         </div>
       </div>
     </div>
-    <div class="score-list">
-      <div class="score-item van-hairline--bottom">
+    <div class="score-list" v-if="bean">
+      <div
+        class="score-item van-hairline--bottom"
+        v-for="(item, ind) in bean.list"
+        :key="ind"
+      >
         <div class="left-img-box">
-          <div><span class="num">3</span>分</div>
+          <div>
+            <span class="num"> {{ item.scoreNum || "" }}</span
+            >分
+          </div>
           <div>记分分值</div>
         </div>
         <div class="right-main-box">
           <div class="kind">
-            问题种类问题种类问题种类问题种类问题种类问题种类问题种类问题种类
+            {{ item.queType || "" }}
           </div>
-          <div class="desc"><span class="label">记分类型：</span>xxx记分</div>
-          <div class="desc"><span class="label">记分时间：</span>xxx记分</div>
-        </div>
-      </div>
-      <div class="score-item van-hairline--bottom">
-        <div class="left-img-box">
-          <div><span class="num">3</span>分</div>
-          <div>记分分值</div>
-        </div>
-        <div class="right-main-box">
-          <div class="kind">
-            问题种类问题种类问题种类问题种类问题种类问题种类问题种类问题种类
+          <div class="desc">
+            <span class="label">记分类型：</span> {{ item.scoreType || "" }}
           </div>
-          <div class="desc"><span class="label">记分类型：</span>xxx记分</div>
-          <div class="desc"><span class="label">记分时间：</span>xxx记分</div>
+          <div class="desc">
+            <span class="label">记分时间：</span> {{ item.createTime || "" }}
+          </div>
         </div>
       </div>
     </div>

@@ -1,63 +1,135 @@
 <script lang="ts" name="PetitionComplain" setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
+
+import { getXfTsNumRep, getXfTsListRep } from "@/api/personPortrait";
+
+const props = defineProps({
+  params: {
+    type: Object,
+    default: () => {}
+  }
+});
+
+const bean = ref<any>({});
+const tsList = ref<any>([]);
+const queryType = ref(0);
+
+const getData = (params: any) => {
+  getXfTsNumRep(params).then(data => {
+    bean.value = data || {};
+  });
+  getXfTsList();
+};
+
+const getXfTsList = () => {
+  getXfTsListRep({
+    ...props.params,
+    queryType: queryType.value
+  }).then(data => {
+    tsList.value = data || [];
+  });
+};
+
+const setQueryType = (type: number) => {
+  queryType.value = type;
+};
+
+watch(
+  () => props.params,
+  newValue => {
+    if (newValue.db33) {
+      getData(props.params);
+    }
+  },
+  { immediate: true, deep: true }
+);
 </script>
 
 <template>
   <div class="petition-complain">
-    <div class="all-count-box">
-      <div class="all-count-item van-hairline--right">
-        <div class="name">投诉件总量</div>
-        <div><span class="num">27</span>件</div>
+    <template v-if="bean.reportNumVo">
+      <div class="all-count-box">
+        <div
+          class="all-count-item van-hairline--right"
+          @click="setQueryType(0)"
+        >
+          <div class="name">投诉件总量</div>
+          <div>
+            <span class="num">{{ bean.reportNumVo.comTotalNum || 0 }}</span
+            >件
+          </div>
+        </div>
+        <div
+          class="all-count-item van-hairline--right"
+          @click="setQueryType(1)"
+        >
+          <div class="name">12389派发件</div>
+          <div>
+            <span class="num">{{ bean.reportNumVo.pfNum || 0 }}</span
+            >件
+          </div>
+        </div>
+        <div class="all-count-item" @click="setQueryType(2)">
+          <div class="name">自接件</div>
+          <div>
+            <span class="num">{{ bean.reportNumVo.zjNum || 0 }}</span
+            >件
+          </div>
+        </div>
       </div>
-      <div class="all-count-item van-hairline--right">
-        <div class="name">12389派发件</div>
-        <div><span class="num">27</span>件</div>
-      </div>
-      <div class="all-count-item">
-        <div class="name">自接件</div>
-        <div><span class="num">27</span>件</div>
-      </div>
-    </div>
 
-    <div class="status-box">
-      <div class="status-item-box wait">
-        <div class="name">未办结</div>
-        <div><span class="num">3</span> 件</div>
-      </div>
-      <div class="status-item-box true">
-        <div class="name">属实</div>
-        <div><span class="num">3</span> 件</div>
-      </div>
-      <div class="status-item-box part-true">
-        <div class="name">部分属实</div>
-        <div><span class="num">3</span> 件</div>
-      </div>
-    </div>
+      <div class="status-box">
+        <div class="status-item-box wait" @click="setQueryType(3)">
+          <div class="name">未办结</div>
+          <div>
+            <span class="num">{{ bean.reportNumVo.wbjNum || 0 }}</span> 件
+          </div>
+        </div>
+        <div class="status-item-box true" @click="setQueryType(4)">
+          <div class="name">属实</div>
+          <div>
+            <span class="num">{{ bean.reportNumVo.ssNum || 0 }}</span> 件
+          </div>
+        </div>
+        <div class="status-item-box part-true" @click="setQueryType(5)">
+          <div class="name">部分属实</div>
+          <div>
+            <span class="num">{{ bean.reportNumVo.bfssNum || 0 }}</span> 件
+          </div>
+        </div>
+      </div></template
+    >
 
     <div class="petition-list">
-      <div class="petition-item van-hairline--bottom">
+      <div
+        class="petition-item van-hairline--bottom"
+        v-for="(item, ind) in tsList"
+        :key="ind"
+      >
         <div class="left-img-box"></div>
         <div class="right-main-box">
           <div class="name">
-            问题种类问题种类问题种类问题种类问题种类问题种类问题种类问题种类
+            {{ item.queNature || "" }}
           </div>
           <div class="petition-status">
             <div class="is-right petition-status-box">
               <span class="icon-box true"></span>
-              属实
+              {{ item.isComplete || "" }}
             </div>
             <div class="is-conclude petition-status-box">
               <span class="icon-box true"></span>
-              已办结
+              {{ item.isTrue || "" }}
             </div>
           </div>
           <div class="info-box">
-            <div class="info-item"><span class="label">投诉人：</span>xxx</div>
             <div class="info-item">
-              <span class="label">投诉方式：</span>xxx
+              <span class="label">投诉人：</span>{{ item.dutyPoliceName || "" }}
             </div>
             <div class="info-item">
-              <span class="label">投诉时间：</span>xxx
+              <span class="label">投诉方式：</span>{{ item.compMethod || "" }}
+            </div>
+            <div class="info-item">
+              <span class="label">投诉时间：</span>{{ item.comTime || "" }}
             </div>
           </div>
         </div>

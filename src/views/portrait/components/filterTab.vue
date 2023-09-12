@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: 辰月
  * @Date: 2023-09-08 13:36:19
- * @LastEditTime: 2023-09-09 09:46:22
+ * @LastEditTime: 2023-09-12 14:30:56
  * @LastEditors: 辰月
 -->
 <template>
@@ -31,7 +31,7 @@
       @click="onTabChange(TAB_TYPE.time)"
     >
       <div class="filter-tab_txt">
-        {{ formatTime().length ? formatTime().join("~") : "时间" }}
+        {{ getDate().length ? getDate().join("~") : "时间" }}
         <van-icon class="filter-tab_icon" name="play" />
       </div>
     </div>
@@ -42,13 +42,13 @@
       :close-on-click-overlay="false"
     >
       <div class="action-sheet">
-        <div class="action-sheet-top">
+        <div class="action-sheet-top" v-if="tabActive !== TAB_TYPE.time">
           <span class="action-sheet-top_btn" @click="onPopupClose('cancel')"
             >取消</span
           >
-          <!-- <span class="action-sheet-top_btn" @click="onPopupClose('confirm')"
-          >确定</span
-        > -->
+          <span class="action-sheet-top_btn" @click="onPopupClose('confirm')"
+            >确认</span
+          >
         </div>
 
         <div class="action-sheet-body">
@@ -98,7 +98,7 @@
             </template>
           </div>
 
-          <van-calendar
+          <!-- <van-calendar
             :show-title="false"
             v-if="tabActive === TAB_TYPE.time"
             :close-on-click-overlay="false"
@@ -110,16 +110,24 @@
             allow-same-day
             :default-date="times"
             @confirm="onConfirmCalendar"
-          />
-        </div>
-        <div class="action-sheet-footer" v-if="tabActive !== TAB_TYPE.time">
-          <van-button
-            round
-            type="primary"
-            @click="onPopupClose('confirm')"
-            block
-            >确认</van-button
+          /> -->
+          <van-picker-group
+            v-if="tabActive === TAB_TYPE.time"
+            :tabs="['开始日期', '结束日期']"
+            @cancel="onPopupClose('cancel')"
+            @confirm="onPopupClose('confirm')"
           >
+            <van-date-picker
+              v-model="startDate"
+              :min-date="minDate"
+              :max-date="maxDate"
+            />
+            <van-date-picker
+              v-model="endDate"
+              :min-date="minDate"
+              :max-date="maxDate"
+            />
+          </van-picker-group>
         </div>
       </div>
     </van-popup>
@@ -136,6 +144,7 @@ import type {
 import { onMounted } from "vue";
 import { ref, watch } from "vue";
 import dayjs from "dayjs";
+import { showToast } from "vant";
 
 const emit = defineEmits(["refresh"]);
 const props = defineProps({
@@ -147,13 +156,14 @@ const props = defineProps({
 
 const filterTabData = ref<IPersonPortraitParam>({
   db33Txt: "",
+  startTime: dayjs().startOf("M").format("YYYY/MM/DD"),
+  endTime: dayjs().format("YYYY/MM/DD"),
   db33: "",
   policeHandlingCase: ""
 });
 //  临时变量 目的是只有点了确认之后才会更改显示上的值 及发起请求
 const db33Local = ref<IPersonPortraitUnit>({});
 const policeHandlingCaseLocal = ref(filterTabData.value.policeHandlingCase);
-const times = ref<Date[]>([dayjs().startOf("M").toDate(), dayjs().toDate()]);
 
 // tab
 const TAB_TYPE = {
@@ -174,6 +184,9 @@ const policeData = ref<any>([]);
 
 // 时间
 const minDate = dayjs().subtract(10, "year").toDate();
+const maxDate = dayjs().add(10, "year").toDate();
+const startDate = ref(filterTabData.value.startTime.split("/"));
+const endDate = ref(filterTabData.value.endTime.split("/"));
 
 function onTabChange(code: string) {
   if (code === tabActive.value) return false;
@@ -201,6 +214,18 @@ function onPopupClose(type: string) {
     if (policeHandlingCaseLocal.value) {
       filterTabData.value.policeHandlingCase = policeHandlingCaseLocal.value;
     }
+
+    if (tabActive.value === TAB_TYPE.time) {
+      const _startDate = dayjs(startDate.value.join("/"));
+      const _endDate = dayjs(endDate.value.join("/"));
+      if (_startDate.isAfter(_endDate)) {
+        showToast("结束日期不能早于开始日期");
+        return false;
+      }
+      filterTabData.value.startTime = _startDate.toString();
+      filterTabData.value.endTime = _endDate.toString();
+    }
+
     emitChange();
   }
   tabActive.value = "";
@@ -211,7 +236,7 @@ function emitChange() {
   const params = { ...filterTabData.value };
   delete params.db33Txt;
 
-  const [startTime, endTime] = formatTime();
+  const [startTime, endTime] = getDate();
   params.startTime = dayjs(startTime).format("YYYY/MM/DD 00:00:00");
   params.endTime = dayjs(endTime).format("YYYY/MM/DD 23:59:59");
   emit("refresh", params);
@@ -223,11 +248,6 @@ function onChosePeople(data: any) {
 
 function onChoseUnit(data: IPersonPortraitUnit) {
   db33Local.value = data;
-}
-
-function onConfirmCalendar(data: Date[]) {
-  times.value = data;
-  onPopupClose("confirm");
 }
 
 function getOrgData() {
@@ -256,12 +276,9 @@ function getGRHXData() {
   });
 }
 
-function formatTime(format = "YYYY/MM/DD") {
-  if (times.value.length === 2) {
-    const [startTime, endTime] = times.value;
-    return [dayjs(startTime).format(format), dayjs(endTime).format(format)];
-  }
-  return [];
+function getDate(format = "YYYY/MM/DD") {
+  const { startTime, endTime } = filterTabData.value;
+  return [startTime, endTime].map(v => dayjs(v).format(format));
 }
 
 onMounted(() => {
@@ -324,11 +341,14 @@ watch(
   // flex-direction: column;
   .action-sheet-top {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     border-bottom: 1px solid #ddd;
     .action-sheet-top_btn {
       padding: 8px 10px;
       color: var(--van-gray-6);
+      &:last-child {
+        color: var(--van-primary-color);
+      }
     }
   }
   .action-sheet-body {

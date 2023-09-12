@@ -1,14 +1,9 @@
 <script lang="ts" name="UnitPortrait" setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed } from "vue";
 import { toList } from "@/utils";
 import { useRoute } from "vue-router";
 
-import {
-  POLICE_TYPE,
-  POLICE_TYPE_TXT,
-  SPECIES,
-  SPECIES_TXT
-} from "@/const/portrait";
+import { SPECIES, SPECIES_TXT } from "@/const/portrait";
 
 import ViolateDiscipline from "@/views/portrait/components/violateDiscipline.vue";
 import PetitionComplain from "@/views/portrait/components/petitionComplain.vue";
@@ -18,7 +13,6 @@ import FilterTab from "@/views/portrait/components/filterTab.vue";
 
 const searchForm = ref<any>({});
 const speciesList = toList(SPECIES, SPECIES_TXT);
-const jobType = ref<any>({});
 const species = SPECIES;
 const activeSpecies = ref<string | number>(species.wgwj);
 const route = useRoute();
@@ -31,17 +25,6 @@ const compName = computed(() => {
   };
   return compNames[activeSpecies.value];
 });
-onMounted(() => {
-  getDutyList();
-});
-
-const getDutyList = () => {
-  jobType.value = toList(POLICE_TYPE, POLICE_TYPE_TXT);
-  jobType.value.unshift({
-    label: "全部",
-    code: ""
-  });
-};
 
 function refreshData(params: any) {
   searchForm.value = params;

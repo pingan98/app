@@ -5,25 +5,25 @@
     <div class="all-count-box">
       <div class="all-count-item van-hairline--right">
         <div class="name">办理刑事案件数</div>
-        <div><span class="num">27</span>起</div>
+        <div><span class="num">0</span>起</div>
         <div class="average-deduction">
-          平均扣分:<span class="num">12</span>分
+          平均扣分:<span class="num">0</span>分
         </div>
       </div>
       <div class="all-count-item van-hairline--right">
         <div class="name">办理行政案件数</div>
-        <div><span class="num">27</span>起</div>
+        <div><span class="num">0</span>起</div>
         <div class="average-deduction">
-          平均扣分:<span class="num">12</span>分
+          平均扣分:<span class="num">0</span>分
         </div>
       </div>
       <div class="all-count-item">
         <div class="name">接处警数</div>
-        <div><span class="num">27</span>起</div>
+        <div><span class="num">0</span>起</div>
       </div>
     </div>
 
-    <div class="case-list">
+    <div class="case-list" v-if="false">
       <div class="case-item van-hairline--bottom">
         <div class="left-img-box"></div>
         <div class="right-main-box">
