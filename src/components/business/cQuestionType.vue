@@ -48,7 +48,7 @@
 <script lang="ts" setup name="CQuestionType">
 import { ref, watch, onMounted } from "vue";
 import { VanTree } from "vangle";
-import "vangle/dist/style.css";
+// import "vangle/dist/style.css";
 import { getTreeList, getUserConcernTreeList } from "@/api/scoreManage";
 
 // 文档地址： https://vangleer.github.io/vangle/zh/component/button.html
@@ -223,6 +223,7 @@ defineExpose({
 });
 </script>
 <style lang="less" scoped>
+@import "vangle/dist/style.css";
 @import "@/styles/mixin.less";
 /deep/.van-tree__node__content {
   height: 40px;

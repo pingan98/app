@@ -37,7 +37,7 @@ const props = defineProps<{
         </div>
         <div class="score-clause-item">
           <span class="label">记分条款:</span>
-          <span class="desc"> {{ item.scoreBasic }}</span>
+          <div class="desc">{{ item.scoreBasic }}</div>
         </div>
       </div>
     </div>
@@ -76,16 +76,19 @@ const props = defineProps<{
   font-size: 12px;
   margin-bottom: 5px;
 }
-.score-clause-item {
-  .flex(flex-start, flex-start);
+.score-clause {
   background: #f8f8f8;
   color: var(--text-color2);
   padding: 5px 9px;
   font-size: 13px;
   border-radius: 5px;
+  margin-top: 4px;
+}
+.score-clause-item {
+  .flex(flex-start, flex-start);
   .label {
     display: inline-block;
-    width: 60px;
+    width: 66px;
   }
   .desc {
     flex: 1;

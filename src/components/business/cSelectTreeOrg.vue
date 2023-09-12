@@ -49,7 +49,6 @@ import { ref, watch, onMounted } from "vue";
 import { VanTree } from "vangle";
 import { getOrgList } from "@/api/org";
 import { toMap } from "@/utils";
-import "vangle/dist/style.css";
 
 // 文档地址： https://vangleer.github.io/vangle/zh/component/button.html
 interface Tree {
@@ -247,6 +246,8 @@ defineExpose({
 });
 </script>
 <style lang="less" scoped>
+@import "vangle/dist/style.css";
+
 /deep/.van-tree__node__content {
   height: 40px;
 }

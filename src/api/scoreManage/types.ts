@@ -26,6 +26,7 @@ export interface PoliceMan {
  * 表单类型
  */
 export interface Form {
+  id?: string;
   dutyOrgName: string; // 所在部门
   dutyOrgId: string;
   dutyPoliceName?: string;

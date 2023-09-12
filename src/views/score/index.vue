@@ -104,7 +104,7 @@ const onCancel = () => {
       axis="xy"
       icon="plus"
       magnetic="x"
-      @click="$router.push('/score/add')"
+      @click="$router.push('/score/add?type=add')"
     />
   </div>
 </template>

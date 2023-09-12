@@ -1,17 +1,30 @@
 <script lang="ts" name="ScoreDetail" setup>
 import { ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
-import { getScoreManageDetail } from "@/api/scoreManage";
+import { useRoute, useRouter } from "vue-router";
+import { getScoreManageDetail, removeScoreManage } from "@/api/scoreManage";
 import { formatTime } from "@/utils";
 import type { Form } from "@/api/scoreManage/types";
 import { POLICE_TYPE_TXT } from "@/const";
+import { showConfirmDialog, showSuccessToast } from "vant";
 
 const route = useRoute();
+const router = useRouter();
 const detailData = ref<Form>();
+
 onMounted(async () => {
   const res = await getScoreManageDetail({ id: route.params.id as string });
   detailData.value = { ...res.data };
 });
+
+const removeFn = async () => {
+  await showConfirmDialog({
+    title: "温馨提示",
+    message: `您确认删除此条信息吗？`
+  });
+  await removeScoreManage({ id: route.params.id as string });
+  showSuccessToast("删除成功");
+  await router.push("/score");
+};
 </script>
 
 <template>
@@ -83,6 +96,28 @@ onMounted(async () => {
         <div class="desc">{{ item.scoreBasic }}</div>
       </div>
     </div>
+
+    <!--<div class="bottom-action flex justify-between">
+      <van-button
+        round
+        block
+        icon="delete-o"
+        type="danger"
+        plain
+        @click="removeFn"
+      >
+        删 除
+      </van-button>
+      <van-button
+        round
+        block
+        icon="edit"
+        color="linear-gradient(to right, #037CED, #02C2FA)"
+        @click="router.push(`/score/add/${detailData?.id}?type=edit`)"
+      >
+        编 辑
+      </van-button>
+    </div>-->
   </div>
 </template>
 
@@ -91,6 +126,8 @@ onMounted(async () => {
 .score-detail-page {
   position: relative;
   padding: 46px 10px 10px;
+  //padding: 46px 10px 86px;
+  //min-height: 100vh;
 }
 
 .base-info-top {

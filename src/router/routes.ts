@@ -10,7 +10,7 @@ const routes: Array<RouteRecordRaw> = [
     meta: { title: "记分管理" }
   },
   {
-    path: "/score/add",
+    path: "/score/add/:id?",
     name: "ScoreAdd",
     component: () => import("@/views/score/scoreAdd.vue"),
     meta: { title: "记分录入" }

@@ -1,16 +1,22 @@
 <script lang="ts" name="ScoreAdd" setup>
-import { ref, reactive } from "vue";
+import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { POLICE_TYPE } from "@/const";
 import type { Form } from "@/api/scoreManage/types";
-import type { FormInstance } from "vant";
+import type { FormInstance, FieldRule } from "vant";
 import { showFailToast, showSuccessToast } from "vant";
-import { addScoreManage } from "@/api/scoreManage";
+import {
+  addScoreManage,
+  getScoreManageDetail,
+  editScoreManage
+} from "@/api/scoreManage";
+import { NUMBERREG } from "@/const/reg";
 import { refreshPage } from "@/utils";
 
 const route = useRoute();
 const router = useRouter();
 
+const pageType = ref("");
 const loading = ref(false);
 const timeShow = ref(false);
 const timeKey = ref<"queTime" | "scoreTime">();
@@ -22,15 +28,13 @@ const policeIndex = ref<number>(0);
 const policeType = ref("-1");
 const formRef = ref<FormInstance>();
 
-const rules = {
-  queTime: [{ required: true, message: "请选择时间", trigger: "onChange" }],
-  dutyOrgId: [{ required: true, message: "请选择部门", trigger: "onChange" }]
-};
-const queTime = [
-  { required: true, message: "请选择时间", trigger: "onChange" }
+// 表单校验
+const scoreNumRules: FieldRule[] = [
+  { required: true, message: "请输入分值" },
+  { pattern: NUMBERREG, message: "请输入数字" }
 ];
 
-const formData = reactive<Form>({
+const formData = ref<Form>({
   scoreTime: "",
   queTime: "",
   dutyOrgName: "",
@@ -38,7 +42,8 @@ const formData = reactive<Form>({
   inputOrgId: "",
   inputOrgName: ""
 });
-const policeForm = reactive({
+// 因为直接把这俩数组放在formData里 页面会循环出个police和auxPolice，暂时分开写
+const policeForm = ref({
   police: [
     {
       dutyOrgId: "",
@@ -68,8 +73,27 @@ const policeForm = reactive({
     }
   ]
 });
+
+onMounted(async () => {
+  pageType.value = route.query.type as string;
+  const id = route.params.id as string;
+  if (id) {
+    const { data } = await getScoreManageDetail({ id });
+    formData.value = { ...data };
+    // policeForm.value =
+  }
+});
+
+const getTitle = (val: "add" | "edit") => {
+  const temp = {
+    add: "新增",
+    edit: "编辑"
+  };
+  return temp[val];
+};
+
 const formatPolice = (data: any, scoreType: string) => {
-  const { dutyOrgId, dutyOrgName } = formData;
+  const { dutyOrgId, dutyOrgName } = formData.value;
   return data
     .filter((v: any) => v.dutyPoliceName)
     .map((v: any) => {
@@ -98,8 +122,8 @@ const formatPolice = (data: any, scoreType: string) => {
 };
 
 const submitFn = () => {
-  const { police, auxPolice } = policeForm;
-  const { scoreTime, queTime, ...form } = formData;
+  const { police, auxPolice } = policeForm.value;
+  const { scoreTime, queTime, ...form } = formData.value;
   const detailsList = [
     ...formatPolice(police, POLICE_TYPE.min),
     ...formatPolice(auxPolice, POLICE_TYPE.fu)
@@ -136,7 +160,7 @@ const submitFn = () => {
 };
 
 const addFn = (type: "police" | "auxPolice") => {
-  policeForm[type].push({
+  policeForm.value[type].push({
     dutyOrgId: "",
     dutyOrgName: "",
     dutyPoliceName: "",
@@ -150,7 +174,7 @@ const addFn = (type: "police" | "auxPolice") => {
   });
 };
 const delFn = (type: "police" | "auxPolice", index: number) => {
-  policeForm[type].splice(index, 1);
+  policeForm.value[type].splice(index, 1);
 };
 const changeOrgPop = (key: "dutyOrgId" | "inputOrgId") => {
   orgKey.value = key;
@@ -159,13 +183,13 @@ const changeOrgPop = (key: "dutyOrgId" | "inputOrgId") => {
 const onConfirmOrg = (val: any) => {
   orgShow.value = false;
   const { orgId, orgName } = val;
-  console.log(val);
+  // console.log(val);
   if (orgKey.value === "dutyOrgId") {
-    formData.dutyOrgId = orgId;
-    formData.dutyOrgName = orgName;
+    formData.value.dutyOrgId = orgId;
+    formData.value.dutyOrgName = orgName;
   } else if (orgKey.value === "inputOrgId") {
-    formData.inputOrgId = orgId;
-    formData.inputOrgName = orgName;
+    formData.value.inputOrgId = orgId;
+    formData.value.inputOrgName = orgName;
   }
 };
 
@@ -184,45 +208,41 @@ const onConfirmPolice = (val: any) => {
   // console.log(val.idcard);
   policeShow.value = false;
   if (policeType.value === POLICE_TYPE.min) {
-    policeForm.police[policeIndex.value].dutyPoliceName = val.jyname;
-    policeForm.police[policeIndex.value].dutyPoliceNo = val.jycode;
-    policeForm.police[policeIndex.value].idcard = val.idcard;
+    policeForm.value.police[policeIndex.value].dutyPoliceName = val.jyname;
+    policeForm.value.police[policeIndex.value].dutyPoliceNo = val.jycode;
+    policeForm.value.police[policeIndex.value].idcard = val.idcard;
   } else if (policeType.value === POLICE_TYPE.fu) {
-    policeForm.auxPolice[policeIndex.value].dutyPoliceName = val.jyname;
-    policeForm.auxPolice[policeIndex.value].dutyPoliceNo = val.jycode;
-    policeForm.auxPolice[policeIndex.value].idcard = val.idcard;
+    policeForm.value.auxPolice[policeIndex.value].dutyPoliceName = val.jyname;
+    policeForm.value.auxPolice[policeIndex.value].dutyPoliceNo = val.jycode;
+    policeForm.value.auxPolice[policeIndex.value].idcard = val.idcard;
   }
 };
 const onConfirmQuestion = (val: any) => {
   // console.log(val);
   questionShow.value = false;
   if (policeType.value === POLICE_TYPE.min) {
-    policeForm.police[policeIndex.value].questionName = val.name;
-    policeForm.police[policeIndex.value].questionTypeId = val.id;
-    policeForm.police[policeIndex.value].scoreNum = val.score;
-    policeForm.police[policeIndex.value].scoreBasic = val.labels_txt;
-    policeForm.police[policeIndex.value].scoreBasicId = val.ids_txt;
+    policeForm.value.police[policeIndex.value].questionName = val.name;
+    policeForm.value.police[policeIndex.value].questionTypeId = val.id;
+    policeForm.value.police[policeIndex.value].scoreNum = val.score;
+    policeForm.value.police[policeIndex.value].scoreBasic = val.labels_txt;
+    policeForm.value.police[policeIndex.value].scoreBasicId = val.ids_txt;
   } else if (policeType.value === POLICE_TYPE.fu) {
-    policeForm.auxPolice[policeIndex.value].questionName = val.name;
-    policeForm.auxPolice[policeIndex.value].questionTypeId = val.id;
-    policeForm.auxPolice[policeIndex.value].scoreNum = val.score;
-    policeForm.auxPolice[policeIndex.value].scoreBasic = val.labels_txt;
-    policeForm.auxPolice[policeIndex.value].scoreBasicId = val.ids_txt;
+    policeForm.value.auxPolice[policeIndex.value].questionName = val.name;
+    policeForm.value.auxPolice[policeIndex.value].questionTypeId = val.id;
+    policeForm.value.auxPolice[policeIndex.value].scoreNum = val.score;
+    policeForm.value.auxPolice[policeIndex.value].scoreBasic = val.labels_txt;
+    policeForm.value.auxPolice[policeIndex.value].scoreBasicId = val.ids_txt;
   }
 };
 const changeTimePop = (key: "queTime" | "scoreTime") => {
   timeKey.value = key;
   timeShow.value = true;
 };
-const onConfirmTime = (time: Date, key: "queTime" | "scoreTime") => {
-  formData[key] = time;
-  timeShow.value = false;
-};
 </script>
 
 <template>
   <div class="score-add-page">
-    <nav-bar :title="route.meta.title" />
+    <nav-bar :title="getTitle(route.query?.type || '')" />
 
     <div class="score-form">
       <van-form ref="formRef">
@@ -271,11 +291,20 @@ const onConfirmTime = (time: Date, key: "queTime" | "scoreTime") => {
               </template>
               <van-field
                 v-model="item.dutyPoliceName"
-                name="police"
+                name="dutyPoliceNo"
+                :rules="
+                  policeForm.auxPolice.filter(v => v.dutyPoliceName).length > 0
+                    ? []
+                    : [{ required: true, message: '请选择' }]
+                "
+                :class="{
+                  'is-required':
+                    policeForm.auxPolice.filter(v => v.dutyPoliceName)
+                      .length === 0
+                }"
                 label="责任民警"
                 placeholder="责任民警"
                 @click="changePolice(POLICE_TYPE.min, ind)"
-                class="is-required"
                 readonly
                 clickable
                 is-link
@@ -283,20 +312,26 @@ const onConfirmTime = (time: Date, key: "queTime" | "scoreTime") => {
               <van-field
                 v-model="item.questionName"
                 name="questionName"
+                :rules="
+                  item.dutyPoliceName
+                    ? [{ required: true, message: '请选择' }]
+                    : []
+                "
+                :class="{ 'is-required': !!item.dutyPoliceName }"
                 label="记分条款"
                 placeholder="记分条款"
                 @click="changePolice(POLICE_TYPE.min, ind, 'question')"
-                class="is-required"
                 readonly
                 clickable
                 is-link
               />
               <van-field
                 v-model="item.scoreNum"
+                :rules="item.dutyPoliceName ? scoreNumRules : []"
+                :class="{ 'is-required': !!item.dutyPoliceName }"
                 name="scoreNum"
                 label="分值"
                 placeholder="分值"
-                class="is-required"
               />
             </module-box>
 
@@ -327,10 +362,18 @@ const onConfirmTime = (time: Date, key: "queTime" | "scoreTime") => {
               </template>
               <van-field
                 v-model="item.dutyPoliceName"
+                :rules="
+                  policeForm.police.filter(v => v.dutyPoliceName).length > 0
+                    ? []
+                    : [{ required: true, message: '请选择' }]
+                "
+                :class="{
+                  'is-required':
+                    policeForm.police.filter(v => v.dutyPoliceName).length === 0
+                }"
                 name="police"
                 label="责任辅警"
                 placeholder="责任辅警"
-                class="is-required"
                 @click="changePolice(POLICE_TYPE.fu, ind)"
                 readonly
                 clickable
@@ -339,10 +382,15 @@ const onConfirmTime = (time: Date, key: "queTime" | "scoreTime") => {
               <van-field
                 v-model="item.questionName"
                 name="questionName"
+                :rules="
+                  item.dutyPoliceName
+                    ? [{ required: true, message: '请选择' }]
+                    : []
+                "
+                :class="{ 'is-required': !!item.dutyPoliceName }"
                 label="记分条款"
                 placeholder="记分条款"
                 @click="changePolice(POLICE_TYPE.fu, ind, 'question')"
-                class="is-required"
                 readonly
                 clickable
                 is-link
@@ -350,9 +398,10 @@ const onConfirmTime = (time: Date, key: "queTime" | "scoreTime") => {
               <van-field
                 v-model="item.scoreNum"
                 name="scoreNum"
+                :rules="item.dutyPoliceName ? scoreNumRules : []"
+                :class="{ 'is-required': !!item.dutyPoliceName }"
                 label="分值"
                 placeholder="分值"
-                class="is-required"
               />
             </module-box>
             <van-button
@@ -402,7 +451,7 @@ const onConfirmTime = (time: Date, key: "queTime" | "scoreTime") => {
       </van-form>
     </div>
 
-    <div class="bottom-action">
+    <div class="bottom-action flex justify-between">
       <van-button
         round
         block

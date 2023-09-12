@@ -58,62 +58,10 @@ const submitFn = (type: string, status?: string) => {
       };
       let fn = updateWarnMaterial;
       if (type !== "edit") {
-        console.log("add");
         serve.warnState = status;
         fn = addWarnMaterial;
       }
       fn(serve).then(res => {
-        console.log(res);
-        showSuccessToast("已提交");
-        router.push("/caution");
-      });
-
-      /*if (type === "edit") {
-        const { warnTime, warnTitle, warnContent, battchJson } = formData.value;
-        const serve = {
-          id: route.params.id as string,
-          warnTime,
-          warnTitle,
-          warnContent,
-          battchJson
-        };
-        updateWarnMaterial(serve).then(res => {
-          console.log(res);
-          showSuccessToast("已提交");
-          router.push("/caution");
-        });
-        return;
-      }
-
-      const { ...form } = formData.value;
-      const serve = {
-        ...form,
-        warnState: status
-      };
-      console.log(serve);
-      addWarnMaterial(serve).then(res => {
-        console.log(res);
-        showSuccessToast("已提交");
-        router.push("/caution");
-      });*/
-    })
-    .catch(error => {
-      showFailToast("请正确填写信息");
-    });
-};
-const editFn = () => {
-  formRef.value
-    ?.validate()
-    .then(() => {
-      const { warnTime, warnTitle, warnContent } = formData.value;
-      const serve = {
-        id: route.params.id as string,
-        warnTime,
-        warnTitle,
-        warnContent
-      };
-      updateWarnMaterial(serve).then(res => {
-        console.log(res);
         showSuccessToast("已提交");
         router.push("/caution");
       });
