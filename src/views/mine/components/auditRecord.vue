@@ -28,7 +28,6 @@ const searchForm = ref<Query>({
   dutyPeopleName: userStore?.userInfo?.name
 });
 const onLoad = async () => {
-  console.log(111);
   const res = await getQueOrderPage(searchForm.value);
   listData.value.push(...res!.rows);
 
@@ -54,6 +53,7 @@ const onLoad = async () => {
         :title="sourceName[item.source]"
         v-for="(item, ind) in listData"
         :key="ind"
+        @click="$router.push(`/audit/detail/${item.id}`)"
       >
         <template v-slot:icon>
           <img :src="defaultIcon" alt="" />

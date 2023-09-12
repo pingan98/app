@@ -32,3 +32,23 @@ export const ASSIGN_STATUS_TXT = {
   [ASSIGN_STATUS.archive]: "已归档",
   [ASSIGN_STATUS.all]: "汇总"
 };
+//  处置方式
+export const DISPOSAL_METHOD = {
+  ji_lv: "0",
+  jin_bi: "1",
+  t_z_z_x_z_w: "2",
+  j_g_j_f: "3",
+  tong_bao: "4",
+  p_p_j_y: "5",
+  other: "6"
+};
+
+export const DISPOSAL_METHOD_TXT = {
+  [DISPOSAL_METHOD.ji_lv]: "纪律处分",
+  [DISPOSAL_METHOD.jin_bi]: "禁闭",
+  [DISPOSAL_METHOD.t_z_z_x_z_w]: "停止执行职务",
+  [DISPOSAL_METHOD.j_g_j_f]: "局规记分",
+  [DISPOSAL_METHOD.tong_bao]: "通报",
+  [DISPOSAL_METHOD.p_p_j_y]: "批评教育",
+  [DISPOSAL_METHOD.other]: "其他"
+};

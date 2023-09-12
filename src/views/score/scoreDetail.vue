@@ -79,8 +79,8 @@ onMounted(async () => {
         </div>
       </div>
       <div class="score-clause">
-        <span class="label">记分条款:</span>
-        <span class="desc"> {{ item.scoreBasic }}</span>
+        <div class="label">记分条款:</div>
+        <div class="desc">{{ item.scoreBasic }}</div>
       </div>
     </div>
   </div>
@@ -141,7 +141,6 @@ onMounted(async () => {
   }
 }
 .score-clause {
-  .flex(flex-start, flex-start);
   background: #f4f9fe;
   color: #6f8fbd;
   padding: 5px 9px;

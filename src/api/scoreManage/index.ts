@@ -2,6 +2,7 @@ import type { AxiosPromise } from "axios";
 import qs from "qs";
 import { http } from "@/utils/http";
 import type { Query, Form, Key } from "./types";
+import { ContentTypeEnum } from "@/enums/requestEnum";
 const prefix = "/ScoreManage/";
 
 // 新增记分管理
@@ -9,6 +10,9 @@ export function addScoreManage(data: Form): AxiosPromise {
   return http.request({
     url: prefix + "addScoreManage",
     method: "post",
+    headers: {
+      "Content-Type": ContentTypeEnum.JSON
+    },
     data
   });
 }
@@ -17,6 +21,9 @@ export function editScoreManage(data: Form): AxiosPromise {
   return http.request({
     url: prefix + "scoreManageEdit",
     method: "post",
+    headers: {
+      "Content-Type": ContentTypeEnum.JSON
+    },
     data
   });
 }
