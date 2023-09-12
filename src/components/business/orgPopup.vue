@@ -82,12 +82,14 @@ watch(
         >确定</van-button
       >
     </div>
-    <c-select-tree-org
-      :check-type="props.checkType"
-      :leaf-only="props.leafOnly"
-      v-model:model-value="checkedNode"
-      ref="cOrgRef"
-    ></c-select-tree-org>
+    <div class="popup-body">
+      <c-select-tree-org
+        :check-type="props.checkType"
+        :leaf-only="props.leafOnly"
+        v-model:model-value="checkedNode"
+        ref="cOrgRef"
+      ></c-select-tree-org>
+    </div>
   </van-popup>
 </template>
 

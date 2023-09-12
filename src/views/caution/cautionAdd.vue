@@ -22,7 +22,8 @@ const formData = ref<Form>({
   warnTitle: "",
   warnTime: "",
   warnContent: "",
-  warnState: ""
+  warnState: "",
+  battchJson: ""
 });
 onMounted(async () => {
   pageType.value = route.query.type as string;
@@ -41,22 +42,60 @@ const getTitle = (val: "add" | "edit") => {
   return temp[val];
 };
 
-const submitFn = (type: string) => {
+const submitFn = (type: string, status?: string) => {
   formRef.value
     ?.validate()
     .then(() => {
-      const { warnTime, ...form } = formData.value;
+      const { id, warnTime, warnTitle, warnContent, battchJson, warnState } =
+        formData.value;
+      const serve = {
+        id,
+        warnTime,
+        warnTitle,
+        warnContent,
+        battchJson,
+        warnState
+      };
+      let fn = updateWarnMaterial;
+      if (type !== "edit") {
+        console.log("add");
+        serve.warnState = status;
+        fn = addWarnMaterial;
+      }
+      fn(serve).then(res => {
+        console.log(res);
+        showSuccessToast("已提交");
+        router.push("/caution");
+      });
+
+      /*if (type === "edit") {
+        const { warnTime, warnTitle, warnContent, battchJson } = formData.value;
+        const serve = {
+          id: route.params.id as string,
+          warnTime,
+          warnTitle,
+          warnContent,
+          battchJson
+        };
+        updateWarnMaterial(serve).then(res => {
+          console.log(res);
+          showSuccessToast("已提交");
+          router.push("/caution");
+        });
+        return;
+      }
+
+      const { ...form } = formData.value;
       const serve = {
         ...form,
-        warnState: type,
-        warnTime: warnTime + " 00:00:00"
+        warnState: status
       };
       console.log(serve);
       addWarnMaterial(serve).then(res => {
         console.log(res);
         showSuccessToast("已提交");
         router.push("/caution");
-      });
+      });*/
     })
     .catch(error => {
       showFailToast("请正确填写信息");
@@ -132,6 +171,7 @@ const editFn = () => {
       <van-field name="uploader">
         <template #input>
           <c-file
+            v-model:model-value="formData.battchJson"
             :order-id="formData.id"
             module-id="cautionAdd"
             bus-type="警示教育"
@@ -146,14 +186,14 @@ const editFn = () => {
           round
           class="w-[50%]"
           plain
-          @click="submitFn(CAUTION_STATUS.draft)"
+          @click="submitFn('draft', CAUTION_STATUS.draft)"
           >存草稿</van-button
         >
         <van-button
           round
           class="w-[50%]"
           color="linear-gradient(to right, #037CED, #02C2FA)"
-          @click="submitFn(CAUTION_STATUS.listing)"
+          @click="submitFn('add', CAUTION_STATUS.listing)"
         >
           发布
         </van-button>
@@ -164,7 +204,7 @@ const editFn = () => {
         round
         block
         color="linear-gradient(to right, #037CED, #02C2FA)"
-        @click="editFn"
+        @click="submitFn('edit')"
       >
         确定
       </van-button>

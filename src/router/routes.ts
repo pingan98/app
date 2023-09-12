@@ -76,6 +76,12 @@ const routes: Array<RouteRecordRaw> = [
     meta: { title: "个人画像" }
   },
   {
+    path: "/audit/detail/:id",
+    name: "AuditDetail",
+    component: () => import("@/views/mine/auditDetail.vue"),
+    meta: { title: "审核详情" }
+  },
+  {
     path: "/mock",
     name: "Mock",
     component: () => import("@/views/mock/index.vue"),

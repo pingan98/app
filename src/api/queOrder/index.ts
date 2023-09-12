@@ -22,3 +22,11 @@ export function addQueOrder(data: ReportFrom): AxiosPromise {
     data: qs.stringify(data)
   });
 }
+// 交办详情
+export function orderDetail(data: any): AxiosPromise {
+  return http.request({
+    url: prefix + "orderDetail",
+    method: "post",
+    data: qs.stringify(data)
+  });
+}

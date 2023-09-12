@@ -1,6 +1,6 @@
 <script lang="ts" name="ScoreAdd" setup>
 import { ref, reactive } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { POLICE_TYPE } from "@/const";
 import type { Form } from "@/api/scoreManage/types";
 import type { FormInstance } from "vant";
@@ -9,6 +9,8 @@ import { addScoreManage } from "@/api/scoreManage";
 import { refreshPage } from "@/utils";
 
 const route = useRoute();
+const router = useRouter();
+
 const loading = ref(false);
 const timeShow = ref(false);
 const timeKey = ref<"queTime" | "scoreTime">();
@@ -98,31 +100,30 @@ const formatPolice = (data: any, scoreType: string) => {
 const submitFn = () => {
   const { police, auxPolice } = policeForm;
   const { scoreTime, queTime, ...form } = formData;
-  const dataList = [
+  const detailsList = [
     ...formatPolice(police, POLICE_TYPE.min),
     ...formatPolice(auxPolice, POLICE_TYPE.fu)
   ];
   // console.log(dataList);
   const serve = {
-    dataList,
+    detailsList,
     scoreTime: scoreTime + " 00:00:00",
     queTime: queTime + " 00:00:00",
     ...form
   };
-  console.log(serve);
+  // console.log(serve);
 
-  showSuccessToast("已提交");
-  refreshPage();
-  // loading.value = true;
+  // showSuccessToast("已提交");
+  // refreshPage();
 
-  /*formRef.value
+  formRef.value
     ?.validate()
     .then(() => {
-      console.log("通过");
+      // console.log("通过");
       addScoreManage(serve).then((code: any, msg?: string) => {
         if (code) {
           showSuccessToast("已提交");
-          reload();
+          router.push("/score");
         } else {
           if (msg) showFailToast(msg);
         }
@@ -131,7 +132,7 @@ const submitFn = () => {
     .catch(err => {
       //验证失败
       showFailToast("请正确填写信息");
-    });*/
+    });
 };
 
 const addFn = (type: "police" | "auxPolice") => {
@@ -224,7 +225,7 @@ const onConfirmTime = (time: Date, key: "queTime" | "scoreTime") => {
     <nav-bar :title="route.meta.title" />
 
     <div class="score-form">
-      <van-form ref="form">
+      <van-form ref="formRef">
         <van-cell-group>
           <van-field
             v-model="formData.queTime"

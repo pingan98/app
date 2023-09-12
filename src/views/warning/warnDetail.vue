@@ -219,10 +219,15 @@ const submitFn = (isOrder: string) => {
       </module-box>
     </div>
 
-    <!--v-if="isEdit"-->
-    <div class="bottom-action flex justify-between">
-      <!-- v-if="formData.dealResult === QK_TYPE.true"-->
-      <van-button round block @click="submitFn('0')"> 上 报 </van-button>
+    <div class="bottom-action flex justify-between" v-if="isEdit">
+      <van-button
+        round
+        block
+        @click="submitFn('0')"
+        v-if="formData.dealResult === QK_TYPE.true"
+      >
+        上 报
+      </van-button>
       <van-button
         round
         block

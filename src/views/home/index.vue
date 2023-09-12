@@ -53,7 +53,10 @@ const onConfirm = async ({ selectedOptions }) => {
 const getCautionList = async () => {
   try {
     const res = await getWarnMaterialPage(materialForm.value);
-    console.log(res);
+    res!.rows.forEach((item: any) => {
+      item.battchJson = item?.battchJson ? JSON.parse(item?.battchJson) : [];
+      item.coverImg = item.battchJson?.[0]?.attachFullPath;
+    });
     listData.value.push(...res!.rows);
 
     if (listData.value.length === res.total) {

@@ -70,14 +70,16 @@ watch(
         >确定</van-button
       >
     </div>
-    <c-question-type
-      ref="cQuestionRef"
-      :is-type="props.isType"
-      :leaf-only="props.leafOnly"
-      :search="props.search"
-      :check-type="props.checkType"
-    />
+    <div class="popup-body">
+      <c-question-type
+        ref="cQuestionRef"
+        :is-type="props.isType"
+        :leaf-only="props.leafOnly"
+        :search="props.search"
+        :check-type="props.checkType"
+      />
+    </div>
   </van-popup>
 </template>
 
-<style scoped></style>
+<style scoped lang="less"></style>

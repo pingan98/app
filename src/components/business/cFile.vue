@@ -12,6 +12,10 @@ const fileList = ref<Image[]>([]);
 const viewList = ref<Image[]>([]);
 
 const props = defineProps({
+  modelValue: {
+    type: String,
+    default: ""
+  },
   btnTxt: {
     type: String,
     default: "上传文件"
@@ -51,6 +55,7 @@ watch(
 );
 const emit = defineEmits<{
   (e: "refresh"): void;
+  (e: "update:modelValue", val: any): void;
 }>();
 
 // 图片上传
@@ -116,6 +121,7 @@ function getFileList() {
             url: v.attachFullPath
           };
         });
+        emit("update:modelValue", JSON.stringify(fileList.value));
       }
     );
   }
