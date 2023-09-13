@@ -2,8 +2,11 @@ import { fileURLToPath, URL } from "node:url";
 import { defineConfig, loadEnv } from "vite";
 import vue from "@vitejs/plugin-vue";
 import vueJsx from "@vitejs/plugin-vue-jsx";
+// 配置组件自动注册的插件
+// 配置 vant UI 组件库的解析器
 import Components from "unplugin-vue-components/vite";
 import { VantResolver } from "unplugin-vue-components/resolvers";
+// svg插件
 import { createSvgIconsPlugin } from "vite-plugin-svg-icons";
 import path from "path";
 import mockDevServerPlugin from "vite-plugin-mock-dev-server";
@@ -26,7 +29,8 @@ export default defineConfig(({ mode }) => {
       mockDevServerPlugin(),
       // vant 组件自动按需引入
       Components({
-        resolvers: [VantResolver()]
+        dts: false,
+        resolvers: [VantResolver({ importStyle: false })]
       }),
       // svg icon
       createSvgIconsPlugin({
@@ -40,13 +44,7 @@ export default defineConfig(({ mode }) => {
       // 生产环境 gzip 压缩资源
       viteCompression(),
       // 注入模板数据
-      createHtmlPlugin({
-        inject: {
-          data: {
-            ENABLE_ERUDA: env.VITE_ENABLE_ERUDA || "false"
-          }
-        }
-      })
+      createHtmlPlugin()
     ],
     resolve: {
       alias: {

@@ -182,14 +182,30 @@ const changeOrgPop = (key: "dutyOrgId" | "inputOrgId") => {
 };
 const onConfirmOrg = (val: any) => {
   orgShow.value = false;
-  const { orgId, orgName } = val;
-  // console.log(val);
   if (orgKey.value === "dutyOrgId") {
-    formData.value.dutyOrgId = orgId;
-    formData.value.dutyOrgName = orgName;
+    if (Array.isArray(val)) {
+      // console.log("回显", val);
+      formData.value!.dutyOrgId = val.map((item: any) => item.id).join(",");
+      formData.value!.dutyOrgName = val
+        .map((item: any) => item.shortName)
+        .join(",");
+    } else {
+      const { orgId, orgName } = val;
+      formData.value!.dutyOrgId = orgId;
+      formData.value!.dutyOrgName = orgName;
+    }
   } else if (orgKey.value === "inputOrgId") {
-    formData.value.inputOrgId = orgId;
-    formData.value.inputOrgName = orgName;
+    if (Array.isArray(val)) {
+      // console.log("回显", val);
+      formData.value!.inputOrgId = val.map((item: any) => item.id).join(",");
+      formData.value!.inputOrgName = val
+        .map((item: any) => item.label)
+        .join(",");
+    } else {
+      const { orgId, orgName } = val;
+      formData.value!.inputOrgId = orgId;
+      formData.value!.inputOrgName = orgName;
+    }
   }
 };
 

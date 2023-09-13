@@ -8,8 +8,8 @@ const props = defineProps({
     default: false
   },
   modelValue: {
-    type: [Array as any, String]
-    // required: true
+    type: String,
+    required: true
   },
   checkType: {
     type: String,
@@ -34,7 +34,7 @@ const emit = defineEmits<{
   (e: "onConfirm", val: any): void;
 }>();
 const confirmFn = () => {
-  // console.log(cOrgRef.value!.getCheckedKeys());
+  console.log(cOrgRef.value!.getCheckedNodes());
   emit(
     "onConfirm",
     props.checkType === "single"
@@ -50,19 +50,12 @@ const cancelFn = () => {
   emit("onCancel");
 };
 
-const checkedNode = ref<any>(null);
+const checkedNode = ref<any>(props.modelValue);
 watch(
   () => checkedNode.value,
   val => {
     emit("update:modelValue", val);
   }
-);
-watch(
-  () => props.modelValue,
-  val => {
-    checkedNode.value = Array.isArray(props.modelValue) ? val : val?.split(",");
-  },
-  { immediate: true }
 );
 </script>
 

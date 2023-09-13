@@ -8,8 +8,9 @@
     />
   </div>
   <van-radio-group v-model="selectValue">
-    <van-tree
+    <el-tree
       ref="treeRef"
+      class="custom-tree"
       :data="treeData"
       :show-checkbox="checkType === 'multiple'"
       :default-expand-all="false"
@@ -41,14 +42,14 @@
           </div>
         </div>
       </template>
-    </van-tree>
+    </el-tree>
   </van-radio-group>
 </template>
 
 <script lang="ts" setup name="CQuestionType">
+import "element-plus/es/components/tree/style/css";
+import { ElTree } from "element-plus";
 import { ref, watch, onMounted } from "vue";
-import { VanTree } from "vangle";
-// import "vangle/dist/style.css";
 import { getTreeList, getUserConcernTreeList } from "@/api/scoreManage";
 
 // 文档地址： https://vangleer.github.io/vangle/zh/component/button.html
@@ -141,10 +142,14 @@ const defaultProps = {
 const selectValue = ref<any>(undefined);
 // 节点点击事件(单选的情况)
 function handleNodeClick(node: any) {
-  if (node.childNodes?.length) return; // 不是最后一级节点就不操作
+  // console.log("handleNodeClick-----------");
   // console.log(node);
+  if (node.childNodes?.length) return; // 不是最后一级节点就不操作
+  if (props.checkType === "multiple") return; // 多选模式下也不操作
   selectValue.value = node.id;
-  getCheckedKeys(node, node.data);
+
+  const sss = treeRef.value.getNode(node);
+  getCheckedKeys(sss, node);
 }
 
 // 筛选函数
@@ -158,7 +163,8 @@ function handleFilter(val: any) {
 }
 
 function handleClickRadio(node: Node, data: any, e: any) {
-  console.log(node);
+  // console.log("Radio-----------");
+  // console.log(node);
   // console.log(data);
   // console.log(e);
   if (!props.leafOnly) {
@@ -223,9 +229,5 @@ defineExpose({
 });
 </script>
 <style lang="less" scoped>
-@import "vangle/dist/style.css";
 @import "@/styles/mixin.less";
-/deep/.van-tree__node__content {
-  height: 40px;
-}
 </style>

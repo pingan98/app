@@ -8,14 +8,16 @@
     />
   </div>
   <van-radio-group v-model="selectValue">
-    <van-tree
+    <el-tree
       ref="treeRef"
+      class="custom-tree"
       :data="treeData"
       :show-checkbox="checkType === 'multiple'"
       :default-expand-all="false"
       node-key="id"
       highlight-current
       :props="defaultProps"
+      empty-text="暂无数据"
       :filter-node-method="filterNode"
       @node-click="handleNodeClick"
     >
@@ -40,13 +42,16 @@
           </div>
         </div>
       </template>
-    </van-tree>
+    </el-tree>
   </van-radio-group>
 </template>
 
 <script lang="ts" setup>
+import "element-plus/es/components/tree/style/css";
+import { ElTree } from "element-plus";
 import { ref, watch, onMounted } from "vue";
-import { VanTree } from "vangle";
+// import "vangle/dist/style.css";
+// import { VanTree } from "vangle";
 import { getOrgList } from "@/api/org";
 import { toMap } from "@/utils";
 
@@ -59,12 +64,12 @@ interface Tree {
 
 const props = defineProps({
   modelValue: {
-    type: [Array as any, String]
+    type: String
     // required: true
   },
   checkType: {
     type: String,
-    default: "multiple" // multiple/single
+    default: "single" // multiple/single
   },
   search: {
     type: Boolean,
@@ -82,27 +87,10 @@ const treeRef = ref<any>(null);
 const treeData = ref<any>([]);
 const mapTreeData = ref<any>({});
 
-// const setCheckedNodes = () => {
-//   treeRef.value!.setCheckedNodes(
-//     [
-//       {
-//         id: 5,
-//         label: "Level two 2-1"
-//       },
-//       {
-//         id: 9,
-//         label: "Level three 1-1-1"
-//       }
-//     ],
-//     false
-//   );
-// };
-
 // 回显
 const setCheckedNodes = () => {
   if (JSON.stringify(mapTreeData.value) !== "{}") {
-    const arr = props.modelValue?.map((item: any) => {
-      console.log(item);
+    const arr = props.modelValue!.split(",").map((item: any) => {
       return mapTreeData.value[item];
     });
     treeRef.value!.setCheckedNodes(arr);
@@ -114,7 +102,7 @@ onMounted(async () => {
     if (props.checkType === "multiple") {
       setCheckedNodes();
     } else {
-      selectValue.value = props.modelValue[0];
+      selectValue.value = props.modelValue;
     }
   }
 });
@@ -128,6 +116,25 @@ const defData = (arr: any) => {
 };
 const getInit = async () => {
   const res = await getOrgList();
+  /*const obj = {
+    id: "330421540770",
+    children: "",
+    code: "330421540770",
+    fullName: "xx派出所",
+    shortName: "xx派出所",
+    unitInitial: "",
+    address: "",
+    parentId: "330421000000",
+    parentCode: "330421000000",
+    enable: "U",
+    sort: "",
+    createTime: "",
+    beginId: "",
+    isSupervision: "",
+    policeNum: "",
+    id1: ""
+  };
+  res[0].children.push(obj);*/
   treeData.value = res;
   defData(res || []);
 };
@@ -245,10 +252,4 @@ defineExpose({
   resetChecked
 });
 </script>
-<style lang="less" scoped>
-@import "vangle/dist/style.css";
-
-/deep/.van-tree__node__content {
-  height: 40px;
-}
-</style>
+<style lang="less" scoped></style>

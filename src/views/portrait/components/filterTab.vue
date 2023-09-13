@@ -1,5 +1,5 @@
 <!--
- * @Description: 
+ * @Description:
  * @Author: 辰月
  * @Date: 2023-09-08 13:36:19
  * @LastEditTime: 2023-09-12 14:30:56
@@ -361,7 +361,7 @@ watch(
 
   .action-sheet-footer {
     padding: 0 var(--van-padding-md) 6px;
-    /deep/.van-button {
+    :deep(.van-button) {
       height: var(--van-calendar-confirm-button-height);
     }
   }

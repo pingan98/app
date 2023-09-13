@@ -135,22 +135,27 @@ a:hover {
     overflow: auto;
   }
 }
-.custom-tree-node {
-  width: 0;
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  font-size: 14px;
-  .label {
-    width: 0;
-    flex: 1;
-    .ellipsis();
-    padding-right: 10px;
+.custom-tree {
+  .el-tree-node__content {
+    height: 30px;
   }
-  .radio {
-    text-align: right;
-    width: 25px;
+  .custom-tree-node {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    font-size: 14px;
+    .label {
+      width: 0;
+      flex: 1;
+      .ellipsis();
+      padding-right: 10px;
+    }
+    .radio {
+      text-align: right;
+      width: 25px;
+    }
   }
 }
+

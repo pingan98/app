@@ -32,7 +32,7 @@
     >
       <div class="filter-tab_txt">
         <template v-if="filterTabData.startTime && filterTabData.endTime"
-          >{{ filterTabData.startTime }}{{ filterTabData.endTime }}</template
+          >{{ filterTabData.startTime }}~{{ filterTabData.endTime }}</template
         ><template v-else>时间</template>
         <van-icon class="filter-tab_icon" name="play" />
       </div>

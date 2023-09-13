@@ -46,7 +46,9 @@ const onConfirmOrg = (val: any) => {
   if (Array.isArray(val)) {
     // console.log("回显", val);
     formData.value!.dutyOrgId = val.map((item: any) => item.id).join(",");
-    formData.value!.dutyOrgName = val.map((item: any) => item.label).join(",");
+    formData.value!.dutyOrgName = val
+      .map((item: any) => item.shortName)
+      .join(",");
   } else {
     const { orgId, orgName } = val;
     formData.value!.dutyOrgId = orgId;
