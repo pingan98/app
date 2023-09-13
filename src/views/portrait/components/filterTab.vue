@@ -2,7 +2,7 @@
  * @Description:
  * @Author: 辰月
  * @Date: 2023-09-08 13:36:19
- * @LastEditTime: 2023-09-12 14:30:56
+ * @LastEditTime: 2023-09-13 13:45:09
  * @LastEditors: 辰月
 -->
 <template>
@@ -154,17 +154,6 @@ const props = defineProps({
   }
 });
 
-const filterTabData = ref<IPersonPortraitParam>({
-  db33Txt: "",
-  startTime: dayjs().startOf("M").format("YYYY/MM/DD"),
-  endTime: dayjs().format("YYYY/MM/DD"),
-  db33: "",
-  policeHandlingCase: ""
-});
-//  临时变量 目的是只有点了确认之后才会更改显示上的值 及发起请求
-const db33Local = ref<IPersonPortraitUnit>({});
-const policeHandlingCaseLocal = ref(filterTabData.value.policeHandlingCase);
-
 // tab
 const TAB_TYPE = {
   unit: "unit",
@@ -185,8 +174,19 @@ const policeData = ref<any>([]);
 // 时间
 const minDate = dayjs().subtract(10, "year").toDate();
 const maxDate = dayjs().add(10, "year").toDate();
-const startDate = ref(filterTabData.value.startTime.split("/"));
-const endDate = ref(filterTabData.value.endTime.split("/"));
+const startDate = ref(dayjs().startOf("M").format("YYYY/MM/DD").split("/"));
+const endDate = ref(dayjs().format("YYYY/MM/DD").split("/"));
+
+const filterTabData = ref<IPersonPortraitParam>({
+  db33Txt: "",
+  startTime: "",
+  endTime: "",
+  db33: "",
+  policeHandlingCase: ""
+});
+//  临时变量 目的是只有点了确认之后才会更改显示上的值 及发起请求
+const db33Local = ref<IPersonPortraitUnit>({});
+const policeHandlingCaseLocal = ref(filterTabData.value.policeHandlingCase);
 
 function onTabChange(code: string) {
   if (code === tabActive.value) return false;
@@ -237,8 +237,12 @@ function emitChange() {
   delete params.db33Txt;
 
   const [startTime, endTime] = getDate();
-  params.startTime = dayjs(startTime).format("YYYY/MM/DD 00:00:00");
-  params.endTime = dayjs(endTime).format("YYYY/MM/DD 23:59:59");
+  params.startTime = dayjs(startTime || startDate.value.join("/")).format(
+    "YYYY/MM/DD 00:00:00"
+  );
+  params.endTime = dayjs(endTime || endDate.value.join("/")).format(
+    "YYYY/MM/DD 23:59:59"
+  );
   emit("refresh", params);
 }
 
@@ -278,7 +282,7 @@ function getGRHXData() {
 
 function getDate(format = "YYYY/MM/DD") {
   const { startTime, endTime } = filterTabData.value;
-  return [startTime, endTime].map(v => dayjs(v).format(format));
+  return [startTime, endTime].filter(v => v).map(v => dayjs(v).format(format));
 }
 
 onMounted(() => {
