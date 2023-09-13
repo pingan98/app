@@ -21,11 +21,11 @@ onMounted(async () => {
     : [];
   detailData.value = { ...res.data };
 });
-const batchUpdate = async () => {
+const batchUpdate = async (warnState: string) => {
   const getType = (type: string) => {
     const temp = {
       [CAUTION_STATUS.listing]: "下架",
-      [CAUTION_STATUS.delist]: "上架"
+      [CAUTION_STATUS.draft]: "上架"
     };
     return temp[type];
   };
@@ -34,10 +34,7 @@ const batchUpdate = async () => {
     title: "温馨提示",
     message: `您确认${str}此条信息吗？`
   });
-  await batchUpdateWarnMaterial(
-    [detailData.value?.id as string],
-    detailData.value?.warnState as string
-  );
+  await batchUpdateWarnMaterial([detailData.value?.id as string], warnState);
   showSuccessToast(str + "成功");
   await router.push("/caution");
 };
@@ -87,7 +84,7 @@ const removeFn = async () => {
         <div>
           <van-button
             type="warning"
-            @click="batchUpdate"
+            @click="batchUpdate(CAUTION_STATUS.listing)"
             round
             color="linear-gradient(to right, #00B3B3, #13E1B6)"
             ><svg-icon name="listing" class="inline-block" />上架</van-button
@@ -117,7 +114,7 @@ const removeFn = async () => {
       <template v-else>
         <van-button
           type="warning"
-          @click="batchUpdate"
+          @click="batchUpdate(CAUTION_STATUS.delist)"
           round
           block
           color="linear-gradient(to right, #FE871B, #FFCD4E)"

@@ -114,8 +114,8 @@ const props = defineProps({
 const jobLocal = ref<any>(null);
 
 const filterTabData = ref<any>({});
-const startTime = ref<string[]>([]);
-const endTime = ref<string[]>([]);
+const startTime = ref(dayjs().format("YYYY-MM-DD").split("-"));
+const endTime = ref(dayjs().format("YYYY-MM-DD").split("-"));
 // tab
 const TAB_TYPE = {
   unit: "unit",
@@ -149,8 +149,8 @@ const getDutyList = () => {
 function resetTab() {
   cOrgRef.value?.resetChecked();
   filterTabData.value = {};
-  endTime.value = [];
-  startTime.value = [];
+  endTime.value = dayjs().format("YYYY-MM-DD").split("-");
+  startTime.value = dayjs().format("YYYY-MM-DD").split("-");
   jobLocal.value = null;
 }
 function onPopupClose(type: string) {

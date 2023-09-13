@@ -131,8 +131,8 @@ const submitFn = () => {
   // console.log(dataList);
   const serve = {
     detailsList,
-    scoreTime: scoreTime + " 00:00:00",
-    queTime: queTime + " 00:00:00",
+    scoreTime: scoreTime,
+    queTime: queTime,
     ...form
   };
   // console.log(serve);

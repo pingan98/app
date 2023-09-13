@@ -68,7 +68,7 @@ const props = defineProps<{
     border-radius: 5px;
     img {
       max-width: 100%;
-      height: auto;
+      max-height: 100%;
     }
   }
 }

@@ -8,6 +8,7 @@ import type { Query, List } from "@/api/scoreManage/types";
 import { POLICE_TYPE, POLICE_TYPE_TXT } from "@/const";
 import FilterTab from "@/views/score/components/filterTab.vue";
 const route = useRoute();
+const offset = ref({ y: 550, x: -10 });
 // 加载中状态
 const loading = ref(false);
 // 是否完全加载完毕数据
@@ -104,6 +105,7 @@ const onCancel = () => {
       axis="xy"
       icon="plus"
       magnetic="x"
+      v-model:offset="offset"
       @click="$router.push('/score/add?type=add')"
     />
   </div>

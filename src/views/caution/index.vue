@@ -25,7 +25,7 @@ const searchForm = ref<Query>({
   warnState: CAUTION_STATUS.listing
 });
 const listData = ref<List[]>([]);
-const offset = ref({ y: 500 });
+const offset = ref({ y: 550, x: -10 });
 const checkAll = ref(false);
 const checkboxGroup = ref<any>(null);
 const checkedList = ref<any>([]);
@@ -35,6 +35,8 @@ const tabChange = (value: string) => {
   batchFlag.value = false;
   searchForm.value.page = 1;
   listData.value = [];
+  checkedList.value = [];
+  checkAll.value = false;
   onLoad();
 };
 
@@ -46,7 +48,13 @@ const cancelBatch = () => {
   checkAll.value = false;
   checkedList.value = [];
 };
-
+const getStatus = (status: string) => {
+  const temp = {
+    [CAUTION_STATUS.listing]: CAUTION_STATUS.delist,
+    [CAUTION_STATUS.delist]: CAUTION_STATUS.listing
+  };
+  return temp[status] || "";
+};
 const getType = (type: string) => {
   const temp = {
     [CAUTION_STATUS.listing]: "下架",
@@ -86,17 +94,19 @@ const onClear = () => {
   onLoad();
 };
 const batchUpdate = async () => {
-  showFailToast("暂无选中数据");
   if (!checkedList.value.length) {
     showFailToast("暂无选中数据");
     return;
   }
-  const str = getType(searchForm.value.warnState);
+  const str = getType(searchForm.value?.warnState as string);
   await showConfirmDialog({
     title: "温馨提示",
     message: `您确认${str}选中数据吗？`
   });
-  await batchUpdateWarnMaterial(checkedList, searchForm.value.warnState);
+  await batchUpdateWarnMaterial(
+    checkedList.value,
+    getStatus(searchForm.value.warnState as string)
+  );
   showSuccessToast(str + "成功");
   onSearch();
 };
@@ -110,7 +120,7 @@ const removeFn = async () => {
     title: "温馨提示",
     message: `您确认删除选中数据吗？`
   });
-  await removeWarnMaterial(checkedList);
+  await removeWarnMaterial(checkedList.value);
   showSuccessToast("删除成功");
   onSearch();
 };
@@ -240,6 +250,7 @@ const removeFn = async () => {
 .caution-page {
   position: relative;
   padding-top: 46px;
+  padding-bottom: 80px;
 }
 .material-list {
   background: #ffffff;
