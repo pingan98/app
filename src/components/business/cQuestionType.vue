@@ -1,11 +1,13 @@
 <template>
   <div v-if="search">
-    <van-search
-      v-model="keyword"
-      shape="round"
-      placeholder="请输入搜索关键词"
-      @update:model-value="handleFilter"
-    />
+    <form action="/">
+      <van-search
+        v-model="filterText"
+        shape="round"
+        placeholder="请输入搜索关键词"
+        @update:model-value="handleFilter"
+      />
+    </form>
   </div>
   <van-radio-group v-model="selectValue">
     <el-tree
@@ -82,7 +84,7 @@ const props = defineProps({
     default: true
   }
 });
-const keyword = ref<string | number>("");
+const filterText = ref<string | number>("");
 const treeRef = ref<any>(null);
 // const treeData = ref<Tree[]>();
 const treeData = ref([]);
@@ -153,9 +155,9 @@ function handleNodeClick(node: any) {
 }
 
 // 筛选函数
-function filterNode(value: any, data: any) {
+function filterNode(value: string, data: any) {
   if (!value) return true;
-  return data.label.includes(value);
+  return data.name.includes(value);
 }
 // 输入框的值变化触发筛选
 function handleFilter(val: any) {

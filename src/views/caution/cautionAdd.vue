@@ -63,7 +63,7 @@ const submitFn = (type: string, status?: string) => {
       }
       fn(serve).then(res => {
         showSuccessToast("已提交");
-        router.push("/caution");
+        router.replace("/caution");
       });
     })
     .catch(error => {

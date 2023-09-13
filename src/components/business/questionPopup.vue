@@ -1,12 +1,8 @@
 <script lang="ts" name="QuestionPopup" setup>
-import { ref, watch } from "vue";
+import { onMounted, ref } from "vue";
 const visible = ref(false);
 const cQuestionRef = ref<any>(null);
 const props = defineProps({
-  showPicker: {
-    type: Boolean,
-    default: false
-  },
   modelValue: {
     type: [Array, String]
     // required: true
@@ -33,6 +29,10 @@ const emit = defineEmits<{
   (e: "onCancel"): void;
   (e: "onConfirm", val: any): void;
 }>();
+
+onMounted(() => {
+  visible.value = true;
+});
 const confirmFn = () => {
   visible.value = false;
   const obj = cQuestionRef.value!.checkedData;
@@ -44,14 +44,6 @@ const cancelFn = () => {
   cQuestionRef.value!.resetChecked();
   emit("onCancel");
 };
-watch(
-  () => props.showPicker,
-  val => {
-    if (val) {
-      visible.value = val;
-    }
-  }
-);
 </script>
 
 <template>

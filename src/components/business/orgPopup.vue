@@ -3,10 +3,6 @@ import { onMounted, ref, watch } from "vue";
 const visible = ref(false);
 const cOrgRef = ref<any>(null);
 const props = defineProps({
-  showPicker: {
-    type: Boolean,
-    default: false
-  },
   modelValue: {
     type: String,
     required: true

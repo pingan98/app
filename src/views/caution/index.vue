@@ -138,7 +138,7 @@ const removeFn = async () => {
           shape="round"
           placeholder="请输入"
           @search="onSearch"
-          @clear.prevent.stop="onClear"
+          @clear="onClear"
         />
       </form>
       <c-tab :tabs="tabs" @tabChange="tabChange" />
