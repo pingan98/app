@@ -14,7 +14,7 @@ const finished = ref(false);
 const searchForm = ref<Query>({
   page: 1,
   size: 20,
-  warnState: WARN_STATUS.audited
+  warnState: WARN_STATUS.reviewed
 });
 const listData = ref<List[]>([]);
 const tabs = toList(WARN_STATUS, WARN_STATUS_TXT);
@@ -44,7 +44,7 @@ const onSearch = () => {
  * todo: 清空事件暂不生效
  */
 const onClear = () => {
-  console.log(111111);
+  // console.log(111111);
   searchForm.value.page = 1;
   searchForm.value.warnName = "";
   listData.value = [];

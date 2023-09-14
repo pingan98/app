@@ -15,8 +15,7 @@ import homeBanner3 from "@/assets/homeSwipe/ad3@3x.png";
 const images = [homeBanner1, homeBanner2, homeBanner3];
 const testRole = [
   { name: "陈俊文", policeNo: "cjw" },
-  { name: "李", policeNo: "ldp" },
-  { name: "jxdc", policeNo: "jxdc" }
+  { name: "jsdc ", policeNo: "jsdc " }
 ];
 const showPicker = ref(false);
 const loginData = ref<LoginData>({

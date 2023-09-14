@@ -1,11 +1,11 @@
 export const WARN_STATUS = {
-  audited: "1",
-  reviewed: "0"
+  reviewed: "0",
+  audited: "1"
 };
 
 export const WARN_STATUS_TXT = {
-  [WARN_STATUS.audited]: "已处理",
-  [WARN_STATUS.reviewed]: "待处理"
+  [WARN_STATUS.reviewed]: "待处理",
+  [WARN_STATUS.audited]: "已处理"
 };
 
 export const QK_TYPE = {

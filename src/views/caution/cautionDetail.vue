@@ -36,7 +36,7 @@ const batchUpdate = async (warnState: string) => {
   });
   await batchUpdateWarnMaterial([detailData.value?.id as string], warnState);
   showSuccessToast(str + "成功");
-  await router.push("/caution");
+  await router.back();
 };
 const removeFn = async () => {
   await showConfirmDialog({
@@ -45,7 +45,7 @@ const removeFn = async () => {
   });
   await removeWarnMaterial([detailData.value!.id as string]);
   showSuccessToast("删除成功");
-  await router.push("/caution");
+  await router.back();
 };
 </script>
 

@@ -63,7 +63,11 @@ const submitFn = (type: string, status?: string) => {
       }
       fn(serve).then(res => {
         showSuccessToast("已提交");
-        router.replace("/caution");
+        if (type !== "edit") {
+          router.back();
+        } else {
+          router.go(2);
+        }
       });
     })
     .catch(error => {
