@@ -147,7 +147,7 @@ const submitFn = () => {
       addScoreManage(serve).then((code: any, msg?: string) => {
         if (code) {
           showSuccessToast("已提交");
-          router.push("/score");
+          router.replace("/score");
         } else {
           if (msg) showFailToast(msg);
         }

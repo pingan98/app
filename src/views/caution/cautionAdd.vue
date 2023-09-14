@@ -87,9 +87,7 @@ const submitFn = (type: string, status?: string) => {
         v-model="formData.warnTitle"
         name="warnTitle"
         label="标题"
-        show-error
         placeholder="请输入标题"
-        show-word-limit
         :rules="[{ required: true, message: '请输入' }]"
       />
       <van-field
@@ -177,5 +175,14 @@ const submitFn = (type: string, status?: string) => {
   padding: 50px 16px 86px;
   background: #ffffff;
   min-height: calc(100vh - 64px);
+}
+.must {
+  :deep(.van-cell__title) {
+    &::before {
+      content: "*";
+      color: #ff0000;
+      margin-right: 4px;
+    }
+  }
 }
 </style>
