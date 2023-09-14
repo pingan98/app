@@ -44,7 +44,13 @@ export default defineConfig(({ mode }) => {
       // 生产环境 gzip 压缩资源
       viteCompression(),
       // 注入模板数据
-      createHtmlPlugin()
+      createHtmlPlugin({
+        inject: {
+          data: {
+            ENABLE_ERUDA: env.VITE_ENABLE_ERUDA || "false"
+          }
+        }
+      })
     ],
     resolve: {
       alias: {
