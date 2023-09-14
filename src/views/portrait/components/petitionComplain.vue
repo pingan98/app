@@ -112,12 +112,31 @@ watch(
             {{ item.queNature || "" }}
           </div>
           <div class="petition-status">
-            <div class="is-right petition-status-box">
-              <span class="icon-box true"></span>
-              {{ item.isComplete || "" }}
+            <!--是否办结-->
+            <div class="is-right petition-status-box" v-if="item.isComplete">
+              <span
+                :class="[
+                  'icon-box',
+                  {
+                    true: item.isComplete === '是',
+                    false: item.isComplete === '否'
+                  }
+                ]"
+              ></span>
+              {{ item.isComplete === "是" ? "已办结" : "未办结" || "" }}
             </div>
-            <div class="is-conclude petition-status-box">
-              <span class="icon-box true"></span>
+            <!--是否属实-->
+            <div class="is-conclude petition-status-box" v-if="item.isTrue">
+              <span
+                :class="[
+                  'icon-box',
+                  {
+                    true: item.isTrue === '属实',
+                    false: item.isTrue === '不属实',
+                    'part-true': item.isTrue === '部分属实'
+                  }
+                ]"
+              ></span>
               {{ item.isTrue || "" }}
             </div>
           </div>
