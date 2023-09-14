@@ -42,6 +42,15 @@ a:hover {
   content: '*';
   color: #ff0000;
 }
+.must {
+  .van-cell__title {
+    &::before {
+      content: "*";
+      color: #ff0000;
+      margin-right: 4px;
+    }
+  }
+}
 .detail-bg::before {
   position: absolute;
   content: '';

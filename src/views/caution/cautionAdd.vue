@@ -176,13 +176,4 @@ const submitFn = (type: string, status?: string) => {
   background: #ffffff;
   min-height: calc(100vh - 64px);
 }
-.must {
-  :deep(.van-cell__title) {
-    &::before {
-      content: "*";
-      color: #ff0000;
-      margin-right: 4px;
-    }
-  }
-}
 </style>
