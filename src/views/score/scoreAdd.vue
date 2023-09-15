@@ -5,6 +5,7 @@ import { POLICE_TYPE } from "@/const";
 import type { Form } from "@/api/scoreManage/types";
 import type { FormInstance, FieldRule } from "vant";
 import { showFailToast, showSuccessToast } from "vant";
+import dayjs from "dayjs";
 import {
   addScoreManage,
   getScoreManageDetail,
@@ -22,6 +23,7 @@ const timeShow = ref(false);
 const timeKey = ref<"queTime" | "scoreTime">();
 const orgShow = ref(false);
 const orgKey = ref<"dutyOrgId" | "inputOrgId">();
+const policeKey = ref<"police" | "auxPolice">();
 const policeShow = ref(false);
 const questionShow = ref(false);
 const policeIndex = ref<number>(0);
@@ -40,10 +42,9 @@ const formData = ref<Form>({
   dutyOrgName: "",
   dutyOrgId: "",
   inputOrgId: "",
-  inputOrgName: ""
-});
-// 因为直接把这俩数组放在formData里 页面会循环出个police和auxPolice，暂时分开写
-const policeForm = ref({
+  inputOrgName: "",
+  dutyPoliceName: "",
+  dutyPoliceNo: "",
   police: [
     {
       dutyOrgId: "",
@@ -74,16 +75,61 @@ const policeForm = ref({
   ]
 });
 
-onMounted(async () => {
+onMounted(() => {
   pageType.value = route.query.type as string;
   const id = route.params.id as string;
   if (id) {
-    const { data } = await getScoreManageDetail({ id });
-    formData.value = { ...data };
-    // policeForm.value =
+    echoCurData(id);
   }
 });
+// 回显当前数据
+const echoCurData = async (id: string) => {
+  const { data } = await getScoreManageDetail({ id });
+  if (data.queTime) {
+    data.queTime = dayjs(data.queTime).format("YYYY-MM-DD HH:mm:ss");
+  }
+  if (data.scoreTime) {
+    data.scoreTime = dayjs(data.scoreTime).format("YYYY-MM-DD HH:mm:ss");
+  }
+  data.detailsList.forEach(item => {
+    if (item.scoreBasicId) {
+      const problemId = (item.scoreBasicId || "").split("-");
+      const problemName = (item.scoreBasic || "").split("-");
+      item.questionTypeId = problemId[problemId.length - 1] || "";
+      item.questionName = problemName[problemName.length - 1] || "";
+    }
+    item.jyname = item.dutyPoliceName;
+  });
 
+  const defaultArr = [
+    {
+      dutyOrgId: "",
+      dutyOrgName: "",
+      dutyPoliceName: "",
+      dutyPoliceNo: "",
+      idcard: "",
+      scoreNum: "",
+      questionName: "",
+      questionTypeId: "",
+      scoreBasic: "",
+      scoreBasicId: ""
+    }
+  ];
+  // 0 民警  1辅警
+  const policeArr =
+    data?.detailsList?.filter(item => item.scoreType == POLICE_TYPE.min)
+      ?.length > 0
+      ? data.detailsList.filter(item => item.scoreType == POLICE_TYPE.min)
+      : defaultArr;
+  const auxPoliceArr =
+    data.detailsList.filter(item => item.scoreType == POLICE_TYPE.fu)?.length >
+    0
+      ? data.detailsList.filter(item => item.scoreType == POLICE_TYPE.fu)
+      : defaultArr;
+  delete data.detailsList;
+
+  formData.value = { id, ...data, police: policeArr, auxPolice: auxPoliceArr };
+};
 const getTitle = (val: "add" | "edit") => {
   const temp = {
     add: "新增",
@@ -97,50 +143,34 @@ const formatPolice = (data: any, scoreType: string) => {
   return data
     .filter((v: any) => v.dutyPoliceName)
     .map((v: any) => {
-      const {
-        dutyPoliceNo,
-        dutyPoliceName,
-        idcard,
-        scoreNum,
-        questionTypeId,
-        scoreBasic,
-        scoreBasicId
-      } = v;
       return {
         scoreType,
         dutyOrgId,
         dutyOrgName,
-        dutyPoliceNo,
-        dutyPoliceName,
-        idcard,
-        scoreNum,
-        scoreBasic,
-        scoreBasicId,
-        questionTypeId
+        ...v
       };
     });
 };
 
 const submitFn = () => {
-  const { police, auxPolice } = policeForm.value;
-  const { scoreTime, queTime, ...form } = formData.value;
+  const { scoreTime, queTime, police, auxPolice, ...form } = formData.value;
   const detailsList = [
     ...formatPolice(police, POLICE_TYPE.min),
     ...formatPolice(auxPolice, POLICE_TYPE.fu)
   ];
-  // console.log(dataList);
+  console.log(detailsList);
   const serve = {
     detailsList,
     scoreTime: scoreTime,
     queTime: queTime,
     ...form
   };
-  // console.log(serve);
+  console.log(serve);
 
   // showSuccessToast("已提交");
   // refreshPage();
 
-  formRef.value
+  /*formRef.value
     ?.validate()
     .then(() => {
       // console.log("通过");
@@ -156,11 +186,11 @@ const submitFn = () => {
     .catch(err => {
       //验证失败
       showFailToast("请正确填写信息");
-    });
+    });*/
 };
 
 const addFn = (type: "police" | "auxPolice") => {
-  policeForm.value[type].push({
+  formData.value[type]?.push({
     dutyOrgId: "",
     dutyOrgName: "",
     dutyPoliceName: "",
@@ -174,7 +204,7 @@ const addFn = (type: "police" | "auxPolice") => {
   });
 };
 const delFn = (type: "police" | "auxPolice", index: number) => {
-  policeForm.value[type].splice(index, 1);
+  formData.value[type]!.splice(index, 1);
 };
 const changeOrgPop = (key: "dutyOrgId" | "inputOrgId") => {
   orgKey.value = key;
@@ -216,39 +246,28 @@ const changePolice = (type: string, index: number, popType?: string) => {
   if (popType === "question") {
     questionShow.value = true;
   } else {
+    policeKey.value = type === POLICE_TYPE.min ? "police" : "auxPolice";
     policeShow.value = true;
   }
 };
 const onConfirmPolice = (val: any) => {
+  policeShow.value = false;
+  const { jyname = "", jycode = "", idcard = "" } = val;
+  formData.value[policeKey.value][policeIndex.value].dutyPoliceName = jyname;
+  formData.value[policeKey.value][policeIndex.value].dutyPoliceNo = jycode;
+  formData.value[policeKey.value][policeIndex.value].idcard = idcard;
   // console.log(val);
   // console.log(val.idcard);
-  policeShow.value = false;
-  if (policeType.value === POLICE_TYPE.min) {
-    policeForm.value.police[policeIndex.value].dutyPoliceName = val.jyname;
-    policeForm.value.police[policeIndex.value].dutyPoliceNo = val.jycode;
-    policeForm.value.police[policeIndex.value].idcard = val.idcard;
-  } else if (policeType.value === POLICE_TYPE.fu) {
-    policeForm.value.auxPolice[policeIndex.value].dutyPoliceName = val.jyname;
-    policeForm.value.auxPolice[policeIndex.value].dutyPoliceNo = val.jycode;
-    policeForm.value.auxPolice[policeIndex.value].idcard = val.idcard;
-  }
 };
 const onConfirmQuestion = (val: any) => {
   // console.log(val);
   questionShow.value = false;
-  if (policeType.value === POLICE_TYPE.min) {
-    policeForm.value.police[policeIndex.value].questionName = val.name;
-    policeForm.value.police[policeIndex.value].questionTypeId = val.id;
-    policeForm.value.police[policeIndex.value].scoreNum = val.score;
-    policeForm.value.police[policeIndex.value].scoreBasic = val.labels_txt;
-    policeForm.value.police[policeIndex.value].scoreBasicId = val.ids_txt;
-  } else if (policeType.value === POLICE_TYPE.fu) {
-    policeForm.value.auxPolice[policeIndex.value].questionName = val.name;
-    policeForm.value.auxPolice[policeIndex.value].questionTypeId = val.id;
-    policeForm.value.auxPolice[policeIndex.value].scoreNum = val.score;
-    policeForm.value.auxPolice[policeIndex.value].scoreBasic = val.labels_txt;
-    policeForm.value.auxPolice[policeIndex.value].scoreBasicId = val.ids_txt;
-  }
+  const { name = "", id = "", score = "", labels_txt = "", ids_txt = "" } = val;
+  formData.value[policeKey.value][policeIndex.value].questionName = name;
+  formData.value[policeKey.value][policeIndex.value].questionTypeId = id;
+  formData.value[policeKey.value][policeIndex.value].scoreNum = score;
+  formData.value[policeKey.value][policeIndex.value].scoreBasic = labels_txt;
+  formData.value[policeKey.value][policeIndex.value].scoreBasicId = ids_txt;
 };
 const changeTimePop = (key: "queTime" | "scoreTime") => {
   timeKey.value = key;
@@ -293,7 +312,7 @@ const changeTimePop = (key: "queTime" | "scoreTime") => {
             <module-box
               class="mb-[10px]"
               title="责任民警"
-              v-for="(item, ind) in policeForm.police"
+              v-for="(item, ind) in formData.police"
               :key="ind"
             >
               <template v-slot:icon>
@@ -309,14 +328,14 @@ const changeTimePop = (key: "queTime" | "scoreTime") => {
                 v-model="item.dutyPoliceName"
                 name="dutyPoliceNo"
                 :rules="
-                  policeForm.auxPolice.filter(v => v.dutyPoliceName).length > 0
+                  formData.auxPolice?.filter(v => v.dutyPoliceName).length > 0
                     ? []
                     : [{ required: true, message: '请选择' }]
                 "
                 :class="{
                   'is-required':
-                    policeForm.auxPolice.filter(v => v.dutyPoliceName)
-                      .length === 0
+                    formData.auxPolice?.filter(v => v.dutyPoliceName).length ===
+                    0
                 }"
                 label="责任民警"
                 placeholder="责任民警"
@@ -364,7 +383,7 @@ const changeTimePop = (key: "queTime" | "scoreTime") => {
             <module-box
               class="mb-[10px]"
               title="责任辅警"
-              v-for="(item, ind) in policeForm.auxPolice"
+              v-for="(item, ind) in formData.auxPolice"
               :key="ind"
             >
               <template v-slot:icon>
@@ -379,13 +398,13 @@ const changeTimePop = (key: "queTime" | "scoreTime") => {
               <van-field
                 v-model="item.dutyPoliceName"
                 :rules="
-                  policeForm.police.filter(v => v.dutyPoliceName).length > 0
+                  formData.police?.filter(v => v.dutyPoliceName).length > 0
                     ? []
                     : [{ required: true, message: '请选择' }]
                 "
                 :class="{
                   'is-required':
-                    policeForm.police.filter(v => v.dutyPoliceName).length === 0
+                    formData.police?.filter(v => v.dutyPoliceName).length === 0
                 }"
                 name="police"
                 label="责任辅警"
@@ -481,7 +500,8 @@ const changeTimePop = (key: "queTime" | "scoreTime") => {
 
     <!-- 责任民警/辅警 -->
     <police-popup
-      :show-picker="policeShow"
+      v-if="policeShow"
+      v-model:model-value="formData[policeKey][policeIndex].idcard"
       :org-id="formData.dutyOrgId"
       :police-type="policeType"
       @onCancel="policeShow = false"
@@ -497,7 +517,6 @@ const changeTimePop = (key: "queTime" | "scoreTime") => {
     <!-- 部门 -->
     <org-popup
       v-if="orgShow"
-      :show-picker="orgShow"
       v-model:model-value="formData[orgKey]"
       @onCancel="orgShow = false"
       @onConfirm="onConfirmOrg"
@@ -505,7 +524,6 @@ const changeTimePop = (key: "queTime" | "scoreTime") => {
     <!-- 记分条款 -->
     <question-popup
       v-if="questionShow"
-      :show-picker="questionShow"
       :search="true"
       @onCancel="questionShow = false"
       @onConfirm="onConfirmQuestion"

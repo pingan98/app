@@ -1,5 +1,5 @@
 <script lang="ts" name="PolicePopup" setup>
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref } from "vue";
 import { getPoliceByOrgId } from "@/api/tCarUser";
 import { showFailToast } from "vant";
 import { toMap } from "@/utils";
@@ -7,6 +7,8 @@ import { toMap } from "@/utils";
 const list = ref<any>([]);
 const mapList = ref<any>({});
 const visible = ref(false);
+const selectedValue = ref([]);
+const loading = ref(true);
 const customFieldName = {
   text: "jyname",
   value: "idcard"
@@ -20,9 +22,9 @@ const props = defineProps({
     type: String,
     default: ""
   },
-  showPicker: {
-    type: Boolean,
-    default: false
+  modelValue: {
+    type: String,
+    default: ""
   }
 });
 const emit = defineEmits<{
@@ -38,28 +40,29 @@ const cancelFn = () => {
   visible.value = false;
   emit("onCancel");
 };
-watch(
-  () => props.showPicker,
-  val => {
-    if (val) {
-      visible.value = val;
-
-      getData();
-    }
-  }
-);
+onMounted(() => {
+  getData();
+});
 const getData = () => {
   if (!props.orgId) {
     showFailToast("请选择部门");
     return false;
   }
+  visible.value = true;
+  selectedValue.value = [props.modelValue];
 
-  getPoliceByOrgId({ orgId: props.orgId, type: props.policeType }).then(
-    ({ data }) => {
+  getPoliceByOrgId({
+    orgId: props.orgId as string,
+    type: props.policeType as string
+  })
+    .then(({ data }) => {
+      loading.value = false;
       list.value = data;
       mapList.value = toMap(data, "idcard");
-    }
-  );
+    })
+    .catch(err => {
+      loading.value = false;
+    });
 };
 </script>
 
@@ -67,6 +70,8 @@ const getData = () => {
   <van-popup v-model:show="visible" round position="bottom" @closed="cancelFn">
     <van-picker
       v-if="list.length"
+      :loading="loading"
+      v-model="selectedValue"
       show-toolbar
       :columns="list"
       @confirm="confirmFn"

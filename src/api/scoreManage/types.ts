@@ -12,14 +12,14 @@ export interface Query extends PageQuery {
  *
  */
 export interface PoliceMan {
-  dutyOrgId: "";
-  dutyOrgName: "";
-  dutyPoliceName: "";
-  dutyPoliceNo: "";
-  idcard: "";
-  scoreNum: "";
-  questionName: "";
-  questionTypeId: "";
+  dutyOrgId: string;
+  dutyOrgName: string;
+  dutyPoliceName: string;
+  dutyPoliceNo: string;
+  idcard: string;
+  scoreNum: string;
+  questionName: string;
+  questionTypeId: string;
   scoreType?: string;
 }
 /**
@@ -30,14 +30,15 @@ export interface Form {
   dutyOrgName: string; // 所在部门
   dutyOrgId: string;
   dutyPoliceName?: string;
+  dutyPoliceNo?: string;
   scoreBasic?: string;
   scoreDesc?: string;
   inputOrgId: string; // 记分部门
   inputOrgName: string; // 记分部门
   queTime: string | Date;
   scoreTime: string | Date; // 记分时间
-  police?: PoliceMan[];
-  auxPolice?: PoliceMan[];
+  police?: any[];
+  auxPolice?: any[];
 }
 /**
  * 列表展示

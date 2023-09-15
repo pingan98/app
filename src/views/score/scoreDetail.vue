@@ -23,7 +23,7 @@ const removeFn = async () => {
   });
   await removeScoreManage({ id: route.params.id as string });
   showSuccessToast("删除成功");
-  await router.push("/score");
+  await router.back();
 };
 </script>
 
@@ -97,7 +97,7 @@ const removeFn = async () => {
       </div>
     </div>
 
-    <!--<div class="bottom-action flex justify-between">
+    <div class="bottom-action flex justify-between">
       <van-button
         round
         block
@@ -117,7 +117,7 @@ const removeFn = async () => {
       >
         编 辑
       </van-button>
-    </div>-->
+    </div>
   </div>
 </template>
 
@@ -140,7 +140,7 @@ const removeFn = async () => {
     border-radius: 4px;
     margin-top: -1px;
     transform: translateX(-20px);
-    background: linear-gradient(top, #a9d6ff 0%, #58aeff 100%);
+    background: linear-gradient(to bottom, #a9d6ff 0%, #58aeff 100%);
   }
 }
 .duty-list {

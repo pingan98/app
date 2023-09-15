@@ -143,15 +143,15 @@ const defaultProps = {
 
 const selectValue = ref<any>(undefined);
 // 节点点击事件(单选的情况)
-function handleNodeClick(node: any) {
+function handleNodeClick(data: any) {
   // console.log("handleNodeClick-----------");
-  // console.log(node);
-  if (node.childNodes?.length) return; // 不是最后一级节点就不操作
+  // console.log(data);
+  if (data.child?.length) return; // 不是最后一级节点就不操作
   if (props.checkType === "multiple") return; // 多选模式下也不操作
-  selectValue.value = node.id;
+  selectValue.value = data.id;
 
-  const sss = treeRef.value.getNode(node);
-  getCheckedKeys(sss, node);
+  const node = treeRef.value.getNode(data);
+  getCheckedKeys(node, data);
 }
 
 // 筛选函数
@@ -172,9 +172,9 @@ function handleClickRadio(node: Node, data: any, e: any) {
   if (!props.leafOnly) {
     e.stopPropagation();
   } else {
+    getCheckedKeys(node, data);
     e.stopPropagation(true);
   }
-  getCheckedKeys(node, data);
 }
 const emit = defineEmits(["update:modelValue"]);
 watch(
@@ -190,11 +190,12 @@ let tempIds = [] as any[];
 // 递归拿到parent信息
 const defGetParent = (node: any, labels: any, ids: any) => {
   // console.log(node);
-  tempObj = node.parent;
-  labels.unshift(node.label);
-  ids.unshift(node.id);
 
-  if (node.parent) {
+  if (node.parent && node.label) {
+    tempObj = node.parent;
+    labels.unshift(node.label);
+    ids.unshift(node.id);
+
     defGetParent(tempObj, tempLabels, tempIds);
   }
 };
@@ -213,16 +214,10 @@ const getCheckedKeys = (node: any, data: any) => {
     ...data
   };
 
+  // 释放递归临时变量
   tempObj = {};
   tempLabels = [];
   tempIds = [];
-  // return {
-  //   labels: tempLabels,
-  //   labels_txt: tempLabels.join("-"),
-  //   ids: tempIds,
-  //   ids_txt: tempIds.join("-"),
-  //   ...data
-  // };
 };
 // 向外暴露
 defineExpose({

@@ -4,8 +4,8 @@ const visible = ref(false);
 const cQuestionRef = ref<any>(null);
 const props = defineProps({
   modelValue: {
-    type: [Array, String]
-    // required: true
+    type: String,
+    default: ""
   },
   isType: {
     type: String,
