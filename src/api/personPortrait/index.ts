@@ -9,10 +9,11 @@ import type { AxiosPromise } from "axios";
 // import qs from "qs";
 import { http } from "@/utils/http";
 
+const prefix = "/moveSecondaryScreen/";
 // 个人画像列表
 export function getGRHX(params: any): AxiosPromise {
   return http.request({
-    url: "/secondaryScreen/getGRHX",
+    url: prefix + "getGRHX",
     method: "get",
     params
   });
@@ -21,7 +22,7 @@ export function getGRHX(params: any): AxiosPromise {
 // 单位画像列表
 export function getDWHX(params: any): AxiosPromise {
   return http.request({
-    url: "/secondaryScreen/getDWHX",
+    url: prefix + "getDWHX",
     method: "get",
     params
   });
@@ -30,7 +31,7 @@ export function getDWHX(params: any): AxiosPromise {
 // 个人画像 & 单位画像
 export function getZJ(params: any): AxiosPromise {
   return http.request({
-    url: "/secondaryScreen/getZJ",
+    url: prefix + "getZJ",
     method: "get",
     params
   });
@@ -39,7 +40,7 @@ export function getZJ(params: any): AxiosPromise {
 // 个人画像 记分
 export function getPerScoreList(params: any): AxiosPromise {
   return http.request({
-    url: "/secondaryScreen/getPerScoreList",
+    url: prefix + "getPerScoreList",
     method: "get",
     params
   });
@@ -48,7 +49,7 @@ export function getPerScoreList(params: any): AxiosPromise {
 // 单位画像 违规违纪
 export function getBreakRuleScore(params: any): AxiosPromise {
   return http.request({
-    url: "/secondaryScreen/getBreakRuleScore",
+    url: prefix + "getBreakRuleScore",
     method: "get",
     params
   });
@@ -57,7 +58,7 @@ export function getBreakRuleScore(params: any): AxiosPromise {
 // 单位画像 信访投诉
 export function getXfTsNumRep(params: any): AxiosPromise {
   return http.request({
-    url: "/secondaryScreen/getXfTsNumRep",
+    url: prefix + "getXfTsNumRep",
     method: "get",
     params
   });
@@ -66,7 +67,7 @@ export function getXfTsNumRep(params: any): AxiosPromise {
 // 单位画像 信访投诉列表查询
 export function getXfTsListRep(params: any) {
   return http.request({
-    url: "/secondaryScreen/getXfTsListRep",
+    url: prefix + "getXfTsListRep",
     method: "get",
     params
   });
@@ -75,7 +76,7 @@ export function getXfTsListRep(params: any) {
 // 单位画像 饮酒报备
 export function getYJBBDW(params: any) {
   return http.request({
-    url: "/secondaryScreen/getYJBBDW",
+    url: prefix + "getYJBBDW",
     method: "get",
     params
   });

@@ -3,7 +3,7 @@ import qs from "qs";
 import { http } from "@/utils/http";
 import type { Query } from "@/api/tCarAlarm/types";
 
-const prefix = "/TCarAlarm/";
+const prefix = "/moveTCarAlarm/";
 
 // 获取警员数据
 export function getTCarAlarmPage(data: Query): AxiosPromise {

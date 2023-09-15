@@ -4,7 +4,7 @@ import { http } from "@/utils/http";
 import type { Query } from "@/api/queOrder/types";
 import type { ReportFrom } from "@/api/tWarnInfo/types";
 
-const prefix = "/QueOrder/";
+const prefix = "/moveQueOrder/";
 
 // 问题交办表分页查询
 export function getQueOrderPage(data: Query): AxiosPromise {

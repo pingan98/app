@@ -3,7 +3,7 @@ import qs from "qs";
 import { http } from "@/utils/http";
 import type { Query, Form, Key } from "./types";
 import { ContentTypeEnum } from "@/enums/requestEnum";
-const prefix = "/ScoreManage/";
+const prefix = "/moveScoreManage/";
 
 // 新增记分管理
 export function addScoreManage(data: Form): AxiosPromise {

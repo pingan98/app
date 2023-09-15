@@ -3,7 +3,7 @@ import qs from "qs";
 import { http } from "@/utils/http";
 import type { Form, Key, Query, WarnDeal } from "@/api/tWarnInfo/types";
 
-const prefix = "/TWarnInfo/";
+const prefix = "/moveTWarnInfo/";
 
 // 分页
 export function getTWarnInfoPage(data: Query): AxiosPromise {
