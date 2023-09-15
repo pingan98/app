@@ -1,5 +1,5 @@
 <script lang="ts" name="QuestionPopup" setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 const visible = ref(false);
 const cQuestionRef = ref<any>(null);
 const props = defineProps({
@@ -27,6 +27,7 @@ const props = defineProps({
 });
 const emit = defineEmits<{
   (e: "onCancel"): void;
+  (e: "update:modelValue", val: any): void;
   (e: "onConfirm", val: any): void;
 }>();
 
@@ -41,9 +42,17 @@ const confirmFn = () => {
 };
 const cancelFn = () => {
   visible.value = false;
-  cQuestionRef.value!.resetChecked();
+  // cQuestionRef.value!.resetChecked();
   emit("onCancel");
 };
+
+const checkedNode = ref<any>(props.modelValue);
+/*watch(
+  () => checkedNode.value,
+  val => {
+    emit("update:modelValue", val);
+  }
+);*/
 </script>
 
 <template>
@@ -65,6 +74,7 @@ const cancelFn = () => {
     <div class="popup-body">
       <c-question-type
         ref="cQuestionRef"
+        v-model:model-value="checkedNode"
         :is-type="props.isType"
         :leaf-only="props.leafOnly"
         :search="props.search"

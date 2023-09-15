@@ -63,7 +63,7 @@ interface Tree {
 
 const props = defineProps({
   modelValue: {
-    type: [Array, String]
+    type: String
     // required: true
   },
   isType: {
@@ -92,13 +92,22 @@ const mapTreeData = ref<any>({});
 const checkedData = ref<any>({});
 
 // 回显
-const setCheckedKeys = () => {
-  treeRef.value!.setCheckedKeys(props.modelValue, false);
+const setCheckedNodes = () => {
+  if (JSON.stringify(mapTreeData.value) !== "{}") {
+    const arr = props.modelValue!.split(",").map((item: any) => {
+      return mapTreeData.value[item];
+    });
+    treeRef.value!.setCheckedNodes(arr);
+  }
 };
 onMounted(() => {
   getInit();
   if (props.modelValue) {
-    setCheckedKeys();
+    if (props.checkType === "multiple") {
+      setCheckedNodes();
+    } else {
+      selectValue.value = props.modelValue;
+    }
   }
 });
 // 递归数据变成扁平化对象

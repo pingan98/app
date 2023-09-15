@@ -158,7 +158,7 @@ const submitFn = () => {
     ...formatPolice(police, POLICE_TYPE.min),
     ...formatPolice(auxPolice, POLICE_TYPE.fu)
   ];
-  console.log(detailsList);
+  // console.log(detailsList);
   const serve = {
     detailsList,
     scoreTime: scoreTime,
@@ -170,7 +170,7 @@ const submitFn = () => {
   // showSuccessToast("已提交");
   // refreshPage();
 
-  /*formRef.value
+  formRef.value
     ?.validate()
     .then(() => {
       // console.log("通过");
@@ -186,7 +186,7 @@ const submitFn = () => {
     .catch(err => {
       //验证失败
       showFailToast("请正确填写信息");
-    });*/
+    });
 };
 
 const addFn = (type: "police" | "auxPolice") => {
@@ -242,11 +242,11 @@ const onConfirmOrg = (val: any) => {
 const changePolice = (type: string, index: number, popType?: string) => {
   policeType.value = type;
   policeIndex.value = index;
+  policeKey.value = type === POLICE_TYPE.min ? "police" : "auxPolice";
 
   if (popType === "question") {
     questionShow.value = true;
   } else {
-    policeKey.value = type === POLICE_TYPE.min ? "police" : "auxPolice";
     policeShow.value = true;
   }
 };
@@ -524,6 +524,7 @@ const changeTimePop = (key: "queTime" | "scoreTime") => {
     <!-- 记分条款 -->
     <question-popup
       v-if="questionShow"
+      v-model:model-value="formData[policeKey][policeIndex].questionTypeId"
       :search="true"
       @onCancel="questionShow = false"
       @onConfirm="onConfirmQuestion"

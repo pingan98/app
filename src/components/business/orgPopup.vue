@@ -47,12 +47,12 @@ const cancelFn = () => {
 };
 
 const checkedNode = ref<any>(props.modelValue);
-watch(
+/*watch(
   () => checkedNode.value,
   val => {
     emit("update:modelValue", val);
   }
-);
+);*/
 </script>
 
 <template>
