@@ -14,7 +14,7 @@ export function loginApi(data: LoginData): AxiosPromise<LoginResult> {
   formData.append("password", data.password);
 
   return http.request({
-    url: "/moveLogin",
+    url: "/login",
     method: "post",
     data: formData,
     headers: {

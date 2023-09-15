@@ -11,7 +11,6 @@ import {
   getScoreManageDetail,
   editScoreManage
 } from "@/api/scoreManage";
-import { NUMBERREG } from "@/const/reg";
 import { refreshPage } from "@/utils";
 
 const route = useRoute();
@@ -29,12 +28,6 @@ const questionShow = ref(false);
 const policeIndex = ref<number>(0);
 const policeType = ref("-1");
 const formRef = ref<FormInstance>();
-
-// 表单校验
-const scoreNumRules: FieldRule[] = [
-  { required: true, message: "请输入分值" },
-  { pattern: NUMBERREG, message: "请输入数字" }
-];
 
 const formData = ref<Form>({
   scoreTime: "",
@@ -153,31 +146,36 @@ const formatPolice = (data: any, scoreType: string) => {
 };
 
 const submitFn = () => {
-  const { scoreTime, queTime, police, auxPolice, ...form } = formData.value;
-  const detailsList = [
-    ...formatPolice(police, POLICE_TYPE.min),
-    ...formatPolice(auxPolice, POLICE_TYPE.fu)
-  ];
-  // console.log(detailsList);
-  const serve = {
-    detailsList,
-    scoreTime: scoreTime,
-    queTime: queTime,
-    ...form
-  };
-  console.log(serve);
-
-  // showSuccessToast("已提交");
-  // refreshPage();
-
   formRef.value
     ?.validate()
     .then(() => {
+      const { scoreTime, queTime, police, auxPolice, ...form } = formData.value;
+      const detailsList = [
+        ...formatPolice(police, POLICE_TYPE.min),
+        ...formatPolice(auxPolice, POLICE_TYPE.fu)
+      ];
+      // console.log(detailsList);
+      const serve = {
+        detailsList,
+        scoreTime: scoreTime,
+        queTime: queTime,
+        ...form
+      };
+      // console.log(serve);
+      // refreshPage();
+      let fn = addScoreManage;
+      if (pageType.value === "edit") {
+        fn = editScoreManage;
+      }
       // console.log("通过");
-      addScoreManage(serve).then((code: any, msg?: string) => {
+      fn(serve).then((code: any, msg?: string) => {
         if (code) {
           showSuccessToast("已提交");
-          router.replace("/score");
+          if (pageType.value !== "edit") {
+            router.back();
+          } else {
+            router.go(-2);
+          }
         } else {
           if (msg) showFailToast(msg);
         }
@@ -240,15 +238,19 @@ const onConfirmOrg = (val: any) => {
 };
 
 const changePolice = (type: string, index: number, popType?: string) => {
-  policeType.value = type;
-  policeIndex.value = index;
-  policeKey.value = type === POLICE_TYPE.min ? "police" : "auxPolice";
-
   if (popType === "question") {
     questionShow.value = true;
   } else {
+    if (!formData.value.dutyOrgName) {
+      showFailToast("请选择部门");
+      return;
+    }
     policeShow.value = true;
   }
+
+  policeType.value = type;
+  policeIndex.value = index;
+  policeKey.value = type === POLICE_TYPE.min ? "police" : "auxPolice";
 };
 const onConfirmPolice = (val: any) => {
   policeShow.value = false;
@@ -362,7 +364,11 @@ const changeTimePop = (key: "queTime" | "scoreTime") => {
               />
               <van-field
                 v-model="item.scoreNum"
-                :rules="item.dutyPoliceName ? scoreNumRules : []"
+                :rules="
+                  item.dutyPoliceName
+                    ? [{ required: true, message: '请输入' }]
+                    : []
+                "
                 :class="{ 'is-required': !!item.dutyPoliceName }"
                 name="scoreNum"
                 label="分值"

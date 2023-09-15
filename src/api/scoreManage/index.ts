@@ -33,6 +33,9 @@ export function removeScoreManage(data: Key): AxiosPromise {
   return http.request({
     url: prefix + "removeScoreManage",
     method: "delete",
+    headers: {
+      "Content-Type": ContentTypeEnum.JSON
+    },
     data
   });
 }
