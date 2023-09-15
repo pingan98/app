@@ -15,6 +15,7 @@ import homeBanner3 from "@/assets/homeSwipe/ad3@3x.png";
 const images = [homeBanner1, homeBanner2, homeBanner3];
 const testRole = [
   { name: "陈俊文", policeNo: "cjw" },
+  { name: "派出所", policeNo: "pcs" },
   { name: "jsdc ", policeNo: "jsdc " }
 ];
 const showPicker = ref(false);
@@ -144,7 +145,7 @@ const getCautionList = async () => {
           @load="getCautionList"
         >
           <material-item
-            @click="$router.push(`/caution/detail/${item.id}`)"
+            @click="$router.push(`/caution/detail/${item.id}?from=home`)"
             v-for="(item, ind) in listData"
             :key="ind"
             :item="item"

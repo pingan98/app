@@ -75,7 +75,11 @@ const removeFn = async () => {
         <img :src="item.attachFullPath" alt="" />
       </div>
     </div>
-    <div class="bottom-action flex justify-between">
+    <!-- 从首页过来的不显示操作 -->
+    <div
+      class="bottom-action flex justify-between"
+      v-if="route.query.from !== 'home'"
+    >
       <template v-if="detailData?.warnState === CAUTION_STATUS.draft">
         <div class="flex flex-col items-center" @click="removeFn">
           <van-icon name="delete-o" size="26" />
@@ -133,7 +137,7 @@ const removeFn = async () => {
 .caution-detail-page {
   padding: 50px 16px 86px;
   background: #ffffff;
-  min-height: calc(100vh - 64px);
+  min-height: 100vh;
   .title-box {
     font-size: 18px;
     margin-bottom: 8px;

@@ -11,12 +11,14 @@ import { getWarnInfoDetail, postWarnDeal } from "@/api/tWarnInfo";
 import { formatTime, toList } from "@/utils";
 import { showFailToast, showSuccessToast } from "vant";
 import { QK_TYPE, QK_TYPE_TXT, WARN_STATUS } from "@/const";
+import { getTCarAlarmPage } from "@/api/tCarAlarm";
 const route = useRoute();
 const router = useRouter();
 const detailData = ref<Form>();
 const isEdit = ref(false);
 const pageTitle = ref("");
 const qkArr = toList(QK_TYPE, QK_TYPE_TXT);
+const relateData = ref<any>([]);
 const IS_ORDER = "0";
 onMounted(() => {
   getInit();
@@ -28,12 +30,18 @@ const formData = ref({
 });
 const getInit = async () => {
   const { warnState } = route.query;
-  console.log(warnState);
+  // console.log(warnState);
   pageTitle.value =
     warnState === WARN_STATUS.reviewed ? "审核" : (route.meta.title as string);
   isEdit.value = warnState === WARN_STATUS.reviewed;
   const res = await getWarnInfoDetail({ id: route.params.id as string });
   detailData.value = { ...res.data };
+  const { data } = await getTCarAlarmPage({
+    page: 1,
+    size: 20,
+    id: route.params.id as string
+  });
+  relateData.value = data.records || [];
 };
 const getColor = () => {
   const obj = {
@@ -136,7 +144,7 @@ const submitFn = (isOrder: string) => {
             <label class="label">预警地点</label>
             <span>{{ detailData?.warnAddredd }}</span>
           </div>
-          <div class="info-item">
+          <div class="info-item" v-if="relateData.length">
             <van-button
               round
               block

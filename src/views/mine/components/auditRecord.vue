@@ -24,8 +24,7 @@ const sourceName = {
 const searchForm = ref<Query>({
   page: 1,
   size: 20,
-  state: ASSIGN_STATUS.archive,
-  dutyPeopleName: userStore?.userInfo?.name
+  state: ASSIGN_STATUS.archive
 });
 const onLoad = async () => {
   const res = await getQueOrderPage(searchForm.value);

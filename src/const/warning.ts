@@ -52,3 +52,13 @@ export const DISPOSAL_METHOD_TXT = {
   [DISPOSAL_METHOD.p_p_j_y]: "批评教育",
   [DISPOSAL_METHOD.other]: "其他"
 };
+
+export const REVIEW_TYPE = {
+  pass: "1",
+  reject: "0"
+};
+
+export const REVIEW_TYPE_TXT = {
+  [REVIEW_TYPE.pass]: "通过",
+  [REVIEW_TYPE.reject]: "拒绝"
+};

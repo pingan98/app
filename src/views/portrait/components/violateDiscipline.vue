@@ -41,6 +41,10 @@ const setBeanData = () => {
 const getData = (params: any) => {
   getBreakRuleScore(params).then(data => {
     beanLocal = data || {};
+
+    tabArr[0].score = data?.mjTotalScore || 0;
+    tabArr[1].score = data?.fjTotalScore || 0;
+
     setBeanData();
   });
 };
@@ -77,7 +81,7 @@ watch(
       >
         <div class="name">{{ item.label }}总记分</div>
         <div class="num">
-          {{ bean.score || 0 }}
+          {{ item.score || 0 }}
         </div>
       </div>
     </div>

@@ -2,7 +2,13 @@
 import { useRoute } from "vue-router";
 import ModuleBox from "@/components/business/moduleBox.vue";
 import { onMounted, ref } from "vue";
-import { ASSIGN_STATUS, DISPOSAL_METHOD_TXT, POLICE_TYPE_TXT } from "@/const";
+import {
+  ASSIGN_STATUS,
+  DISPOSAL_METHOD_TXT,
+  POLICE_TYPE_TXT,
+  REVIEW_TYPE,
+  REVIEW_TYPE_TXT
+} from "@/const";
 import type { Form } from "@/api/tWarnInfo/types";
 import { formatTime } from "@/utils";
 import { orderDetail } from "@/api/queOrder";
@@ -21,6 +27,19 @@ const getDisposalPeople = (data: any) => {
     const txt = [DISPOSAL_METHOD_TXT[v.dealType]].join();
     return { ...v, txt, policeTypeTxt: POLICE_TYPE_TXT[v.policeType] };
   });
+};
+const isShowDeal = (data: any) => {
+  return ![ASSIGN_STATUS.pending].includes(data.state);
+};
+const isShowApprove = (data: any) => {
+  if (
+    !(
+      !data.approveResult &&
+      ![ASSIGN_STATUS.pending, ASSIGN_STATUS.review].includes(data.state)
+    )
+  ) {
+    return ![ASSIGN_STATUS.pending, ASSIGN_STATUS.review].includes(data.state);
+  }
 };
 const getInit = async () => {
   const { data } = await orderDetail({ orderId: route.params.id as string });
@@ -50,7 +69,8 @@ const getInit = async () => {
       },
       approve: {
         ...defRow,
-        ...approve
+        ...approve,
+        approveResult1: approve.approveResult || REVIEW_TYPE.pass
       }
     };
   });
@@ -61,7 +81,6 @@ const getInit = async () => {
       approve: { ...defRow }
     });
   }
-  tmp.isLggbTxt = String(tmp.isLggb) === "1" ? "是" : "否";
   detailData.value = { ...tmp };
 };
 </script>
@@ -107,81 +126,88 @@ const getInit = async () => {
         </div>
       </module-box>
 
-      <module-box
-        title="处理信息"
-        class="mb-[10px]"
-        bg="from-[#d0f7ff] to-[#f7fdff]"
-        v-for="(item, ind) in processList"
-        :key="ind"
-      >
-        <template v-slot:icon>
-          <img src="@/assets/norisk_icon@3x.png" alt="" />
-        </template>
-        <div class="info-line-box">
-          <div class="info-item">
-            <label class="label">处理情况</label>
-            <span>{{ item.deal?.dealStatue }}</span>
-          </div>
-          <div class="info-item">
-            <label class="label">处理时间</label>
-            <span>{{ formatTime(item.deal?.inputTime) }}</span>
-          </div>
-          <div class="table-info-item">
-            <div class="label">追责人员</div>
-            <div class="drink-module">
-              <div class="drink-module_row is-header">
-                <div class="drink-module_col">人员类型</div>
-                <div class="drink-module_col">警员姓名</div>
-                <div class="drink-module_col">拟处置方式</div>
-              </div>
-              <div class="drink-module_table">
-                <template v-if="getDisposalPeople(item.deal).length">
-                  <div
-                    class="drink-module_row van-hairline--bottom"
-                    :key="peopleIndex"
-                    v-for="(peopleItem, peopleIndex) in getDisposalPeople(
-                      item.deal
-                    )"
-                  >
-                    <div class="drink-module_col">
-                      {{ peopleItem.policeTypeTxt }}
+      <template v-for="(item, ind) in processList" :key="ind">
+        <module-box
+          v-if="isShowDeal(item.deal)"
+          title="处理信息"
+          class="mb-[10px]"
+          bg="from-[#d0f7ff] to-[#f7fdff]"
+          :key="`deal_${ind}`"
+        >
+          <template v-slot:icon>
+            <img src="@/assets/norisk_icon@3x.png" alt="" />
+          </template>
+          <div class="info-line-box">
+            <div class="info-item">
+              <label class="label">处理情况</label>
+              <span>{{ item.deal?.dealStatue }}</span>
+            </div>
+            <div class="info-item">
+              <label class="label">处理时间</label>
+              <span>{{ formatTime(item.deal?.inputTime) }}</span>
+            </div>
+            <div class="table-info-item">
+              <div class="label">追责人员</div>
+              <div class="drink-module">
+                <div class="drink-module_row is-header">
+                  <div class="drink-module_col">人员类型</div>
+                  <div class="drink-module_col">警员姓名</div>
+                  <div class="drink-module_col">拟处置方式</div>
+                </div>
+                <div class="drink-module_table">
+                  <template v-if="getDisposalPeople(item.deal).length">
+                    <div
+                      class="drink-module_row van-hairline--bottom"
+                      :key="peopleIndex"
+                      v-for="(peopleItem, peopleIndex) in getDisposalPeople(
+                        item.deal
+                      )"
+                    >
+                      <div class="drink-module_col">
+                        {{ peopleItem.policeTypeTxt }}
+                      </div>
+                      <div class="drink-module_col">
+                        {{ peopleItem.policeName }}
+                      </div>
+                      <div class="drink-module_col">{{ peopleItem.txt }}</div>
                     </div>
-                    <div class="drink-module_col">
-                      {{ peopleItem.policeName }}
-                    </div>
-                    <div class="drink-module_col">{{ peopleItem.txt }}</div>
-                  </div>
-                </template>
-                <div v-else class="text-center">暂无数据</div>
+                  </template>
+                  <div v-else class="text-center">暂无数据</div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </module-box>
+        </module-box>
 
-      <module-box title="审核信息" class="mb-[10px]">
-        <template v-slot:icon>
-          <img src="@/assets/risk_icon@3x.png" alt="" />
-        </template>
-        <div class="info-line-box">
-          <div class="info-item">
-            <label class="label">审核结果</label>
-            <span>{{ detailData?.approveResultTxt }}</span>
+        <module-box
+          title="审核信息"
+          class="mb-[10px]"
+          :key="`approve_${ind}`"
+          v-if="isShowApprove(item.approve)"
+        >
+          <template v-slot:icon>
+            <img src="@/assets/risk_icon@3x.png" alt="" />
+          </template>
+          <div class="info-line-box">
+            <div class="info-item">
+              <label class="label">审核结果</label>
+              <span>{{ REVIEW_TYPE_TXT[item.approve?.approveResult1] }}</span>
+            </div>
+            <div class="info-item">
+              <label class="label">审核时间</label>
+              <span>{{ formatTime(item.approve?.inputTime) }}</span>
+            </div>
+            <div class="info-item">
+              <label class="label">是否列管跟办</label>
+              <span>{{ item.approve?.isLggb === "1" ? "是" : "否" }}</span>
+            </div>
+            <div class="info-item">
+              <label class="label">审核意见</label>
+              <span>{{ item.approve?.approveDesc }}</span>
+            </div>
           </div>
-          <div class="info-item">
-            <label class="label">审核时间</label>
-            <span>{{ formatTime(detailData?.inputTime) }}</span>
-          </div>
-          <div class="info-item">
-            <label class="label">是否列管跟办</label>
-            <span>{{ detailData?.isLggbTxt }}</span>
-          </div>
-          <div class="info-item">
-            <label class="label">审核意见</label>
-            <span>{{ detailData?.approveDesc }}</span>
-          </div>
-        </div>
-      </module-box>
+        </module-box>
+      </template>
     </div>
   </div>
 </template>
