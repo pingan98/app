@@ -62,3 +62,15 @@ export const REVIEW_TYPE_TXT = {
   [REVIEW_TYPE.pass]: "通过",
   [REVIEW_TYPE.reject]: "拒绝"
 };
+
+export const HANDLE_TYPE = {
+  true: "1",
+  partTrue: "2",
+  false: "0"
+};
+
+export const HANDLE_TYPE_TXT = {
+  [HANDLE_TYPE.true]: "属实",
+  [HANDLE_TYPE.partTrue]: "部分属实",
+  [HANDLE_TYPE.false]: "不属实"
+};

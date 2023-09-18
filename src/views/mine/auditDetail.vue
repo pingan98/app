@@ -7,7 +7,8 @@ import {
   DISPOSAL_METHOD_TXT,
   POLICE_TYPE_TXT,
   REVIEW_TYPE,
-  REVIEW_TYPE_TXT
+  REVIEW_TYPE_TXT,
+  HANDLE_TYPE_TXT
 } from "@/const";
 import type { Form } from "@/api/tWarnInfo/types";
 import { formatTime } from "@/utils";
@@ -138,6 +139,10 @@ const getInit = async () => {
             <img src="@/assets/norisk_icon@3x.png" alt="" />
           </template>
           <div class="info-line-box">
+            <div class="info-item">
+              <label class="label">核查结果</label>
+              <span>{{ HANDLE_TYPE_TXT[item.deal?.isTrue] }}</span>
+            </div>
             <div class="info-item">
               <label class="label">处理情况</label>
               <span>{{ item.deal?.dealStatue }}</span>

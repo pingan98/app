@@ -51,9 +51,11 @@ function refreshData(params: any) {
           {{ item.label }}
         </span>
       </div>
-      <transition name="van-fade">
-        <component :params="searchForm" :is="compName" />
-      </transition>
+      <!--先取消过度效果 页面会闪一下-->
+      <!--因为两个元素过渡的时候，两个页面都被渲染出来了，new按照文档流布局在old的下方，old过渡结束，隐藏，new的布局从old下方一下子飞到顶部，造成闪烁。-->
+      <!--<transition name="van-fade">-->
+      <component :params="searchForm" :is="compName" />
+      <!--</transition>-->
     </div>
   </div>
 </template>

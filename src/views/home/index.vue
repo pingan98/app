@@ -1,17 +1,20 @@
-<script setup lang="ts">
+<script setup lang="ts" name="Home">
 import { reactive, ref } from "vue";
 import { useUserStore } from "@/store/modules/user";
 import { showSuccessToast } from "vant";
-const userStore = useUserStore();
 import MaterialItem from "@/views/caution/components/materialItem.vue";
 import type { LoginData } from "@/api/auth/types";
 import type { Query, List } from "@/api/warnMaterial/types";
 import { getWarnMaterialPage } from "@/api/warnMaterial";
 import { CAUTION_STATUS } from "@/const/warnMaterial";
+
 import empty from "@/assets/empty@3x.png";
 import homeBanner1 from "@/assets/homeSwipe/ad1@3x.png";
 import homeBanner2 from "@/assets/homeSwipe/ad2@3x.png";
 import homeBanner3 from "@/assets/homeSwipe/ad3@3x.png";
+
+const userStore = useUserStore();
+
 const images = [homeBanner1, homeBanner2, homeBanner3];
 const testRole = [
   { name: "陈俊文", policeNo: "cjw" },
