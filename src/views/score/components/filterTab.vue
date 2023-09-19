@@ -31,9 +31,7 @@
       @click="onTabChange(TAB_TYPE.time)"
     >
       <div class="filter-tab_txt">
-        <template v-if="filterTabData.startTime && filterTabData.endTime"
-          >{{ filterTabData.startTime }}~{{ filterTabData.endTime }}</template
-        ><template v-else>时间</template>
+        {{ formatTime().length ? formatTime().join("~") : "时间" }}
         <van-icon class="filter-tab_icon" name="play" />
       </div>
     </div>
@@ -78,7 +76,11 @@
 
             <!-- 部门 -->
             <template v-if="tabActive === TAB_TYPE.unit">
-              <c-select-tree-org checkType="single" ref="cOrgRef" />
+              <c-select-tree-org
+                checkType="single"
+                ref="cOrgRef"
+                v-model:model-value="unitLocal"
+              />
             </template>
           </div>
 
@@ -88,8 +90,16 @@
             :tabs="['开始日期', '结束日期']"
           >
             <template v-slot:toolbar></template>
-            <van-date-picker v-model="startTime" :min-date="minDate" />
-            <van-date-picker v-model="endTime" :min-date="minDate" />
+            <van-date-picker
+              v-model="startTime"
+              :min-date="minDate"
+              :max-date="maxDate"
+            />
+            <van-date-picker
+              v-model="endTime"
+              :min-date="minDate"
+              :max-date="maxDate"
+            />
           </van-picker-group>
         </div>
       </div>
@@ -103,15 +113,18 @@ import { ref, watch } from "vue";
 import dayjs from "dayjs";
 import { toList } from "@/utils";
 import { POLICE_TYPE, POLICE_TYPE_TXT } from "@/const";
+import { showToast } from "vant";
 
-const emit = defineEmits(["onSearch"]);
+const emit = defineEmits(["onFilter"]);
 const props = defineProps({
   type: {
     type: String,
     default: "job" // TAB_TYPE.unit | TAB_TYPE.job
   }
 });
+// 临时变量
 const jobLocal = ref<any>(null);
+const unitLocal = ref<any>(null);
 
 const filterTabData = ref<any>({});
 const startTime = ref(dayjs().format("YYYY-MM-DD").split("-"));
@@ -129,38 +142,48 @@ const tabActive = ref("");
 const showPopup = ref(false);
 
 // 职务
-const jobData = ref<any>([]);
+const jobData = toList(POLICE_TYPE, POLICE_TYPE_TXT);
 
 // 时间
 const minDate = dayjs().subtract(10, "year").toDate();
+const maxDate = dayjs().add(10, "year").toDate();
 function onTabChange(code: string) {
   if (code === tabActive.value) return false;
   tabActive.value = code;
 
   showPopup.value = true;
 }
-const getDutyList = () => {
-  jobData.value = toList(POLICE_TYPE, POLICE_TYPE_TXT);
-  jobData.value.unshift({
-    label: "全部",
-    code: ""
-  });
-};
 function resetTab() {
   cOrgRef.value?.resetChecked();
   filterTabData.value = {};
   endTime.value = dayjs().format("YYYY-MM-DD").split("-");
   startTime.value = dayjs().format("YYYY-MM-DD").split("-");
   jobLocal.value = null;
+  unitLocal.value = null;
 }
 function onPopupClose(type: string) {
   if (type === "confirm") {
-    filterTabData.value.scoreType = jobLocal.value;
+    if (tabActive.value === TAB_TYPE.time) {
+      const _startDate = dayjs(startTime.value.join("-"));
+      const _endDate = dayjs(endTime.value.join("-"));
+      if (_startDate.isAfter(_endDate)) {
+        showToast("结束日期不能早于开始日期");
+        return false;
+      }
+      filterTabData.value.startTime = _startDate.toString();
+      filterTabData.value.endTime = _endDate.toString();
+    }
 
-    if (cOrgRef.value) {
-      const { orgId, orgName } = cOrgRef.value!.getCheckedKeys();
-      filterTabData.value.dutyOrgId = orgId;
-      filterTabData.value.dutyOrgName = orgName;
+    if (tabActive.value === TAB_TYPE.unit) {
+      if (cOrgRef.value) {
+        const { orgId, orgName } = cOrgRef.value!.getCheckedKeys();
+        filterTabData.value.dutyOrgId = orgId;
+        filterTabData.value.dutyOrgName = orgName;
+      }
+    }
+
+    if (tabActive.value === TAB_TYPE.job) {
+      filterTabData.value.scoreType = jobLocal.value;
     }
 
     emitChange();
@@ -170,12 +193,8 @@ function onPopupClose(type: string) {
 }
 
 function formatTime(format = "YYYY-MM-DD") {
-  if (startTime.value.length && endTime.value.length) {
-    const stime = startTime.value.join("-");
-    const etime = endTime.value.join("-");
-    return [dayjs(stime).format(format), dayjs(etime).format(format)];
-  }
-  return [];
+  const { startTime, endTime } = filterTabData.value;
+  return [startTime, endTime].filter(v => v).map(v => dayjs(v).format(format));
 }
 
 function emitChange() {
@@ -183,23 +202,17 @@ function emitChange() {
 
   if (formatTime().length) {
     const [startTime, endTime] = formatTime();
-    filterTabData.value.startTime = startTime;
-    filterTabData.value.endTime = endTime;
     params.startTime = dayjs(startTime).format("YYYY-MM-DD 00:00:00");
     params.endTime = dayjs(endTime).format("YYYY-MM-DD 23:59:59");
   }
 
   delete params.dutyOrgName;
-  emit("onSearch", params);
+  emit("onFilter", params);
 }
 
 function onChoseJob(code: string) {
   jobLocal.value = code;
 }
-
-onMounted(() => {
-  getDutyList();
-});
 
 defineExpose({
   resetTab

@@ -35,8 +35,8 @@ const getDutyList = () => {
     code: ""
   });
 };
-const onLoad = async (data?: any) => {
-  const res = await getScoreManagePage({ ...searchForm.value, ...data });
+const onLoad = async () => {
+  const res = await getScoreManagePage(searchForm.value);
   listData.value.push(...res!.rows);
 
   if (listData.value.length === res.total) {
@@ -46,11 +46,18 @@ const onLoad = async (data?: any) => {
   }
   loading.value = false;
 };
-const onSearch = (data: any) => {
+const onSearch = () => {
   listData.value = [];
   searchForm.value.page = 1;
 
-  onLoad(data);
+  onLoad();
+};
+const onFilter = (data: any) => {
+  listData.value = [];
+  searchForm.value = { ...searchForm.value, ...data };
+  searchForm.value.page = 1;
+
+  onLoad();
 };
 const onClear = () => {
   searchForm.value.page = 1;
@@ -86,7 +93,7 @@ const onCancel = () => {
           @cancel="onCancel"
         />
       </form>
-      <filter-tab @onSearch="onSearch" ref="filterRef" />
+      <filter-tab @onFilter="onFilter" ref="filterRef" />
     </div>
 
     <!-- 列表 -->
