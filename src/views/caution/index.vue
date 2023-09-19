@@ -1,5 +1,5 @@
 <script lang="ts" name="Caution" setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { toList } from "@/utils";
 import { showConfirmDialog, showFailToast, showSuccessToast } from "vant";
 import { CAUTION_STATUS, CAUTION_STATUS_TXT } from "@/const/warnMaterial";
@@ -12,8 +12,10 @@ import {
 } from "@/api/warnMaterial";
 import type { List, Query } from "@/api/warnMaterial/types";
 import { useUserStore } from "@/store/modules/user";
+import { useRouteParamsStore } from "@/store/modules/routeParams";
 
 const userStore = useUserStore();
+const routeParamsStore = useRouteParamsStore();
 const route = useRoute();
 
 const judgeRole = userStore.getSomeMenu("warnMaterial");
@@ -65,6 +67,17 @@ const getType = (type: string) => {
     [CAUTION_STATUS.draft]: "上架"
   };
   return temp[type] || "";
+};
+onMounted(() => {
+  formatParams();
+});
+const formatParams = () => {
+  const { name, params } = routeParamsStore.getParams();
+  if (name === "Caution") {
+    const cloneParams = JSON.parse(JSON.stringify(params));
+    searchForm.value.warnState = cloneParams.warnState;
+    routeParamsStore.resetParams();
+  }
 };
 const onLoad = async () => {
   try {
@@ -147,7 +160,12 @@ const removeFn = async () => {
           @clear="onClear"
         />
       </form>
-      <c-tab :tabs="tabs" @tabChange="tabChange" v-if="judgeRole" />
+      <c-tab
+        :tabs="tabs"
+        v-model:model-value="searchForm.warnState"
+        @tabChange="tabChange"
+        v-if="judgeRole"
+      />
     </div>
 
     <!-- 列表 -->

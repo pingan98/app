@@ -11,10 +11,12 @@ import {
 } from "@/api/warnMaterial";
 import { showConfirmDialog, showSuccessToast, type FormInstance } from "vant";
 import { useUserStore } from "@/store/modules/user";
+import { useRouteParamsStore } from "@/store/modules/routeParams";
 
 const route = useRoute();
 const router = useRouter();
 const userStore = useUserStore();
+const routeParamsStore = useRouteParamsStore();
 
 const judgeRole = userStore.getSomeMenu("warnMaterial");
 
@@ -41,7 +43,17 @@ const batchUpdate = async (warnState: string) => {
   });
   await batchUpdateWarnMaterial([detailData.value?.id as string], warnState);
   showSuccessToast(str + "成功");
-  await router.back();
+  returnPage();
+};
+const returnPage = () => {
+  routeParamsStore.setParams({
+    name: "Caution",
+    params: {
+      warnState: detailData.value?.warnState
+    }
+  });
+  router.replace("/caution");
+  router.go(-1);
 };
 const removeFn = async () => {
   await showConfirmDialog({
@@ -50,7 +62,7 @@ const removeFn = async () => {
   });
   await removeWarnMaterial([detailData.value!.id as string]);
   showSuccessToast("删除成功");
-  await router.back();
+  returnPage();
 };
 </script>
 

@@ -12,8 +12,11 @@ import {
 import { CAUTION_STATUS } from "@/const";
 import CFile from "@/components/business/cFile.vue";
 import { generateGuid } from "@/utils";
+import { useRouteParamsStore } from "@/store/modules/routeParams";
+
 const route = useRoute();
 const router = useRouter();
+const routeParamsStore = useRouteParamsStore();
 
 const timeShow = ref(false);
 const pageType = ref("");
@@ -63,11 +66,19 @@ const submitFn = (type: string, status?: string) => {
       }
       fn(serve).then(res => {
         showSuccessToast("已提交");
-        if (type !== "edit") {
+        routeParamsStore.setParams({
+          name: "Caution",
+          params: {
+            warnState: serve.warnState
+          }
+        });
+        router.replace("/caution");
+        router.go(-1);
+        /*if (type !== "edit") {
           router.back();
         } else {
           router.go(2);
-        }
+        }*/
       });
     })
     .catch(error => {

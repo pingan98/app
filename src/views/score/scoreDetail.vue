@@ -6,10 +6,13 @@ import { formatTime } from "@/utils";
 import type { Form } from "@/api/scoreManage/types";
 import { POLICE_TYPE_TXT } from "@/const";
 import { showConfirmDialog, showSuccessToast } from "vant";
+import { useUserStore } from "@/store/modules/user";
 
+const userStore = useUserStore();
 const route = useRoute();
 const router = useRouter();
 const detailData = ref<Form>();
+const judgeRole = userStore.getSomeMenu("warnMaterial");
 
 onMounted(async () => {
   const res = await getScoreManageDetail({ id: route.params.id as string });
@@ -97,7 +100,7 @@ const removeFn = async () => {
       </div>
     </div>
 
-    <div class="bottom-action flex justify-between">
+    <div class="bottom-action flex justify-between" v-if="judgeRole">
       <van-button
         round
         block

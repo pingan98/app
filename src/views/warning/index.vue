@@ -72,7 +72,12 @@ const onClear = () => {
           @clear.prevent.stop="onClear"
         />
       </form>
-      <c-tab :tabs="tabs" @tabChange="tabChange" v-if="judgeRole" />
+      <c-tab
+        :tabs="tabs"
+        v-model:model-value="searchForm.warnState"
+        @tabChange="tabChange"
+        v-if="judgeRole"
+      />
     </div>
 
     <div class="mx-[14px] my-[16px]">

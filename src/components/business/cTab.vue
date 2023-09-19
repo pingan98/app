@@ -1,17 +1,27 @@
 <script lang="ts" name="CTab" setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import type { Ref } from "vue";
 import type { ConstListType } from "@/types";
 
-defineProps<{
+const props = defineProps<{
   tabs: ConstListType;
+  modelValue: string | number;
 }>();
 
-defineEmits<{
+const emit = defineEmits<{
   (e: "tabChange", value: number | string): void;
+  (e: "update:modelValue", val: any): void;
 }>();
 
 const active: Ref<string | number> = ref("");
+
+watch(
+  () => active.value,
+  (val: any) => {
+    active.value = props.modelValue ? props.modelValue : active.value;
+    emit("update:modelValue", val);
+  }
+);
 </script>
 
 <template>
@@ -19,7 +29,7 @@ const active: Ref<string | number> = ref("");
     v-model:active="active"
     @click-tab="$emit('tabChange', $event.name)"
   >
-    <template v-for="(item, i) in tabs" :key="i">
+    <template v-for="(item, i) in props.tabs" :key="i">
       <van-tab :title="item.label" :name="item.code"></van-tab>
     </template>
   </van-tabs>

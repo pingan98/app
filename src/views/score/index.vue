@@ -7,8 +7,12 @@ import { getScoreManagePage } from "@/api/scoreManage";
 import type { Query, List } from "@/api/scoreManage/types";
 import { POLICE_TYPE, POLICE_TYPE_TXT } from "@/const";
 import FilterTab from "@/views/score/components/filterTab.vue";
+import { useUserStore } from "@/store/modules/user";
+
+const userStore = useUserStore();
 const route = useRoute();
 const offset = ref({ y: 550, x: -10 });
+const judgeRole = userStore.getSomeMenu("warnMaterial");
 // 加载中状态
 const loading = ref(false);
 // 是否完全加载完毕数据
@@ -20,6 +24,7 @@ const searchForm = ref<Query>({
 const filterRef = ref<any>(null);
 const listData = ref<List[]>([]);
 const jobType = ref<any>({});
+
 onMounted(() => {
   getDutyList();
 });
@@ -102,6 +107,7 @@ const onCancel = () => {
 
     <!-- 新增按钮 -->
     <van-floating-bubble
+      v-if="judgeRole"
       axis="xy"
       icon="plus"
       magnetic="x"
