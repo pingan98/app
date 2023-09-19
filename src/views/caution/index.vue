@@ -11,8 +11,12 @@ import {
   removeWarnMaterial
 } from "@/api/warnMaterial";
 import type { List, Query } from "@/api/warnMaterial/types";
+import { useUserStore } from "@/store/modules/user";
 
+const userStore = useUserStore();
 const route = useRoute();
+
+const judgeRole = userStore.getSomeMenu("warnMaterial");
 // 加载中状态
 const loading = ref(false);
 // 是否完全加载完毕数据
@@ -64,6 +68,8 @@ const getType = (type: string) => {
 };
 const onLoad = async () => {
   try {
+    // if (!judgeRole)
+    //   searchForm.value.createPoliceNo = userStore.userInfo?.policeNo;
     const res = await getWarnMaterialPage(searchForm.value);
     res!.rows.forEach((item: any) => {
       item.battchJson = item?.battchJson ? JSON.parse(item?.battchJson) : [];
@@ -127,7 +133,7 @@ const removeFn = async () => {
 </script>
 
 <template>
-  <div class="caution-page">
+  <div class="caution-page" :class="{ 'pb-[80px]': judgeRole }">
     <nav-bar :title="route.meta.title" />
 
     <!-- 搜索框 -->
@@ -141,7 +147,7 @@ const removeFn = async () => {
           @clear="onClear"
         />
       </form>
-      <c-tab :tabs="tabs" @tabChange="tabChange" />
+      <c-tab :tabs="tabs" @tabChange="tabChange" v-if="judgeRole" />
     </div>
 
     <!-- 列表 -->
@@ -178,7 +184,7 @@ const removeFn = async () => {
       </van-list>
     </div>
 
-    <div class="bottom-action flex justify-between">
+    <div class="bottom-action flex justify-between" v-if="judgeRole">
       <van-button
         v-if="!batchFlag"
         round
@@ -233,7 +239,7 @@ const removeFn = async () => {
 
     <!-- 新增按钮 -->
     <van-floating-bubble
-      v-if="!batchFlag"
+      v-if="!batchFlag && judgeRole"
       axis="xy"
       icon="plus"
       magnetic="x"
@@ -250,7 +256,6 @@ const removeFn = async () => {
 .caution-page {
   position: relative;
   padding-top: 46px;
-  padding-bottom: 80px;
 }
 .material-list {
   background: #ffffff;

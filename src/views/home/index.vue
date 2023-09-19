@@ -47,7 +47,7 @@ const onConfirm = async ({ selectedOptions }) => {
   loginData.value.username = selectedOptions[0].policeNo;
   // 登录
   userStore.login(loginData.value).then(() => {
-    userStore.getInfo();
+    userStore.setUserInfo();
     showSuccessToast("登录成功");
   });
 

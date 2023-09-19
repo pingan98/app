@@ -10,8 +10,13 @@ import {
   warnMaterialDetail
 } from "@/api/warnMaterial";
 import { showConfirmDialog, showSuccessToast, type FormInstance } from "vant";
+import { useUserStore } from "@/store/modules/user";
+
 const route = useRoute();
 const router = useRouter();
+const userStore = useUserStore();
+
+const judgeRole = userStore.getSomeMenu("warnMaterial");
 
 const detailData = ref<Form>();
 onMounted(async () => {
@@ -78,7 +83,7 @@ const removeFn = async () => {
     <!-- 从首页过来的不显示操作 -->
     <div
       class="bottom-action flex justify-between"
-      v-if="route.query.from !== 'home'"
+      v-if="route.query.from !== 'home' && judgeRole"
     >
       <template v-if="detailData?.warnState === CAUTION_STATUS.draft">
         <div class="flex flex-col items-center" @click="removeFn">

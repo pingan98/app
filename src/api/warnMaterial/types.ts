@@ -9,6 +9,7 @@ export interface Query extends PageQuery {
   upperUser?: string;
   times?: string[];
   createUser?: string;
+  createPoliceNo?: string;
 }
 // 图片列表
 export type Image = {

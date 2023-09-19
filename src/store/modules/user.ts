@@ -15,6 +15,7 @@ export const useUserStore = defineStore(
     // const accessToken = useStorage("accessToken", "");
     const accessToken = ref("");
     const userInfo = ref<UserInfo>();
+    const menuList = ref<any[]>();
 
     /**
      * 登录调用
@@ -35,12 +36,11 @@ export const useUserStore = defineStore(
           });
       });
     }
-    const getToken = (u: UserInfo) => {
+    const setUser = (u: UserInfo) => {
       userInfo.value = u;
     };
-
     // 获取信息(用户昵称、头像、角色集合、权限集合)
-    function getInfo() {
+    function setUserInfo() {
       return new Promise<UserInfo>((resolve, reject) => {
         getCurrentAccount()
           .then(({ data }) => {
@@ -49,6 +49,7 @@ export const useUserStore = defineStore(
               return reject("Verification failed, please Login again.");
             }
             setUser({ ...data });
+            setMenuList([...data.menuList] || []);
             resolve(data);
           })
           .catch(error => {
@@ -56,9 +57,13 @@ export const useUserStore = defineStore(
           });
       });
     }
-    const setUser = (u: UserInfo) => {
-      userInfo.value = u;
+    const getSomeMenu = (url: string) => {
+      return menuList.value?.some(item => item.url === url);
     };
+    const setMenuList = (v: any) => {
+      menuList.value = v;
+    };
+
     // 注销
     function logout() {
       return new Promise<void>((resolve, reject) => {
@@ -83,9 +88,11 @@ export const useUserStore = defineStore(
     return {
       accessToken,
       userInfo,
+      menuList,
       login,
-      getInfo,
+      setUserInfo,
       setUser,
+      getSomeMenu,
       logout,
       resetToken
     };

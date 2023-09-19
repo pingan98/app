@@ -6,7 +6,12 @@ import { WARN_STATUS, WARN_STATUS_TXT } from "@/const";
 import WarningItem from "@/views/warning/components/warningItem.vue";
 import type { List, Query } from "@/api/tWarnInfo/types";
 import { getTWarnInfoPage } from "@/api/tWarnInfo";
+import { useUserStore } from "@/store/modules/user";
+
 const route = useRoute();
+const userStore = useUserStore();
+
+const judgeRole = userStore.getSomeMenu("warnMaterial");
 // 加载中状态
 const loading = ref(false);
 // 是否完全加载完毕数据
@@ -14,7 +19,7 @@ const finished = ref(false);
 const searchForm = ref<Query>({
   page: 1,
   size: 20,
-  warnState: WARN_STATUS.reviewed
+  warnState: judgeRole ? WARN_STATUS.reviewed : WARN_STATUS.audited
 });
 const listData = ref<List[]>([]);
 const tabs = toList(WARN_STATUS, WARN_STATUS_TXT);
@@ -67,7 +72,7 @@ const onClear = () => {
           @clear.prevent.stop="onClear"
         />
       </form>
-      <c-tab :tabs="tabs" @tabChange="tabChange" />
+      <c-tab :tabs="tabs" @tabChange="tabChange" v-if="judgeRole" />
     </div>
 
     <div class="mx-[14px] my-[16px]">

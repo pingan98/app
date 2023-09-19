@@ -70,7 +70,7 @@ class Http {
               password: "M@123456"
             })
             .then(() => {
-              userStore.getInfo();
+              userStore.setUserInfo();
               // refreshPage();
             });
         } else if (res.code === false) {
