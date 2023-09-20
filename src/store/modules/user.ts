@@ -36,7 +36,7 @@ export const useUserStore = defineStore(
           });
       });
     }
-    const setUser = (u: UserInfo) => {
+    const setUser = (u: any) => {
       userInfo.value = u;
     };
     // 获取信息(用户昵称、头像、角色集合、权限集合)
@@ -49,7 +49,7 @@ export const useUserStore = defineStore(
               return reject("Verification failed, please Login again.");
             }
             setUser({ ...data });
-            setMenuList([...data.menuList] || []);
+            setMenuList(data.menuList || []);
             resolve(data);
           })
           .catch(error => {

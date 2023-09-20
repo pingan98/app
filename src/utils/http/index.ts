@@ -9,6 +9,10 @@ declare module "axios" {
   interface AxiosInstance {
     (config: AxiosRequestConfig): Promise<any>;
   }
+  interface AxiosResponse {
+    token: string;
+    // 这里追加你的参数
+  }
 }
 import { useUserStore } from "@/store/modules/user";
 import type { LoginData } from "@/api/auth/types";

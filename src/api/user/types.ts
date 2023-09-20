@@ -10,5 +10,5 @@ export interface UserInfo {
   powerOrgId?: string;
   roles?: string[];
   roleId?: string;
-  menuList?: string[] | number[];
+  menuList?: any[];
 }
