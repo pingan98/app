@@ -51,7 +51,9 @@ const onLoad = async () => {
       @load="onLoad"
     >
       <material-item
-        @click="$router.push(`/caution/detail/${item.warnId}`)"
+        @click="
+          $router.push(`/caution/detail/${item.warnId}?from=browseHistory`)
+        "
         v-for="(item, ind) in listData"
         :key="ind"
         :item="item"

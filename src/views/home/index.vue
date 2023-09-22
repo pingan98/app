@@ -1,5 +1,5 @@
 <script setup lang="ts" name="Home">
-import { reactive, ref } from "vue";
+import { reactive, ref, onMounted } from "vue";
 import { useUserStore } from "@/store/modules/user";
 import { showSuccessToast } from "vant";
 import MaterialItem from "@/views/caution/components/materialItem.vue";
@@ -41,6 +41,7 @@ const homeNav = reactive([
   { title: "警示教育", to: "Caution" },
   { title: "预警管理", to: "Warning" }
 ]);
+// 测试
 const onConfirm = async ({ selectedOptions }) => {
   console.log(selectedOptions);
   showPicker.value = false;
@@ -49,9 +50,26 @@ const onConfirm = async ({ selectedOptions }) => {
   userStore.login(loginData.value).then(() => {
     userStore.setUserInfo();
     showSuccessToast("登录成功");
+    // location.reload();
   });
 
   showPicker.value = false;
+};
+// 正式
+const onLogin = () => {
+  // console.log(window.nativeObj.getZjhm());
+  // 测试 330421196508134111
+  // 正式 window.nativeObj.getZjhm()
+  // 登录
+  userStore
+    .login({
+      username: window.nativeObj?.getZjhm() || ""
+    })
+    .then(() => {
+      userStore.setUserInfo();
+      showSuccessToast("登录成功");
+      // location.reload();
+    });
 };
 const getCautionList = async () => {
   try {
@@ -73,11 +91,31 @@ const getCautionList = async () => {
     finished.value = true;
   }
 };
+onMounted(() => {
+  // console.log("window--------------------------");
+  // console.log(window.nativeObj);
+  // console.log("window.nativeObj--------------------------");
+  // console.log(window.nativeObj);
+  // console.log("window.nativeObj.getUserInfo--------------------------");
+  // console.log(window.nativeObj.getUserInfo);
+  // console.log("window.nativeObj.getZjhm--------------------------");
+  // console.log(window.nativeObj.getZjhm());
+  // console.log("window.nativeObj.getUserId--------------------------");
+  // console.log(window.nativeObj.getUserId());
+  // const getUserInfo = window.nativeObj?.getUserInfo();
+  // localStorage.userIdCard = window.nativeObj?.getUserInfo();
+  // console.log("getUserId--------------------------");
+  // console.log(window.nativeObj?.getUserId());
+  // console.log("home----getUserInfo----------------");
+  // console.log(getUserInfo);
+  // showSuccessToast(getUserInfo);
+  // onLogin();
+});
 </script>
 
 <template>
   <div class="home-page">
-    <!-- 测试切换账号 -->
+    <!-- 测试切换账号 import.meta.env.VUE_APP_ENV === 'dev'-->
     <template v-if="true">
       <div class="user-sty" @click="showPicker = true">
         {{ userStore?.userInfo?.name }}

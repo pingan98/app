@@ -67,16 +67,16 @@ class Http {
           // token过期
           showFailToast(res.msg);
 
-          const userStore = useUserStore();
-          userStore
-            .login(<LoginData>{
-              username: userStore?.userInfo?.policeNo,
-              password: "M@123456"
-            })
-            .then(() => {
-              userStore.setUserInfo();
-              // refreshPage();
-            });
+          // const userStore = useUserStore();
+          // userStore
+          //   .login(<LoginData>{
+          //     username: userStore?.userInfo?.policeNo,
+          //     password: "M@123456"
+          //   })
+          //   .then(() => {
+          //     userStore.setUserInfo();
+          //     // refreshPage();
+          //   });
         } else if (res.code === false) {
           showFailToast(res.msg || "业务失败");
           return Promise.reject(res);

@@ -9,7 +9,7 @@ export interface LoginData {
   /**
    * 密码
    */
-  password: string;
+  password?: string;
 }
 /**
  * 登录响应

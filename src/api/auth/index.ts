@@ -1,7 +1,7 @@
 import type { AxiosPromise } from "axios";
 import type { LoginData, LoginResult } from "./types";
-import { ContentTypeEnum } from "@/enums/requestEnum";
 import { http } from "@/utils/http";
+import qs from "qs";
 /**
  * 登录API
  *
@@ -9,17 +9,10 @@ import { http } from "@/utils/http";
  * @returns
  */
 export function loginApi(data: LoginData): AxiosPromise<LoginResult> {
-  const formData = new FormData();
-  formData.append("username", data.username);
-  formData.append("password", data.password);
-
   return http.request({
     url: "/login",
     method: "post",
-    data: formData,
-    headers: {
-      "Content-Type": ContentTypeEnum.FORM_DATA
-    }
+    data: qs.stringify(data)
   });
 }
 

@@ -13,8 +13,9 @@ import mockDevServerPlugin from "vite-plugin-mock-dev-server";
 import vueSetupExtend from "vite-plugin-vue-setup-extend";
 import viteCompression from "vite-plugin-compression";
 import { createHtmlPlugin } from "vite-plugin-html";
-import esbuild from 'rollup-plugin-esbuild'
-import legacy from '@vitejs/plugin-legacy'
+import esbuild from "rollup-plugin-esbuild";
+import legacy from "@vitejs/plugin-legacy";
+import { noAttr } from "./trasnformHtml";
 
 // 当前工作目录路径
 const root: string = process.cwd();
@@ -54,16 +55,18 @@ export default defineConfig(({ mode }) => {
         }
       }),
       esbuild({
-        target: 'chrome64',
+        target: "chrome64",
         loaders: {
-          '.vue': 'js',
-          '.ts': 'js'
+          ".vue": "js",
+          ".ts": "js"
         }
       }),
       legacy({
-        targets: ['defaults', 'not IE 11']
-      })
+        targets: ["defaults", "not IE 11"]
+      }),
+      noAttr()
     ],
+
     resolve: {
       alias: {
         "@": fileURLToPath(new URL("./src", import.meta.url))
@@ -88,8 +91,8 @@ export default defineConfig(({ mode }) => {
           assetFileNames: "static/[ext]/[name]-[hash].[ext]"
         }
       },
-      minify: 'terser',
-      target: ['edge90', 'chrome64', 'firefox90', 'safari15'], // 适配低版本浏览器
+      minify: "terser",
+      target: ["edge90", "chrome64", "firefox90", "safari15"] // 适配低版本浏览器
     }
   };
 });
