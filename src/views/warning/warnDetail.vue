@@ -17,6 +17,7 @@ const router = useRouter();
 const detailData = ref<Form>();
 const isEdit = ref(false);
 const pageTitle = ref("");
+const pageType = ref("");
 const qkArr = toList(QK_TYPE, QK_TYPE_TXT);
 const relateData = ref<any>([]);
 const IS_ORDER = "0";
@@ -53,6 +54,12 @@ const getColor = () => {
     return obj[detailData.value?.dealResult];
   else return "from-[#d0eaff] to-[#f9fbff]"; // 蓝色
 };
+const editFn = () => {
+  isEdit.value = true;
+  const { remark, dealResult } = detailData.value;
+  formData.value.remark = remark;
+  formData.value.dealResult = dealResult;
+};
 const submitFn = (isOrder: string) => {
   if (isOrder === IS_ORDER) {
     // const { dealResult, remark } = detailData.value;
@@ -70,7 +77,7 @@ const submitFn = (isOrder: string) => {
     .then(() => {
       const { dealResult, remark } = formData.value;
       const server = {
-        id: detailData.value.id,
+        id: detailData.value?.id as string,
         dealResult,
         remark,
         isOrder
@@ -227,23 +234,62 @@ const submitFn = (isOrder: string) => {
       </module-box>
     </div>
 
-    <div class="bottom-action flex justify-between" v-if="isEdit">
-      <van-button
-        round
-        block
-        @click="submitFn('0')"
-        v-if="formData.dealResult === QK_TYPE.true"
-      >
-        上 报
-      </van-button>
-      <van-button
-        round
-        block
-        color="linear-gradient(to right, #037CED, #02C2FA)"
-        @click="submitFn('1')"
-      >
-        保 存
-      </van-button>
+    <div class="bottom-action flex justify-between">
+      <!-- 已处理 -->
+      <template v-if="detailData?.warnState === WARN_STATUS.audited">
+        <van-button
+          v-if="!isEdit"
+          round
+          block
+          color="linear-gradient(to right, #037CED, #02C2FA)"
+          @click="editFn"
+        >
+          编 辑
+        </van-button>
+        <template v-else>
+          <van-button icon="revoke" round type="default" @click="isEdit = false"
+            >取消</van-button
+          >
+          <div class="flex">
+            <van-button
+              round
+              style="width: 100px"
+              @click="submitFn('0')"
+              v-if="formData.dealResult === QK_TYPE.true"
+            >
+              上 报
+            </van-button>
+            <van-button
+              round
+              style="width: 100px"
+              color="linear-gradient(to right, #037CED, #02C2FA)"
+              @click="submitFn('1')"
+            >
+              保 存
+            </van-button>
+          </div>
+        </template>
+      </template>
+
+      <!-- 待处理 -->
+      <template v-else>
+        <van-button
+          round
+          block
+          @click="submitFn('0')"
+          v-if="formData.dealResult === QK_TYPE.true"
+        >
+          上 报
+        </van-button>
+        <van-button
+          round
+          block
+          color="linear-gradient(to right, #037CED, #02C2FA)"
+          @click="submitFn('1')"
+        >
+          保 存
+        </van-button>
+      </template>
     </div>
   </div>
 </template>
