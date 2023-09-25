@@ -1,26 +1,21 @@
 <script setup lang="ts" name="Myself">
-import { useRoute } from "vue-router";
+import { useRoute, RouterLink, RouterView } from "vue-router";
 import { MINE_NAV, MINE_NAV_TXT } from "@/const";
 import { toList } from "@/utils";
-import { computed, ref } from "vue";
 import { useUserStore } from "@/store/modules/user";
-import BrowseHistory from "@/views/mine/components/browseHistory.vue";
-import UploadRecord from "@/views/mine/components/uploadRecord.vue";
-import AuditRecord from "@/views/mine/components/auditRecord.vue";
 
 const route = useRoute();
 const userStore = useUserStore();
 const species = MINE_NAV;
-const activeSpecies = ref<string>(species.audit);
 const speciesList = toList(MINE_NAV, MINE_NAV_TXT);
-const compName = computed(() => {
+const getRouterName = (code: any) => {
   const compNames = {
-    [species.audit]: AuditRecord,
-    [species.upload]: UploadRecord,
-    [species.history]: BrowseHistory
+    [species.audit]: "AuditRecord",
+    [species.upload]: "UploadRecord",
+    [species.history]: "BrowseHistory"
   };
-  return compNames[activeSpecies.value];
-});
+  return compNames[code];
+};
 </script>
 
 <template>
@@ -44,21 +39,19 @@ const compName = computed(() => {
     </div>
 
     <div class="nav-box">
-      <div
+      <router-link
         v-for="(item, ind) in speciesList"
         class="nav-item"
         :key="ind"
-        @click="activeSpecies = item.code"
-        :class="{ active: item.code === activeSpecies }"
+        :to="{ name: getRouterName(item.code) }"
+        exact
       >
         <div class="top-bg" :class="[`bg${ind + 1}`]"></div>
         <div>{{ item.label }}</div>
-      </div>
+      </router-link>
     </div>
 
-    <!--<transition name="van-fade">-->
-    <component :is="compName" />
-    <!--</transition>-->
+    <RouterView />
   </div>
 </template>
 
@@ -114,7 +107,7 @@ const compName = computed(() => {
           background: url("@/assets/footer@3x.png") no-repeat center / 100%;
         }
       }
-      &.active {
+      &.router-link-exact-active {
         border-radius: 10px;
         background: #e0f3ff;
         color: #1472f9;

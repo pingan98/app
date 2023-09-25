@@ -109,7 +109,25 @@ const routes: Array<RouteRecordRaw> = [
         path: "/mine",
         name: "Mine",
         component: () => import("@/views/mine/index.vue"),
-        meta: { title: "我的", noCache: true }
+        meta: { title: "我的", noCache: true },
+        redirect: "/mine/audit",
+        children: [
+          {
+            path: "audit",
+            name: "AuditRecord",
+            component: () => import("@/views/mine/components/auditRecord.vue")
+          },
+          {
+            path: "upload",
+            name: "UploadRecord",
+            component: () => import("@/views/mine/components/uploadRecord.vue")
+          },
+          {
+            path: "history",
+            name: "BrowseHistory",
+            component: () => import("@/views/mine/components/browseHistory.vue")
+          }
+        ]
       }
     ]
   }
