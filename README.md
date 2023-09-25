@@ -1,6 +1,6 @@
 ### 使用须知
-如果pnpm build 打包失败，可以换成pnpm build-only
-打完包看看dist/index.html里还有没有type="module"，如果有 执行`node .\handleDist.js`再把dist文件发后端
+如果pnpm build 打包失败，可以换成pnpm build-only   (只打包 不开启ts类型检查)
+打完包看看dist/index.html里还有没有type="module"，如果没有直接把dist文件发后端；如果有 执行`node .\handleDist.js`再把dist文件发后端
 
 
 <div align="center">
