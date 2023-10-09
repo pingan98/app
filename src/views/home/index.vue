@@ -1,5 +1,5 @@
 <script setup lang="ts" name="Home">
-import { reactive, ref, onMounted } from "vue";
+import { reactive, ref, onMounted, watch } from "vue";
 import { useUserStore } from "@/store/modules/user";
 import { showSuccessToast } from "vant";
 import MaterialItem from "@/views/caution/components/materialItem.vue";
@@ -13,6 +13,7 @@ import homeBanner1 from "@/assets/homeSwipe/ad1@3x.png";
 import homeBanner2 from "@/assets/homeSwipe/ad2@3x.png";
 import homeBanner3 from "@/assets/homeSwipe/ad3@3x.png";
 
+const env = import.meta.env.VITE_APP_ENV;
 const userStore = useUserStore();
 
 const images = [homeBanner1, homeBanner2, homeBanner3];
@@ -49,7 +50,7 @@ const onConfirm = async ({ selectedOptions }) => {
   // 登录
   userStore.login(loginData.value).then(() => {
     userStore.setUserInfo();
-    showSuccessToast("登录成功");
+    // showSuccessToast("登录成功");
     // location.reload();
   });
 
@@ -63,15 +64,17 @@ const onLogin = () => {
   // 登录
   userStore
     .login({
+      // username: "330421196508134111"
       username: window.nativeObj?.getZjhm() || ""
     })
     .then(() => {
       userStore.setUserInfo();
-      showSuccessToast("登录成功");
+      // showSuccessToast("登录成功");
       // location.reload();
     });
 };
 const getCautionList = async () => {
+  console.log(111);
   try {
     const res = await getWarnMaterialPage(materialForm.value);
     res!.rows.forEach((item: any) => {
@@ -109,14 +112,22 @@ onMounted(() => {
   // console.log("home----getUserInfo----------------");
   // console.log(getUserInfo);
   // showSuccessToast(getUserInfo);
-  // onLogin();
+  if (env === "prod") {
+    onLogin();
+  }
 });
+
+watch(
+  () => userStore.accessToken,
+  (newValue, oldValue) => {
+    if (newValue !== oldValue) getCautionList();
+  }
+);
 </script>
 
 <template>
   <div class="home-page">
-    <!-- 测试切换账号 import.meta.env.VUE_APP_ENV === 'dev'-->
-    <template v-if="true">
+    <template v-if="env === 'dev'">
       <div class="user-sty" @click="showPicker = true">
         {{ userStore?.userInfo?.name }}
       </div>
