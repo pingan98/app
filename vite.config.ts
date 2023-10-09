@@ -42,6 +42,7 @@ export default defineConfig(({ mode }) => {
         // 指定 symbolId 格式
         symbolId: "icon-[dir]-[name]"
       }),
+
       // 允许 setup 语法糖上添加组件名属性
       vueSetupExtend(),
       // 生产环境 gzip 压缩资源
