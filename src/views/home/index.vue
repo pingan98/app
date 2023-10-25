@@ -74,7 +74,6 @@ const onLogin = () => {
     });
 };
 const getCautionList = async () => {
-  console.log(111);
   try {
     const res = await getWarnMaterialPage(materialForm.value);
     res!.rows.forEach((item: any) => {
