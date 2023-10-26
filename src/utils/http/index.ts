@@ -97,7 +97,14 @@ class Http {
           config.url = tempArr[index].resourceAddress;
 
           // config["resourceId"] = tempArr[index].resourceId;
-          config.headers["resourceId"] = tempArr[index].resourceId;
+          config.headers["resOrgId"] = tempArr[index].resourceRegionalismCode;
+          config.headers["resId"] = tempArr[index].resourceld;
+          config.headers["userCredential"] = encodeURI(
+            window.nativeObj.getUserCredential()
+          );
+          config.headers["appCredential"] = encodeURI(
+            window.nativeObj.getAppCredential()
+          );
         }
         // NProgress.start();
         const userStore = useUserStore();
@@ -105,6 +112,14 @@ class Http {
         if (userStore.accessToken) {
           config.headers["Access-Token"] = userStore.accessToken;
         }
+        console.log("config------------");
+        console.log(config);
+        console.log("userCredential-----------");
+        console.log(window.nativeObj.getUserCredential());
+        console.log("encodeURI userCredential 编码-----------");
+        console.log(encodeURI(window.nativeObj.getUserCredential()));
+        console.log("appCredential-----------");
+        console.log(window.nativeObj.getAppCredential());
         return config;
       },
       (error: AxiosError) => {
