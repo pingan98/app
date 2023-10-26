@@ -98,7 +98,7 @@ class Http {
 
           // config["resourceId"] = tempArr[index].resourceId;
           config.headers["resOrgId"] = tempArr[index].resourceRegionalismCode;
-          config.headers["resId"] = tempArr[index].resourceld;
+          config.headers["resId"] = tempArr[index].resourceId;
           config.headers["userCredential"] = encodeURI(
             window.nativeObj.getUserCredential()
           );
@@ -112,14 +112,6 @@ class Http {
         if (userStore.accessToken) {
           config.headers["Access-Token"] = userStore.accessToken;
         }
-        console.log("config------------");
-        console.log(config);
-        console.log("userCredential-----------");
-        console.log(window.nativeObj.getUserCredential());
-        console.log("encodeURI userCredential 编码-----------");
-        console.log(encodeURI(window.nativeObj.getUserCredential()));
-        console.log("appCredential-----------");
-        console.log(window.nativeObj.getAppCredential());
         return config;
       },
       (error: AxiosError) => {
