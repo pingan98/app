@@ -19,7 +19,7 @@ import type { LoginData } from "@/api/auth/types";
 
 import NProgress from "../progress";
 import { showFailToast, showSuccessToast, showConfirmDialog } from "vant";
-import { refreshPage } from "@/utils";
+import { generateGuid, refreshPage } from "@/utils";
 
 const env = import.meta.env.VITE_APP_ENV;
 
@@ -65,9 +65,6 @@ class Http {
           const tempArr = window.nativeObj.getAddress()
             ? JSON.parse(window.nativeObj.getAddress())
             : [];
-          // console.log("getAddress start-----------");
-          // console.log(tempArr);
-          // console.log("getAddress end-----------");
           const index = tempArr.findIndex(
             (item: string | any, index: number) => {
               const arr = item.resourceAddress.split("/proxy/")[1].split("/");
@@ -82,21 +79,10 @@ class Http {
               }
             }
           );
-          // console.log('index');
-          // console.log(tempArr[index]);
-          showConfirmDialog({
-            title: "url" + index,
-            message: tempArr[index].resourceAddress || "没找到地址"
-          })
-            .then(() => {
-              // on confirm
-            })
-            .catch(() => {
-              // on cancel
-            });
           config.url = tempArr[index].resourceAddress;
 
           // config["resourceId"] = tempArr[index].resourceId;
+          config.headers["messageId"] = generateGuid();
           config.headers["resOrgId"] = tempArr[index].resourceRegionalismCode;
           config.headers["resId"] = tempArr[index].resourceId;
           config.headers["userCredential"] = encodeURI(
