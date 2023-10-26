@@ -115,11 +115,15 @@ onMounted(() => {
     onLogin();
   }
 });
-
 watch(
   () => userStore.accessToken,
   (newValue, oldValue) => {
-    if (newValue !== oldValue) getCautionList();
+    if (listData.value.length) return;
+
+    listData.value = [];
+    materialForm.value.page = 1;
+    listData.value = [];
+    getCautionList();
   }
 );
 </script>

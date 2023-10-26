@@ -48,38 +48,55 @@ class Http {
           // 所有接口需要走总线那边 返回格式如下：(参考数组第一个)
           /*const tempArr = [
             {
-              resourceId: "330000000000-3-0100-00004774",
-              resourceRegionalismCode: "330000000000",
-              resourceServiceType: "20",
-              resourceAddress:
-                "http://20.65.212:1798/proxy/f5a00d6874408266a7014328f7004e39/user/getCurrentAccount"
-            },
-            {
               resourceId: "33000998000000-3-0100-00004774",
               resourceRegionalismCode: "330000000000",
               resourceServiceType: "20",
               resourceAddress:
-                "http://20.65.212:1798/proxy/f5a00d68744087776a7014328f7004e39/moveWarnMaterial/getWarnMaterialPage"
+                "http://20.65.212:1798/proxy/f5a00d68744087776a7014328f7004e39/moveWarnMaterial/removeWarnMaterial"
+            },
+            {
+              resourceId: "330000000000-3-0100-00004774",
+              resourceRegionalismCode: "330000000000",
+              resourceServiceType: "20",
+              resourceAddress:
+                "http://20.65.212:1798/proxy/f5a00d6874408266a7014328f7004e39/moveWarnMaterial/batchUpdateWarnMaterial"
             }
           ];*/
           const tempArr = window.nativeObj.getAddress()
             ? JSON.parse(window.nativeObj.getAddress())
             : [];
-          const index = tempArr.findIndex(
-            (item: string | any, index: number) => {
-              const arr = item.resourceAddress.split("/proxy/")[1].split("/");
-              const url = "/" + arr.splice(1).join("/");
+          /*showConfirmDialog({
+            title: "getAddress",
+            message: window.nativeObj.getAddress()
+          })
+            .then(() => {
+              // on confirm
+            })
+            .catch(() => {
+              // on cancel
+            });*/
 
-              if (["{", "}"].includes(url)) {
-                // 模糊匹配
-                if (url.includes(config.url) > -1) return index;
-              } else {
-                // 绝对匹配
-                if (url === config.url) return index;
-              }
+          const index = tempArr.findIndex((item: string | any) => {
+            const arr = item.resourceAddress.split("/proxy/")[1].split("/");
+            const url = "/" + arr.splice(1).join("/");
+
+            if (["{", "}"].includes(url)) {
+              return url.includes(config.url);
+            } else if (
+              config.url?.indexOf("?") > -1 &&
+              config.url.includes(url)
+            ) {
+              const queryUrl = config.url?.split("?")[1];
+              item.resourceAddress += queryUrl;
+              return config.url.includes(url);
+            } else {
+              return url === config.url;
             }
-          );
+          });
+          // console.log(index);
+
           config.url = tempArr[index].resourceAddress;
+          console.log(config.url);
 
           // config["resourceId"] = tempArr[index].resourceId;
           config.headers["messageId"] = generateGuid();
@@ -115,8 +132,7 @@ class Http {
         const res = response.data;
         if (res.status == "20000") {
           // token过期
-          showFailToast(res.msg);
-
+          // showFailToast(res.msg);
           // const userStore = useUserStore();
           // userStore
           //   .login(<LoginData>{
