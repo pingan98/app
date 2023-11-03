@@ -12,7 +12,7 @@ import { useUserStore } from "@/store/modules/user";
 const userStore = useUserStore();
 const route = useRoute();
 const offset = ref({ y: 550, x: -10 });
-const judgeRole = userStore.getSomeMenu("warnMaterial");
+const judgeRole = userStore.getSomeMenu("scoreManage");
 // 加载中状态
 const loading = ref(false);
 // 是否完全加载完毕数据
@@ -80,7 +80,7 @@ const onCancel = () => {
   <div class="score-page pt-[46px]">
     <nav-bar :title="route.meta.title" />
     <!-- 搜索框 -->
-    <div class="page-search">
+    <div class="page-search" v-if="judgeRole">
       <form action="/">
         <van-search
           v-model="searchForm.dutyPoliceName"

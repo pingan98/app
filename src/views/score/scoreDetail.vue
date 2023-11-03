@@ -12,11 +12,12 @@ const userStore = useUserStore();
 const route = useRoute();
 const router = useRouter();
 const detailData = ref<Form>();
-const judgeRole = userStore.getSomeMenu("warnMaterial");
+const judgeRole = userStore.getSomeMenu("scoreManage");
 
-onMounted(async () => {
-  const res = await getScoreManageDetail({ id: route.params.id as string });
-  detailData.value = { ...res.data };
+onMounted(() => {
+  getScoreManageDetail({ id: route.params.id as string }).then(({ data }) => {
+    detailData.value = data || {};
+  });
 });
 
 const removeFn = async () => {
