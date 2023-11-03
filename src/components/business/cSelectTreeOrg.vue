@@ -110,7 +110,7 @@ const defData = (arr: any) => {
   arr.forEach((item: any) => {
     mapTreeData.value[item.id] = { ...item };
     if (item?.children?.length) {
-      defData(item.children);
+      defData(item.children || []);
     }
   });
 };

@@ -1,7 +1,7 @@
 <script setup lang="ts" name="Home">
-import { reactive, ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useUserStore } from "@/store/modules/user";
-import { showSuccessToast } from "vant";
+import type { PickerOption } from "vant";
 import MaterialItem from "@/views/caution/components/materialItem.vue";
 import type { LoginData } from "@/api/auth/types";
 import type { Query, List } from "@/api/warnMaterial/types";
@@ -37,25 +37,36 @@ const materialForm = ref<Query>({
   size: 20,
   warnState: CAUTION_STATUS.listing
 });
-const homeNav = reactive([
-  { title: "记分管理", to: "Score" },
-  { title: "警示教育", to: "Caution" },
-  { title: "预警管理", to: "Warning" }
-]);
+
+const homeNav = ref<
+  {
+    title: string;
+    to: string;
+  }[]
+>([]);
 // 测试
-const onConfirm = async ({ selectedOptions }) => {
-  console.log(selectedOptions);
+const onConfirm = async ({
+  selectedOptions
+}: {
+  selectedOptions: PickerOption;
+}): Promise<void> => {
   showPicker.value = false;
   loginData.value.username = selectedOptions[0].policeNo;
   // 登录
   userStore.login(loginData.value).then(() => {
-    userStore.setUserInfo();
+    getUserInfo();
     // showSuccessToast("登录成功");
     // location.reload();
   });
 
   showPicker.value = false;
 };
+function getUserInfo() {
+  userStore.setUserInfo().then(res => {
+    console.log("getUserInfo res :>> ", res);
+  });
+}
+
 // 正式
 const onLogin = () => {
   // console.log(window.nativeObj.getZjhm());
@@ -65,10 +76,10 @@ const onLogin = () => {
   userStore
     .login({
       // username: "330421196508134111"
-      username: window.nativeObj?.getZjhm() || ""
+      username: window.nativeObj.getZjhm() || ""
     })
     .then(() => {
-      userStore.setUserInfo();
+      getUserInfo();
       // showSuccessToast("登录成功");
       // location.reload();
     });
@@ -111,6 +122,7 @@ onMounted(() => {
   // console.log("home----getUserInfo----------------");
   // console.log(getUserInfo);
   // showSuccessToast(getUserInfo);
+
   if (env === "prod") {
     onLogin();
   }
@@ -119,12 +131,25 @@ watch(
   () => userStore.accessToken,
   (newValue, oldValue) => {
     if (listData.value.length) return;
-
     listData.value = [];
     materialForm.value.page = 1;
     listData.value = [];
     getCautionList();
   }
+);
+
+watch(
+  () => userStore.menuList,
+  menuList => {
+    homeNav.value = [
+      { title: "记分管理", to: "Score" },
+      { title: "警示教育", to: "Caution" }
+    ];
+    if (userStore.getSomeMenu("warnManage")) {
+      homeNav.value.push({ title: "预警管理", to: "Warning" });
+    }
+  },
+  { immediate: true, deep: true }
 );
 </script>
 
@@ -157,7 +182,12 @@ watch(
       </div>
 
       <!-- nav -->
-      <van-grid clickable :column-num="3" class="home-nav" :border="false">
+      <van-grid
+        clickable
+        :column-num="homeNav.length"
+        class="home-nav"
+        :border="false"
+      >
         <van-grid-item
           :to="{ name: item.to }"
           v-for="(item, ind) in homeNav"

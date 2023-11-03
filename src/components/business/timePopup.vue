@@ -1,3 +1,10 @@
+<!--
+ * @Description: 
+ * @Author: 辰月
+ * @Date: 2023-09-11 13:41:23
+ * @LastEditTime: 2023-11-03 11:15:57
+ * @LastEditors: 辰月
+-->
 <script lang="ts" name="TimePopup" setup>
 import { onMounted, ref, watch } from "vue";
 import dayjs from "dayjs";
@@ -21,6 +28,7 @@ const props = defineProps({
 const emit = defineEmits<{
   (e: "onCancel"): void;
   (e: "update:modelValue", val: any): void;
+  (e: "onConfirm", val: string): void;
 }>();
 
 onMounted(() => {
@@ -29,18 +37,17 @@ onMounted(() => {
 });
 
 const getCurrentTime = (val?: string) => {
-  const date = val ? val : new Date();
-  const curTime = dayjs(date).format("YYYY-MM-DD HH:mm");
-  const timeArr = curTime.split(" ");
-  currentDate.value = timeArr[0].split("-");
-  currentTime.value = timeArr[1].split(":");
+  const curTime = dayjs(val || new Date());
+  currentDate.value = curTime.format("YYYY-MM-DD").split("-");
+  currentTime.value = curTime.format("HH:mm").split(":");
 };
 const onConfirm = () => {
   visible.value = false;
-  emit(
-    "update:modelValue",
-    currentDate.value.join("-") + " " + currentTime.value.join(":") + ":00"
-  );
+  const tmp = dayjs(
+    `${currentDate.value.join("-")} ${currentTime.value.join(":")}`
+  ).format("YYYY-MM-DD HH:mm:00");
+  emit("update:modelValue", tmp);
+  emit("onConfirm", tmp);
 };
 const onCancel = () => {
   visible.value = false;

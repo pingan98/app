@@ -31,7 +31,7 @@ const removeFn = async () => {
 </script>
 
 <template>
-  <div class="score-detail-page detail-bg">
+  <div class="score-detail-page detail-bg" v-if="detailData">
     <nav-bar :title="route.meta.title" />
 
     <div class="base-info-top card info-line-box">
@@ -56,31 +56,29 @@ const removeFn = async () => {
         <span>{{ formatTime(detailData?.scoreTime) }}</span>
       </div>
     </div>
-    <div class="score-desc card">
+    <!-- <div class="score-desc card">
       <module-box title="记分描述">
         <template v-slot:icon>
           <img src="@/assets/warning_icon@3x.png" alt="" />
         </template>
         <div class="p-[10px]">{{ detailData?.scoreDesc }}</div>
       </module-box>
-    </div>
+    </div> -->
 
     <!-- 责任人 -->
-    <div
-      class="duty-list card"
-      v-for="(item, ind) in detailData?.detailsList"
-      :key="ind"
-    >
+    <div class="duty-list card">
       <div
         class="job-box flex justify-center items-center"
-        :class="[`bg${item.scoreType}`]"
+        :class="[`bg${detailData?.scoreType}`]"
       >
         <img
           src="@/assets/police_hat_icon@3x.png"
           alt=""
           class="w-[16px] mr-[4px]"
         />
-        {{ POLICE_TYPE_TXT[item.scoreType] }}
+        {{
+          detailData?.scoreType ? POLICE_TYPE_TXT[detailData?.scoreType] : ""
+        }}
       </div>
 
       <div class="flex items-center">
@@ -88,15 +86,15 @@ const removeFn = async () => {
           <img src="@/assets/avatar_bg@3x.png" alt="" />
         </div>
         <div class="score-num">
-          <div class="name">{{ item.dutyPoliceName }}</div>
+          <div class="name">{{ detailData?.dutyPoliceName }}</div>
           <div class="num-box">
-            分值: <span class="num">{{ item.scoreNum }}</span>
+            分值: <span class="num">{{ detailData?.scoreNum }}</span>
           </div>
         </div>
       </div>
       <div class="score-clause">
         <div class="label">记分条款:</div>
-        <div class="desc">{{ item.scoreBasic }}</div>
+        <div class="desc">{{ detailData?.scoreBasic }}</div>
       </div>
     </div>
 

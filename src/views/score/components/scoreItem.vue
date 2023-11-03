@@ -1,3 +1,10 @@
+<!--
+ * @Description: 
+ * @Author: 辰月
+ * @Date: 2023-09-13 13:33:57
+ * @LastEditTime: 2023-11-01 11:03:42
+ * @LastEditors: 辰月
+-->
 <script lang="ts" name="ScoreItem" setup>
 import type { List } from "@/api/scoreManage/types";
 import { formatTime } from "@/utils";
@@ -62,7 +69,7 @@ const props = defineProps<{
         width: 0;
       }
       .time {
-        width: 67px;
+        flex-shrink: 0;
         color: var(--text-color2);
         font-size: 12px;
         flex-shrink: 0;

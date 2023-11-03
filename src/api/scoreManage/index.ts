@@ -50,7 +50,7 @@ export function getScoreManagePage(data: any): AxiosPromise {
 }
 
 // 记分管理详情
-export function getScoreManageDetail(data: Key): AxiosPromise {
+export function getScoreManageDetail(data: Key): AxiosPromise<Form> {
   return http.request({
     url: prefix + "getScoreManageDetail",
     method: "post",

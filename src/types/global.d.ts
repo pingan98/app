@@ -1,4 +1,23 @@
+/*
+ * @Description:
+ * @Author: 辰月
+ * @Date: 2023-09-09 09:56:03
+ * @LastEditTime: 2023-11-03 12:46:09
+ * @LastEditors: 辰月
+ */
 declare global {
+  interface INativeObj {
+    getZjhm: () => string;
+    getUserInfo: () => string;
+    getUserId: () => string;
+    getAddress: () => string;
+    getUserCredential: () => string;
+  }
+
+  interface Window {
+    nativeObj: INativeObj;
+  }
+
   /**
    * 分页查询参数
    */

@@ -1,9 +1,8 @@
 <script lang="ts" name="ScoreAdd" setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { POLICE_TYPE } from "@/const";
-import type { Form } from "@/api/scoreManage/types";
-import type { FormInstance, FieldRule } from "vant";
+import type { Form, IPolice, IScore } from "@/api/scoreManage/types";
+import { E_BASIC_TYPE, E_POLICE_TYPE } from "@/enums";
 import { showFailToast, showSuccessToast } from "vant";
 import dayjs from "dayjs";
 import {
@@ -11,278 +10,151 @@ import {
   getScoreManageDetail,
   editScoreManage
 } from "@/api/scoreManage";
-import { refreshPage } from "@/utils";
+
+import { useUserStore } from "@/store/modules/user";
+
+type IKeyTime = "queTime" | "scoreTime";
+type IKeyOrg = "dutyOrg" | "inputOrg";
+interface IOrg {
+  orgId: string;
+  orgName: string;
+  data: any;
+}
+
+const userStore = useUserStore();
 
 const route = useRoute();
 const router = useRouter();
 
-const pageType = ref("");
-const loading = ref(false);
-const timeShow = ref(false);
-const timeKey = ref<"queTime" | "scoreTime">();
-const orgShow = ref(false);
-const orgKey = ref<"dutyOrgId" | "inputOrgId">();
-const policeKey = ref<"police" | "auxPolice">();
-const policeShow = ref(false);
-const questionShow = ref(false);
-const policeIndex = ref<number>(0);
-const policeType = ref("-1");
-const formRef = ref<FormInstance>();
+enum TITLE_TYPE_TXT {
+  add = "新增",
+  edit = "编辑"
+}
 
+const title = ref(
+  TITLE_TYPE_TXT[route.query.type as keyof typeof TITLE_TYPE_TXT]
+);
+const showPopupByPolice = ref(false);
+const showPopupByScore = ref(false);
+const showPopupByTime = ref(false);
+const showPopupByOrg = ref(false);
+
+const loading = ref(false);
+
+const keyOrg = ref<IKeyOrg>("dutyOrg");
+const keyTime = ref<IKeyTime>("queTime");
+const time = ref();
+const org = ref();
 const formData = ref<Form>({
-  scoreTime: "",
-  queTime: "",
-  dutyOrgName: "",
-  dutyOrgId: "",
-  inputOrgId: "",
-  inputOrgName: "",
-  dutyPoliceName: "",
-  dutyPoliceNo: "",
-  police: [
-    {
-      dutyOrgId: "",
-      dutyOrgName: "",
-      dutyPoliceName: "",
-      dutyPoliceNo: "",
-      idcard: "",
-      scoreNum: "",
-      questionName: "",
-      questionTypeId: "",
-      scoreBasic: "",
-      scoreBasicId: ""
-    }
-  ],
-  auxPolice: [
-    {
-      dutyOrgId: "",
-      dutyOrgName: "",
-      dutyPoliceName: "",
-      dutyPoliceNo: "",
-      idcard: "",
-      scoreNum: "",
-      questionName: "",
-      questionTypeId: "",
-      scoreBasic: "",
-      scoreBasicId: ""
-    }
-  ]
+  queTime: dayjs().format("YYYY-MM-DD HH:mm:00"),
+  scoreTime: dayjs().format("YYYY-MM-DD HH:mm:00"),
+  inputOrgName: userStore.userInfo?.orgName,
+  inputOrgId: userStore.userInfo?.orgId,
+  dutyOrgId: userStore.userInfo?.orgId,
+  dutyOrgName: userStore.userInfo?.orgName,
+  scoreType: E_POLICE_TYPE.min,
+  basicType: E_BASIC_TYPE.score
 });
+
+const onChangePoliceType = () => {
+  formData.value = {
+    ...formData.value,
+    dutyPoliceName: "",
+    dutyPoliceNo: ""
+  };
+};
+
+const onChangeBasicType = () => {
+  formData.value = {
+    ...formData.value,
+    scoreBasic: "",
+    scoreBasicId: "",
+    scoreNum: ""
+  };
+};
+
+const openPopupByTime: (keyName: IKeyTime) => void = keyName => {
+  keyTime.value = keyName;
+  time.value = formData.value[keyName];
+  showPopupByTime.value = true;
+};
+
+const openPopupByOrg: (keyName: IKeyOrg) => void = keyName => {
+  keyOrg.value = keyName;
+  org.value = formData.value[`${keyName}Id`];
+  showPopupByOrg.value = true;
+};
+
+const onConfirmByTime = () => {
+  formData.value[keyTime.value] = time.value;
+};
+
+const onConfirmByOrg: (data: IOrg) => void = data => {
+  showPopupByOrg.value = false;
+  formData.value[`${keyOrg.value}Id`] = data.orgId;
+  formData.value[`${keyOrg.value}Name`] = data.orgName;
+};
+
+const onConfirmByPolice: (data: IPolice) => void = data => {
+  formData.value = {
+    ...formData.value,
+    dutyPoliceName: data.jyname,
+    dutyPoliceNo: data.jycode
+  };
+};
+
+const onConfirmByScore: (data: IScore) => void = data => {
+  formData.value = {
+    ...formData.value,
+    scoreBasic: data.labels_txt,
+    scoreBasicId: data.ids_txt,
+    scoreNum: data.score
+  };
+};
+
+const toSubmit = () => {
+  loading.value = true;
+  const fn = formData.value.id ? editScoreManage : addScoreManage;
+  fn(formData.value)
+    .then((code: any, msg?: string) => {
+      if (code) {
+        showSuccessToast("已提交");
+        router.back();
+      } else {
+        if (msg) showFailToast(msg);
+      }
+    })
+    .finally(() => {
+      loading.value = false;
+    });
+};
+
+const getData = () => {
+  getScoreManageDetail({ id: route.params.id as string }).then(({ data }) => {
+    const tmp = data || {};
+    // 提前设置这两个值 是为了防止触发单选框组的change, 从而清空值
+    formData.value.basicType = tmp.basicType;
+    formData.value.scoreType = tmp.scoreType;
+    tmp.queTime = dayjs(tmp.queTime).format("YYYY-MM-DD HH:mm:00");
+    tmp.scoreTime = dayjs(tmp.scoreTime).format("YYYY-MM-DD HH:mm:00");
+    nextTick(() => {
+      formData.value = tmp;
+    });
+  });
+};
 
 onMounted(() => {
-  pageType.value = route.query.type as string;
-  const id = route.params.id as string;
-  if (id) {
-    echoCurData(id);
+  if (route.params.id) {
+    getData();
   }
 });
-// 回显当前数据
-const echoCurData = async (id: string) => {
-  const { data } = await getScoreManageDetail({ id });
-  if (data.queTime) {
-    data.queTime = dayjs(data.queTime).format("YYYY-MM-DD HH:mm:ss");
-  }
-  if (data.scoreTime) {
-    data.scoreTime = dayjs(data.scoreTime).format("YYYY-MM-DD HH:mm:ss");
-  }
-  data.detailsList.forEach(item => {
-    if (item.scoreBasicId) {
-      const problemId = (item.scoreBasicId || "").split("-");
-      const problemName = (item.scoreBasic || "").split("-");
-      item.questionTypeId = problemId[problemId.length - 1] || "";
-      item.questionName = problemName[problemName.length - 1] || "";
-    }
-    item.jyname = item.dutyPoliceName;
-  });
-
-  const defaultArr = [
-    {
-      dutyOrgId: "",
-      dutyOrgName: "",
-      dutyPoliceName: "",
-      dutyPoliceNo: "",
-      idcard: "",
-      scoreNum: "",
-      questionName: "",
-      questionTypeId: "",
-      scoreBasic: "",
-      scoreBasicId: ""
-    }
-  ];
-  // 0 民警  1辅警
-  const policeArr =
-    data?.detailsList?.filter(item => item.scoreType == POLICE_TYPE.min)
-      ?.length > 0
-      ? data.detailsList.filter(item => item.scoreType == POLICE_TYPE.min)
-      : defaultArr;
-  const auxPoliceArr =
-    data.detailsList.filter(item => item.scoreType == POLICE_TYPE.fu)?.length >
-    0
-      ? data.detailsList.filter(item => item.scoreType == POLICE_TYPE.fu)
-      : defaultArr;
-  delete data.detailsList;
-
-  formData.value = { id, ...data, police: policeArr, auxPolice: auxPoliceArr };
-};
-const getTitle = (val: "add" | "edit") => {
-  const temp = {
-    add: "新增",
-    edit: "编辑"
-  };
-  return temp[val];
-};
-
-const formatPolice = (data: any, scoreType: string) => {
-  const { dutyOrgId, dutyOrgName } = formData.value;
-  return data
-    .filter((v: any) => v.dutyPoliceName)
-    .map((v: any) => {
-      return {
-        scoreType,
-        dutyOrgId,
-        dutyOrgName,
-        ...v
-      };
-    });
-};
-
-const submitFn = () => {
-  formRef.value
-    ?.validate()
-    .then(() => {
-      const { scoreTime, queTime, police, auxPolice, ...form } = formData.value;
-      const detailsList = [
-        ...formatPolice(police, POLICE_TYPE.min),
-        ...formatPolice(auxPolice, POLICE_TYPE.fu)
-      ];
-      // console.log(detailsList);
-      const serve = {
-        detailsList,
-        scoreTime: scoreTime,
-        queTime: queTime,
-        ...form
-      };
-      // console.log(serve);
-      // refreshPage();
-      let fn = addScoreManage;
-      if (pageType.value === "edit") {
-        fn = editScoreManage;
-      }
-      // console.log("通过");
-      fn(serve).then((code: any, msg?: string) => {
-        if (code) {
-          showSuccessToast("已提交");
-          if (pageType.value !== "edit") {
-            router.back();
-          } else {
-            router.go(-2);
-          }
-        } else {
-          if (msg) showFailToast(msg);
-        }
-      });
-    })
-    .catch(err => {
-      //验证失败
-      showFailToast("请正确填写信息");
-    });
-};
-
-const addFn = (type: "police" | "auxPolice") => {
-  formData.value[type]?.push({
-    dutyOrgId: "",
-    dutyOrgName: "",
-    dutyPoliceName: "",
-    dutyPoliceNo: "",
-    idcard: "",
-    scoreNum: "",
-    questionName: "",
-    questionTypeId: "",
-    scoreBasic: "",
-    scoreBasicId: ""
-  });
-};
-const delFn = (type: "police" | "auxPolice", index: number) => {
-  formData.value[type]!.splice(index, 1);
-};
-const changeOrgPop = (key: "dutyOrgId" | "inputOrgId") => {
-  orgKey.value = key;
-  orgShow.value = true;
-};
-const onConfirmOrg = (val: any) => {
-  orgShow.value = false;
-  if (orgKey.value === "dutyOrgId") {
-    if (Array.isArray(val)) {
-      // console.log("回显", val);
-      formData.value!.dutyOrgId = val.map((item: any) => item.id).join(",");
-      formData.value!.dutyOrgName = val
-        .map((item: any) => item.shortName)
-        .join(",");
-    } else {
-      const { orgId, orgName } = val;
-      formData.value!.dutyOrgId = orgId;
-      formData.value!.dutyOrgName = orgName;
-    }
-  } else if (orgKey.value === "inputOrgId") {
-    if (Array.isArray(val)) {
-      // console.log("回显", val);
-      formData.value!.inputOrgId = val.map((item: any) => item.id).join(",");
-      formData.value!.inputOrgName = val
-        .map((item: any) => item.label)
-        .join(",");
-    } else {
-      const { orgId, orgName } = val;
-      formData.value!.inputOrgId = orgId;
-      formData.value!.inputOrgName = orgName;
-    }
-  }
-};
-
-const changePolice = (type: string, index: number, popType?: string) => {
-  if (popType === "question") {
-    questionShow.value = true;
-  } else {
-    if (!formData.value.dutyOrgName) {
-      showFailToast("请选择部门");
-      return;
-    }
-    policeShow.value = true;
-  }
-
-  policeType.value = type;
-  policeIndex.value = index;
-  policeKey.value = type === POLICE_TYPE.min ? "police" : "auxPolice";
-};
-const onConfirmPolice = (val: any) => {
-  policeShow.value = false;
-  const { jyname = "", jycode = "", idcard = "" } = val;
-  formData.value[policeKey.value][policeIndex.value].dutyPoliceName = jyname;
-  formData.value[policeKey.value][policeIndex.value].dutyPoliceNo = jycode;
-  formData.value[policeKey.value][policeIndex.value].idcard = idcard;
-  // console.log(val);
-  // console.log(val.idcard);
-};
-const onConfirmQuestion = (val: any) => {
-  // console.log(val);
-  questionShow.value = false;
-  const { name = "", id = "", score = "", labels_txt = "", ids_txt = "" } = val;
-  formData.value[policeKey.value][policeIndex.value].questionName = name;
-  formData.value[policeKey.value][policeIndex.value].questionTypeId = id;
-  formData.value[policeKey.value][policeIndex.value].scoreNum = score;
-  formData.value[policeKey.value][policeIndex.value].scoreBasic = labels_txt;
-  formData.value[policeKey.value][policeIndex.value].scoreBasicId = ids_txt;
-};
-const changeTimePop = (key: "queTime" | "scoreTime") => {
-  timeKey.value = key;
-  timeShow.value = true;
-};
 </script>
 
 <template>
   <div class="score-add-page">
-    <nav-bar :title="getTitle(route.query?.type || '')" />
-
-    <div class="score-form">
-      <van-form ref="formRef">
+    <nav-bar :title="title" />
+    <van-form ref="formRef" @submit="toSubmit">
+      <div class="score-form">
         <van-cell-group>
           <van-field
             v-model="formData.queTime"
@@ -290,11 +162,11 @@ const changeTimePop = (key: "queTime" | "scoreTime") => {
             label="问题时间"
             placeholder="问题时间"
             :rules="[{ required: true, message: '请选择' }]"
-            @click="changeTimePop('queTime')"
             class="is-required"
             readonly
             clickable
             is-link
+            @click="openPopupByTime('queTime')"
           />
           <van-field
             v-model="formData.dutyOrgName"
@@ -303,156 +175,88 @@ const changeTimePop = (key: "queTime" | "scoreTime") => {
             :rules="[{ required: true, message: '请选择' }]"
             placeholder="责任部门"
             class="is-required"
-            @click="changeOrgPop('dutyOrgId')"
             readonly
             clickable
             is-link
+            @click="openPopupByOrg('dutyOrg')"
           />
         </van-cell-group>
         <div class="duty-man">
           <div class="police-man mb-[10px]">
-            <module-box
-              class="mb-[10px]"
-              title="责任民警"
-              v-for="(item, ind) in formData.police"
-              :key="ind"
-            >
+            <module-box class="mb-[10px]" title="责任人">
               <template v-slot:icon>
                 <img src="@/assets/police_hat_icon_active@3x.png" alt="" />
               </template>
-              <template v-slot:op v-if="ind !== 0">
-                <div class="flex items-center" @click="delFn('police', ind)">
-                  <van-icon name="delete-o" color="#5c7195" size="18" />
-                  <span class="text-[#5c7195]">删除</span>
-                </div>
-              </template>
+              <van-field name="radio" label="人员类型">
+                <template #input>
+                  <van-radio-group
+                    v-model="formData.scoreType"
+                    direction="horizontal"
+                    @change="onChangePoliceType"
+                  >
+                    <van-radio :name="E_POLICE_TYPE.min">民警</van-radio>
+                    <van-radio :name="E_POLICE_TYPE.fu">辅警</van-radio>
+                  </van-radio-group>
+                </template>
+              </van-field>
               <van-field
-                v-model="item.dutyPoliceName"
-                name="dutyPoliceNo"
-                :rules="
-                  formData.auxPolice?.filter(v => v.dutyPoliceName).length > 0
-                    ? []
-                    : [{ required: true, message: '请选择' }]
-                "
-                :class="{
-                  'is-required':
-                    formData.auxPolice?.filter(v => v.dutyPoliceName).length ===
-                    0
-                }"
-                label="责任民警"
-                placeholder="责任民警"
-                @click="changePolice(POLICE_TYPE.min, ind)"
+                v-model="formData.dutyPoliceName"
+                name="dutyPoliceName"
                 readonly
+                placeholder="请选择"
                 clickable
+                label="责任人"
+                class="is-required"
+                :rules="[{ required: true, message: '请选择' }]"
+                @click="showPopupByPolice = true"
                 is-link
               />
+              <van-field name="radio" label="记分类型">
+                <template #input>
+                  <van-radio-group
+                    v-model="formData.basicType"
+                    direction="horizontal"
+                    @change="onChangeBasicType"
+                  >
+                    <van-radio :name="E_BASIC_TYPE.score"
+                      >记分办法(试行)</van-radio
+                    >
+                    <van-radio :name="E_BASIC_TYPE.other">其他</van-radio>
+                  </van-radio-group>
+                </template>
+              </van-field>
               <van-field
-                v-model="item.questionName"
-                name="questionName"
-                :rules="
-                  item.dutyPoliceName
-                    ? [{ required: true, message: '请选择' }]
-                    : []
-                "
-                :class="{ 'is-required': !!item.dutyPoliceName }"
+                v-if="formData.basicType === E_BASIC_TYPE.score"
+                v-model="formData.scoreBasic"
+                name="scoreBasic"
+                :rules="[{ required: true, message: '请选择' }]"
                 label="记分条款"
-                placeholder="记分条款"
-                @click="changePolice(POLICE_TYPE.min, ind, 'question')"
+                placeholder="请选择"
                 readonly
                 clickable
                 is-link
+                @click="showPopupByScore = true"
+                class="is-required"
               />
-              <van-field
-                v-model="item.scoreNum"
-                :rules="
-                  item.dutyPoliceName
-                    ? [{ required: true, message: '请输入' }]
-                    : []
-                "
-                :class="{ 'is-required': !!item.dutyPoliceName }"
-                name="scoreNum"
-                label="分值"
-                placeholder="分值"
-              />
-            </module-box>
 
-            <van-button
-              type="primary"
-              block
-              plain
-              icon="plus"
-              @click="addFn('police')"
-              >新增责任民警</van-button
-            >
-          </div>
-          <div class="police-man">
-            <module-box
-              class="mb-[10px]"
-              title="责任辅警"
-              v-for="(item, ind) in formData.auxPolice"
-              :key="ind"
-            >
-              <template v-slot:icon>
-                <img src="@/assets/police_hat_icon_active@3x.png" alt="" />
-              </template>
-              <template v-slot:op v-if="ind !== 0">
-                <div class="flex items-center" @click="delFn('auxPolice', ind)">
-                  <van-icon name="delete-o" color="#5c7195" size="18" />
-                  <span class="text-[#5c7195]">删除</span>
-                </div>
-              </template>
               <van-field
-                v-model="item.dutyPoliceName"
-                :rules="
-                  formData.police?.filter(v => v.dutyPoliceName).length > 0
-                    ? []
-                    : [{ required: true, message: '请选择' }]
-                "
-                :class="{
-                  'is-required':
-                    formData.police?.filter(v => v.dutyPoliceName).length === 0
-                }"
-                name="police"
-                label="责任辅警"
-                placeholder="责任辅警"
-                @click="changePolice(POLICE_TYPE.fu, ind)"
-                readonly
-                clickable
-                is-link
-              />
-              <van-field
-                v-model="item.questionName"
-                name="questionName"
-                :rules="
-                  item.dutyPoliceName
-                    ? [{ required: true, message: '请选择' }]
-                    : []
-                "
-                :class="{ 'is-required': !!item.dutyPoliceName }"
+                v-if="formData.basicType === E_BASIC_TYPE.other"
+                v-model="formData.scoreBasic"
+                name="scoreBasic"
                 label="记分条款"
-                placeholder="记分条款"
-                @click="changePolice(POLICE_TYPE.fu, ind, 'question')"
-                readonly
-                clickable
-                is-link
+                placeholder="请输入"
+                :rules="[{ required: true, message: '请输入' }]"
+                class="is-required"
               />
               <van-field
-                v-model="item.scoreNum"
+                v-model="formData.scoreNum"
                 name="scoreNum"
-                :rules="item.dutyPoliceName ? scoreNumRules : []"
-                :class="{ 'is-required': !!item.dutyPoliceName }"
+                :rules="[{ required: true, message: '请输入' }]"
+                class="is-required"
                 label="分值"
-                placeholder="分值"
+                placeholder="请输入"
               />
             </module-box>
-            <van-button
-              type="primary"
-              block
-              plain
-              icon="plus"
-              @click="addFn('auxPolice')"
-              >新增责任辅警</van-button
-            >
           </div>
         </div>
         <van-cell-group>
@@ -460,11 +264,11 @@ const changeTimePop = (key: "queTime" | "scoreTime") => {
             v-model="formData.scoreTime"
             name="scoreTime"
             label="记分时间"
-            placeholder="记分时间"
-            :rules="[{ required: true, message: '请选择时间' }]"
-            @click="changeTimePop('scoreTime')"
+            placeholder="请选择"
+            :rules="[{ required: true, message: '请选择' }]"
             class="is-required"
             readonly
+            @click="openPopupByTime('scoreTime')"
             clickable
             is-link
           />
@@ -472,68 +276,59 @@ const changeTimePop = (key: "queTime" | "scoreTime") => {
             v-model="formData.inputOrgName"
             name="inputOrgName"
             label="记分单位"
-            placeholder="记分单位"
+            placeholder="请选择"
             :rules="[{ required: true, message: '请选择' }]"
-            @click="changeOrgPop('inputOrgId')"
             class="is-required"
             readonly
             clickable
             is-link
-          />
-          <van-field
-            v-model="formData.scoreDesc"
-            rows="1"
-            autosize
-            label="记分描述"
-            type="textarea"
-            placeholder="记分描述"
+            @click="openPopupByOrg('inputOrg')"
           />
         </van-cell-group>
-      </van-form>
-    </div>
+      </div>
 
-    <div class="bottom-action flex justify-between">
-      <van-button
-        round
-        block
-        :loading="loading"
-        color="linear-gradient(to right, #037CED, #02C2FA)"
-        @click="submitFn"
-      >
-        提 交
-      </van-button>
-    </div>
+      <div class="bottom-action flex justify-between">
+        <van-button
+          round
+          block
+          :loading="loading"
+          color="linear-gradient(to right, #037CED, #02C2FA)"
+          native-type="submit"
+        >
+          提 交
+        </van-button>
+      </div>
+    </van-form>
 
     <!-- 责任民警/辅警 -->
     <police-popup
-      v-if="policeShow"
-      v-model:model-value="formData[policeKey][policeIndex].idcard"
+      v-if="showPopupByPolice"
       :org-id="formData.dutyOrgId"
-      :police-type="policeType"
-      @onCancel="policeShow = false"
-      @onConfirm="onConfirmPolice"
+      :police-type="formData.scoreType"
+      @onCancel="showPopupByPolice = false"
+      @onConfirm="onConfirmByPolice"
     />
     <!-- 时间 -->
     <time-popup
-      v-if="timeShow"
-      v-model:model-value="formData[timeKey]"
-      :show-picker="timeShow"
-      @onCancel="timeShow = false"
+      v-if="showPopupByTime"
+      v-model:model-value="time"
+      :show-picker="showPopupByTime"
+      @onCancel="showPopupByTime = false"
+      @onConfirm="onConfirmByTime"
     />
     <!-- 部门 -->
     <org-popup
-      v-if="orgShow"
-      v-model:model-value="formData[orgKey]"
-      @onCancel="orgShow = false"
-      @onConfirm="onConfirmOrg"
+      v-if="showPopupByOrg"
+      v-model:model-value="org"
+      @onCancel="showPopupByOrg = false"
+      @onConfirm="onConfirmByOrg"
     />
     <!-- 记分条款 -->
     <question-popup
-      v-if="questionShow"
-      v-model:model-value="formData[policeKey][policeIndex].questionTypeId"
+      v-if="showPopupByScore"
       :search="true"
-      @onCancel="questionShow = false"
-      @onConfirm="onConfirmQuestion"
+      @onCancel="showPopupByScore = false"
+      @onConfirm="onConfirmByScore"
     />
   </div>
 </template>
