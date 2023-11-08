@@ -199,7 +199,7 @@ watch(
       </van-grid>
     </div>
 
-    <!-- 警示材料 -->
+    <!-- 警示教育 -->
     <div class="warning-material">
       <div class="head">
         <h3 class="name">
@@ -207,7 +207,7 @@ watch(
             src="@/assets/material_icon@3x.png"
             alt=""
             class="w-[34px] h-[34px] pr-[7px]"
-          />警示材料
+          />警示教育
         </h3>
         <router-link to="/caution" class="more"
           >更多 <van-icon name="arrow"

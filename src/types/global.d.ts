@@ -2,7 +2,7 @@
  * @Description:
  * @Author: 辰月
  * @Date: 2023-09-09 09:56:03
- * @LastEditTime: 2023-11-03 12:46:09
+ * @LastEditTime: 2023-11-03 16:53:34
  * @LastEditors: 辰月
  */
 declare global {
@@ -12,6 +12,7 @@ declare global {
     getUserId: () => string;
     getAddress: () => string;
     getUserCredential: () => string;
+    getAppCredential: () => string;
   }
 
   interface Window {
