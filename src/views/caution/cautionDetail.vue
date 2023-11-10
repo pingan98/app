@@ -1,9 +1,9 @@
 <script lang="ts" name="CautionDetail" setup>
 import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { formatTime } from "@/utils";
+import { formatTime, getFileTypeByExtension } from "@/utils";
 import { CAUTION_STATUS } from "@/const/warnMaterial";
-import type { Form } from "@/api/warnMaterial/types";
+import type { Form, IBattchJson } from "@/api/warnMaterial/types";
 import {
   batchUpdateWarnMaterial,
   removeWarnMaterial,
@@ -17,15 +17,25 @@ const route = useRoute();
 const router = useRouter();
 const userStore = useUserStore();
 const routeParamsStore = useRouteParamsStore();
+const videoList = ref<Array<IBattchJson>>([]);
+const imgList = ref<Array<IBattchJson>>([]);
 
 const judgeRole = userStore.getSomeMenu("warnMaterial");
 
 const detailData = ref<Form>();
 onMounted(async () => {
   const res = await warnMaterialDetail({ id: route.params.id as string });
-  res.data.battchJson = res.data?.battchJson
+  const battchJson = res.data?.battchJson
     ? JSON.parse(res.data?.battchJson)
     : [];
+
+  videoList.value = battchJson.filter(
+    (v: IBattchJson) => getFileTypeByExtension(v.attachName || "") === "video"
+  );
+  imgList.value = battchJson.filter(
+    (v: IBattchJson) => getFileTypeByExtension(v.attachName || "") === "image"
+  );
+
   detailData.value = { ...res.data };
 });
 const batchUpdate = async (warnState: string) => {
@@ -83,13 +93,17 @@ const removeFn = async () => {
       </div>
     </div>
     <div class="desc-box">{{ detailData?.warnContent }}</div>
-    <div class="img-con" v-if="detailData?.battchJson?.length">
-      <div
-        class="img-box"
-        v-for="(item, ind) in detailData?.battchJson"
-        :key="ind"
-      >
+    <div class="img-con" v-if="imgList.length">
+      <div class="img-box" v-for="(item, ind) in imgList" :key="ind">
         <img :src="item.attachFullPath" alt="" />
+      </div>
+    </div>
+    <div class="img-con" v-if="videoList.length">
+      <div class="video-box" v-for="(item, ind) in videoList" :key="ind">
+        <video controls>
+          <source :src="item.attachFullPath" :type="item.attachType" />
+          Your browser does not support the video tag.
+        </video>
       </div>
     </div>
     <!-- 从首页过来的不显示操作 -->
@@ -174,6 +188,13 @@ const removeFn = async () => {
       margin-bottom: 20px;
       img {
         max-width: 100%;
+      }
+    }
+    .video-box {
+      height: 250px;
+      video {
+        width: 100%;
+        height: 250px;
       }
     }
   }

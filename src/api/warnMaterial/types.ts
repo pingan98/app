@@ -1,3 +1,10 @@
+/*
+ * @Description:
+ * @Author: 辰月
+ * @Date: 2023-09-20 10:28:28
+ * @LastEditTime: 2023-11-10 17:23:43
+ * @LastEditors: 辰月
+ */
 import { batchUpdateWarnMaterial } from "@/api/warnMaterial/index";
 
 /**
@@ -31,6 +38,7 @@ export interface List {
   createUser?: string;
   battchJson?: any;
   coverImg?: string;
+  videoUrl?: string;
 }
 // Partial<T> 把一个对象的属性转换成可选
 // Required<T> 把一个对象的属性转换成必选
@@ -48,4 +56,12 @@ export interface Form {
  */
 export interface Key {
   id: string;
+}
+
+export interface IBattchJson {
+  orderId?: string;
+  attachType?: string;
+  attachName?: string;
+  attachFullPath?: string;
+  attachPath?: string;
 }

@@ -1,3 +1,10 @@
+<!--
+ * @Description: 
+ * @Author: 辰月
+ * @Date: 2023-09-13 16:05:07
+ * @LastEditTime: 2023-11-10 17:30:06
+ * @LastEditors: 辰月
+-->
 <script setup lang="ts" name="MaterialItem">
 import type { List } from "@/api/warnMaterial/types";
 import defaultImage from "@/assets/default_fm.png";
@@ -24,9 +31,9 @@ const props = defineProps<{
         }}</span>
       </div>
     </div>
-    <div class="img-box">
+    <div class="img-box" v-if="item?.coverImg">
       <img
-        :src="item?.coverImg || defaultImage"
+        :src="item?.coverImg"
         alt=""
         @error="
           e => {
@@ -34,6 +41,15 @@ const props = defineProps<{
           }
         "
       />
+    </div>
+    <div class="img-box" v-if="item.videoUrl">
+      <video :controls="false">
+        <source :src="item.videoUrl" />
+        Your browser does not support the video tag.
+      </video>
+    </div>
+    <div class="img-box" v-if="!item.videoUrl && !item.coverImg">
+      <img :src="defaultImage" alt="" />
     </div>
   </div>
 </template>
@@ -69,6 +85,10 @@ const props = defineProps<{
     img {
       max-width: 100%;
       max-height: 100%;
+    }
+    video {
+      width: 100%;
+      height: 100%;
     }
   }
 }

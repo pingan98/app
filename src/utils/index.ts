@@ -1,3 +1,10 @@
+/*
+ * @Description:
+ * @Author: 辰月
+ * @Date: 2023-09-09 09:56:03
+ * @LastEditTime: 2023-11-10 17:00:15
+ * @LastEditors: 辰月
+ */
 import type { ConstListType } from "@/types";
 import dayjs from "dayjs";
 /**
@@ -60,4 +67,18 @@ export const formatTime = (date: any, format = "YYYY-MM-DD hh:mm:ss") => {
 // 刷新当前页面
 export function refreshPage(): void {
   location.reload();
+}
+
+export function getFileTypeByExtension(fileName: string): string {
+  const ext = fileName.split(".").pop()?.toLowerCase();
+  if (ext) {
+    if (["mp3", "wav", "ogg"].includes(ext)) {
+      return "audio";
+    } else if (["jpg", "jpeg", "png", "gif"].includes(ext)) {
+      return "image";
+    } else if (["mp4", "webm", "ogg"].includes(ext)) {
+      return "video";
+    }
+  }
+  return "unknown";
 }
