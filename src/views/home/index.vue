@@ -179,8 +179,11 @@ watch(
     </template>
 
     <div class="home-page-head">
+      <div class="home-banner w-screen">
+        <img src="~@/assets/homeSwipe/banner.jpg" alt="" style="max-width: 100%;height: auto">
+      </div>
       <!-- 轮播图 -->
-      <div
+      <!--<div
         class="home-banner px-[16px] bg-gradient-to-t from-[#ffffff] to-[#8dc2ff] w-screen h-[200px] pt-[20px]"
       >
         <van-swipe indicator-color="#fff" :autoplay="3000">
@@ -188,7 +191,7 @@ watch(
             <img :src="image" />
           </van-swipe-item>
         </van-swipe>
-      </div>
+      </div>-->
 
       <!-- nav -->
       <van-grid
