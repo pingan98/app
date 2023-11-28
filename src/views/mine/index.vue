@@ -12,7 +12,8 @@ const getRouterName = (code: any) => {
   const compNames = {
     [species.audit]: "AuditRecord",
     [species.upload]: "UploadRecord",
-    [species.history]: "BrowseHistory"
+    [species.history]: "BrowseHistory",
+    [species.about]: "AboutIndex"
   };
   return compNames[code];
 };
@@ -46,7 +47,7 @@ const getRouterName = (code: any) => {
         :to="{ name: getRouterName(item.code) }"
         exact
       >
-        <div class="top-bg" :class="[`bg${ind + 1}`]"></div>
+        <div :class="['top-bg', `bg${ind + 1}`]"></div>
         <div>{{ item.label }}</div>
       </router-link>
     </div>
@@ -82,14 +83,15 @@ const getRouterName = (code: any) => {
 
   .nav-box {
     position: relative;
-    .flex(space-between, center);
-    padding: 10px 16px;
+    .flex(space-evenly, center);
+    padding: 10px;
     width: 100%;
     background: #fff;
     box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.07);
     border-radius: 5px;
     margin-bottom: 10px;
     .nav-item {
+      flex: 1;
       .flex(center, center);
       flex-direction: column;
       padding: 8px 10px;
@@ -105,6 +107,9 @@ const getRouterName = (code: any) => {
         }
         &.bg3 {
           background: url("@/assets/footer@3x.png") no-repeat center / 100%;
+        }
+        &.bg4 {
+          background: url("@/assets/about@3x.png") no-repeat center / 100%;
         }
       }
       &.router-link-exact-active {

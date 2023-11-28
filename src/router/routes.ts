@@ -126,6 +126,11 @@ const routes: Array<RouteRecordRaw> = [
             path: "history",
             name: "BrowseHistory",
             component: () => import("@/views/mine/components/browseHistory.vue")
+          },
+          {
+            path: "about",
+            name: "AboutIndex",
+            component: () => import("@/views/mine/components/about.vue")
           }
         ]
       }
