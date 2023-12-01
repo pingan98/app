@@ -10,14 +10,10 @@ import { getWarnMaterialPage } from "@/api/warnMaterial";
 import { CAUTION_STATUS } from "@/const/warnMaterial";
 
 import empty from "@/assets/empty@3x.png";
-import homeBanner1 from "@/assets/homeSwipe/ad1@3x.png";
-import homeBanner2 from "@/assets/homeSwipe/ad2@3x.png";
-import homeBanner3 from "@/assets/homeSwipe/ad3@3x.png";
 
 const env = import.meta.env.VITE_APP_ENV;
 const userStore = useUserStore();
 
-const images = [homeBanner1, homeBanner2, homeBanner3];
 const testRole = [
   { name: "陈俊文", policeNo: "cjw" },
   { name: "派出所", policeNo: "pcs" },
@@ -28,6 +24,9 @@ const loginData = ref<LoginData>({
   username: "",
   password: "M@123456"
 });
+const bannerUrl = ref(
+  "http://192.168.3.96:9117/teambuild/cautionAdd/警示教育/6f06e55d-79d5-4768-8d47-15a9ade4550e/2023-12-01/banner.jpg"
+);
 // 加载中状态
 const loading = ref(false);
 // 是否完全加载完毕数据
@@ -134,6 +133,8 @@ onMounted(() => {
 
   if (env === "prod") {
     onLogin();
+    bannerUrl.value =
+      "http://41.225.2.41:9000/yunling/cautionAdd/警示教育/e9ce17a8-a03d-4f8e-b5d3-c5e0442dd178/2023-12-01/banner-2935889c.jpg";
   }
 });
 watch(
@@ -180,7 +181,7 @@ watch(
 
     <div class="home-page-head">
       <div class="home-banner w-screen">
-        <img src="~@/assets/homeSwipe/banner.jpg" alt="" style="max-width: 100%;height: auto">
+        <img :src="bannerUrl" alt="" style="max-width: 100%; height: auto" />
       </div>
       <!-- 轮播图 -->
       <!--<div
