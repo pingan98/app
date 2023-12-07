@@ -29,6 +29,10 @@ export interface toRouteType extends RouteLocationNormalized {
 }
 
 router.beforeEach((to: toRouteType, from, next) => {
+  if (from.path === "/" && to.path === "/home") {
+    // 第一次打开的时候 先跳转到备案页 再自动跳转到首页
+    return next({ path: "/about" });
+  }
   NProgress.start();
   // 路由缓存
   useCachedViewStoreHook().addCachedView(to);
