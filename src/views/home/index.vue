@@ -151,10 +151,12 @@ watch(
 watch(
   () => userStore.menuList,
   menuList => {
-    homeNav.value = [
-      { title: "记分管理", to: "Score" },
-      { title: "警示教育", to: "Caution" }
-    ];
+    homeNav.value = [];
+    if (userStore.getSomeMenu("scoreManageMenu")) {
+      homeNav.value.push({ title: "记分管理", to: "Score" });
+    }
+    // 不用加显隐判断 对所有民警可见
+    homeNav.value.push({ title: "警示教育", to: "Caution" });
     if (userStore.getSomeMenu("warnManage")) {
       homeNav.value.push({ title: "预警管理", to: "Warning" });
     }
