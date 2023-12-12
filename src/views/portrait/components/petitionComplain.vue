@@ -78,7 +78,7 @@ watch(
         </div>
       </div>
 
-      <div class="status-box">
+      <!-- <div class="status-box">
         <div class="status-item-box wait" @click="setQueryType(3)">
           <div class="name">未办结</div>
           <div>
@@ -97,8 +97,8 @@ watch(
             <span class="num">{{ bean.reportNumVo.bfssNum || 0 }}</span> 件
           </div>
         </div>
-      </div></template
-    >
+      </div> -->
+    </template>
 
     <div class="petition-list">
       <div

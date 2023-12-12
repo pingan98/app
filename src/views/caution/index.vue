@@ -38,7 +38,7 @@ const checkedList = ref<any>([]);
 const tabs = toList(CAUTION_STATUS, CAUTION_STATUS_TXT);
 const tabChange = (value: string) => {
   searchForm.value.warnState = value;
-  batchFlag.value = false;
+  batchFlag.value = value === CAUTION_STATUS.delist;
   searchForm.value.page = 1;
   listData.value = [];
   checkedList.value = [];

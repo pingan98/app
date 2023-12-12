@@ -134,7 +134,7 @@ function refreshData(param: any) {
       </div>
 
       <module-box
-        title="执法办案"
+        title="执法质态"
         bg="from-[#d0dfff] to-[#fbfdfd]"
         class="mt-[18px]"
       >

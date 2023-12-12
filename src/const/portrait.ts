@@ -9,7 +9,7 @@ export const SPECIES_TXT = {
   [SPECIES.wgwj]: "违规违纪",
   [SPECIES.petition]: "信访投诉",
   [SPECIES.drink]: "饮酒报备",
-  [SPECIES.case]: "执法办案"
+  [SPECIES.case]: "执法质态"
 };
 
 export const VERIFIED = {
