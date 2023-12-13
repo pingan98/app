@@ -1,13 +1,49 @@
 <script setup lang="ts" name="Myself">
-import { useRoute, RouterLink, RouterView } from "vue-router";
+import { ref, onMounted, watch } from "vue";
+import { useRoute, RouterLink, RouterView, useRouter } from "vue-router";
 import { MINE_NAV, MINE_NAV_TXT } from "@/const";
-import { toList } from "@/utils";
 import { useUserStore } from "@/store/modules/user";
 
 const route = useRoute();
+const router = useRouter();
 const userStore = useUserStore();
 const species = MINE_NAV;
-const speciesList = toList(MINE_NAV, MINE_NAV_TXT);
+const navList = ref([]);
+
+watch(
+  () => userStore.menuList,
+  menuList => {
+    navList.value = [];
+    // 部门审核
+    if (userStore.getSomeMenu("deptAuditMenu")) {
+      navList.value.push({
+        code: MINE_NAV.audit,
+        label: MINE_NAV_TXT[MINE_NAV.audit]
+      });
+    }
+    // 我的上传
+    if (userStore.getSomeMenu("mineUploadMenu")) {
+      navList.value.push({
+        code: MINE_NAV.upload,
+        label: MINE_NAV_TXT[MINE_NAV.upload]
+      });
+    }
+    const defaultNav = [
+      { code: MINE_NAV.history, label: MINE_NAV_TXT[MINE_NAV.history] },
+      { code: MINE_NAV.about, label: MINE_NAV_TXT[MINE_NAV.about] }
+    ];
+    navList.value = [...navList.value, ...defaultNav];
+  },
+  { immediate: true, deep: true }
+);
+onMounted(() => {
+  // 默认跳到第一个
+  const firstMenu = navList.value[0];
+  router.push({
+    name: getRouterName(firstMenu.code)
+  });
+});
+
 const getRouterName = (code: any) => {
   const compNames = {
     [species.audit]: "AuditRecord",
@@ -31,9 +67,8 @@ const getRouterName = (code: any) => {
         <div class="name">{{ userStore?.userInfo?.name }}</div>
         <div class="dep flex">
           <div>
-            <svg-icon name="tree" class="inline-block mr-[4px]" />{{
-              userStore?.userInfo?.orgName
-            }}
+            <svg-icon name="tree" class="inline-block mr-[4px]" />
+            {{ userStore?.userInfo?.orgName }}
           </div>
         </div>
       </div>
@@ -41,7 +76,7 @@ const getRouterName = (code: any) => {
 
     <div class="nav-box">
       <router-link
-        v-for="(item, ind) in speciesList"
+        v-for="(item, ind) in navList"
         class="nav-item"
         :key="ind"
         :to="{ name: getRouterName(item.code) }"
@@ -58,9 +93,11 @@ const getRouterName = (code: any) => {
 
 <style scoped lang="less">
 @import "@/styles/mixin.less";
+
 .mine-page {
   position: relative;
   padding: 56px 10px 10px;
+
   .avatar-box {
     position: relative;
     width: 100%;
@@ -69,12 +106,14 @@ const getRouterName = (code: any) => {
     box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.07);
     border-radius: 5px;
     margin-bottom: 10px;
+
     .name-box {
       .name {
         font-weight: bold;
         font-size: 18px;
         margin-bottom: 5px;
       }
+
       .dep {
         color: var(--text-color2);
       }
@@ -90,28 +129,35 @@ const getRouterName = (code: any) => {
     box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.07);
     border-radius: 5px;
     margin-bottom: 10px;
+
     .nav-item {
       flex: 1;
       .flex(center, center);
       flex-direction: column;
       padding: 8px 10px;
+
       .top-bg {
         width: 42px;
         height: 42px;
         margin-bottom: 4px;
+
         &.bg1 {
           background: url("@/assets/audit@3x.png") no-repeat center / 100%;
         }
+
         &.bg2 {
           background: url("@/assets/share@3x.png") no-repeat center / 100%;
         }
+
         &.bg3 {
           background: url("@/assets/footer@3x.png") no-repeat center / 100%;
         }
+
         &.bg4 {
           background: url("@/assets/about@3x.png") no-repeat center / 100%;
         }
       }
+
       &.router-link-exact-active {
         border-radius: 10px;
         background: #e0f3ff;
