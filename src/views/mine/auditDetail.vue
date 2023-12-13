@@ -202,10 +202,10 @@ const getInit = async () => {
               <label class="label">审核时间</label>
               <span>{{ formatTime(item.approve?.inputTime) }}</span>
             </div>
-            <div class="info-item">
+            <!--<div class="info-item">
               <label class="label">是否列管跟办</label>
               <span>{{ item.approve?.isLggb === "1" ? "是" : "否" }}</span>
-            </div>
+            </div>-->
             <div class="info-item">
               <label class="label">审核意见</label>
               <span>{{ item.approve?.approveDesc }}</span>
