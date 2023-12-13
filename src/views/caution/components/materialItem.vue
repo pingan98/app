@@ -2,12 +2,13 @@
  * @Description: 
  * @Author: 辰月
  * @Date: 2023-09-13 16:05:07
- * @LastEditTime: 2023-12-13 10:04:08
+ * @LastEditTime: 2023-12-13 16:26:20
  * @LastEditors: 辰月
 -->
 <script setup lang="ts" name="MaterialItem">
 import { ref } from "vue";
-import type { List } from "@/api/warnMaterial/types";
+import type { List, IBattchJson } from "@/api/warnMaterial/types";
+import { getFileTypeByExtension } from "@/utils";
 import defaultImage from "@/assets/default_fm.png";
 import { formatTime } from "@/utils";
 import { getAudiovisual } from "@/api/common";
@@ -17,14 +18,21 @@ const props = defineProps<{
 }>();
 
 const url = ref("");
-
+const resouceType = ref("");
 const getResouce = () => {
-  const tmp = props.item.videoUrl || props.item.coverImg;
-  if (!tmp) {
-    url.value = defaultImage;
-    return false;
-  }
-  getAudiovisual(tmp).then(res => {
+  const battchJson = props.item?.battchJson
+    ? JSON.parse(props.item?.battchJson)
+    : [];
+  const coverImg = battchJson.filter(
+    (v: IBattchJson) => getFileTypeByExtension(v.attachName || "") === "image"
+  )[0];
+  const videoUrl = battchJson.filter(
+    (v: IBattchJson) => getFileTypeByExtension(v.attachName || "") === "video"
+  )[0];
+  const tmp = coverImg || videoUrl;
+  if (!tmp) return false;
+  resouceType.value = getFileTypeByExtension(tmp.attachName || "");
+  getAudiovisual(tmp.attachFullPath).then(res => {
     url.value = res as string;
   });
 };
@@ -47,7 +55,7 @@ getResouce();
         }}</span>
       </div>
     </div>
-    <div class="img-box" v-if="item?.coverImg">
+    <div class="img-box" v-if="resouceType === 'image'">
       <img
         :src="url"
         alt=""
@@ -58,13 +66,13 @@ getResouce();
         "
       />
     </div>
-    <div class="img-box" v-if="item.videoUrl">
+    <div class="img-box" v-if="resouceType === 'video'">
       <video :controls="false">
         <source v-if="url" :src="url" />
         Your browser does not support the video tag.
       </video>
     </div>
-    <div class="img-box" v-if="!item.videoUrl && !item.coverImg">
+    <div class="img-box" v-if="!resouceType && !url">
       <img :src="defaultImage" alt="" />
     </div>
   </div>

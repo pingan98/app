@@ -2,11 +2,10 @@
 import { ref, onMounted, watch } from "vue";
 import { useUserStore } from "@/store/modules/user";
 import { useAppStore } from "@/store/modules/app";
-import { getFileTypeByExtension } from "@/utils";
 import type { PickerOption } from "vant";
 import MaterialItem from "@/views/caution/components/materialItem.vue";
 import type { LoginData } from "@/api/auth/types";
-import type { Query, List, IBattchJson } from "@/api/warnMaterial/types";
+import type { Query, List } from "@/api/warnMaterial/types";
 import { getWarnMaterialPage } from "@/api/warnMaterial";
 import { CAUTION_STATUS } from "@/const/warnMaterial";
 
@@ -26,9 +25,7 @@ const loginData = ref<LoginData>({
   username: "",
   password: "M@123456"
 });
-// const bannerUrl = ref(
-//   "http://192.168.3.96:9117/teambuild/cautionAdd/警示教育/6f06e55d-79d5-4768-8d47-15a9ade4550e/2023-12-01/banner.jpg"
-// );
+
 const bannerUrl = ref("");
 getAudiovisual(
   env === "prod"
@@ -97,18 +94,6 @@ const onLogin = () => {
 const getCautionList = async () => {
   try {
     const res = await getWarnMaterialPage(materialForm.value);
-    res!.rows.forEach((item: any) => {
-      const battchJson = item?.battchJson ? JSON.parse(item?.battchJson) : [];
-      item.battchJson = battchJson;
-      item.coverImg = battchJson.filter(
-        (v: IBattchJson) =>
-          getFileTypeByExtension(v.attachName || "") === "image"
-      )[0]?.attachFullPath;
-      item.videoUrl = battchJson.filter(
-        (v: IBattchJson) =>
-          getFileTypeByExtension(v.attachName || "") === "video"
-      )[0]?.attachFullPath;
-    });
 
     listData.value.push(...res!.rows);
 
