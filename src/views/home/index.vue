@@ -31,7 +31,9 @@ const loginData = ref<LoginData>({
 // );
 const bannerUrl = ref("");
 getAudiovisual(
-  "/teambuild/cautionAdd/警示教育/6f06e55d-79d5-4768-8d47-15a9ade4550e/2023-12-01/banner.jpg"
+  env === "prod"
+    ? "/cautionAdd/警示教育/e9ce17a8-a03d-4f8e-b5d3-c5e0442dd178/2023-12-01/banner-2935889c.jpg"
+    : "/cautionAdd/警示教育/6f06e55d-79d5-4768-8d47-15a9ade4550e/2023-12-01/banner.jpg"
 ).then(res => {
   bannerUrl.value = res as string;
 });
@@ -139,11 +141,13 @@ watch(
 
 watch(
   () => userStore.menuList,
-  () => {
-    homeNav.value = [{ title: "警示教育", to: "Caution" }];
+  menuList => {
+    homeNav.value = [];
     if (userStore.getSomeMenu("scoreManageMenu")) {
-      homeNav.value.unshift({ title: "记分管理", to: "Score" });
+      homeNav.value.push({ title: "记分管理", to: "Score" });
     }
+    // 不用加显隐判断 对所有民警可见
+    homeNav.value.push({ title: "警示教育", to: "Caution" });
     if (userStore.getSomeMenu("warnManage")) {
       homeNav.value.push({ title: "预警管理", to: "Warning" });
     }

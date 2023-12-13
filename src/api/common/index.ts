@@ -66,7 +66,7 @@ export function getAudiovisual(data: any) {
   return http.request({
     baseURL,
     url: str + "/cautionAdd/警示教育/" + url,
-    matchUrl: str + "/cautionAdd/警示教育/",
+    matchUrl: "/cautionAdd/警示教育/",
     method: "get",
     responseType: "blob"
   });
