@@ -1,6 +1,7 @@
 <script setup lang="ts" name="Home">
 import { ref, onMounted, watch } from "vue";
 import { useUserStore } from "@/store/modules/user";
+import { useAppStore } from "@/store/modules/app";
 import { getFileTypeByExtension } from "@/utils";
 import type { PickerOption } from "vant";
 import MaterialItem from "@/views/caution/components/materialItem.vue";
@@ -10,10 +11,11 @@ import { getWarnMaterialPage } from "@/api/warnMaterial";
 import { CAUTION_STATUS } from "@/const/warnMaterial";
 
 import empty from "@/assets/empty@3x.png";
+import { getAudiovisual } from "@/api/common";
 
 const env = import.meta.env.VITE_APP_ENV;
 const userStore = useUserStore();
-
+const appStore = useAppStore();
 const testRole = [
   { name: "陈俊文", policeNo: "cjw" },
   { name: "派出所", policeNo: "pcs" },
@@ -24,9 +26,15 @@ const loginData = ref<LoginData>({
   username: "",
   password: "M@123456"
 });
-const bannerUrl = ref(
-  "http://192.168.3.96:9117/teambuild/cautionAdd/警示教育/6f06e55d-79d5-4768-8d47-15a9ade4550e/2023-12-01/banner.jpg"
-);
+// const bannerUrl = ref(
+//   "http://192.168.3.96:9117/teambuild/cautionAdd/警示教育/6f06e55d-79d5-4768-8d47-15a9ade4550e/2023-12-01/banner.jpg"
+// );
+const bannerUrl = ref("");
+getAudiovisual(
+  "/teambuild/cautionAdd/警示教育/6f06e55d-79d5-4768-8d47-15a9ade4550e/2023-12-01/banner.jpg"
+).then(res => {
+  bannerUrl.value = res as string;
+});
 // 加载中状态
 const loading = ref(false);
 // 是否完全加载完毕数据
@@ -76,7 +84,7 @@ const onLogin = () => {
   userStore
     .login({
       // username: "330421196508134111"
-      username: window.nativeObj.getZjhm() || ""
+      username: appStore.zjhm
     })
     .then(() => {
       getUserInfo();
@@ -99,8 +107,9 @@ const getCautionList = async () => {
           getFileTypeByExtension(v.attachName || "") === "video"
       )[0]?.attachFullPath;
     });
+
     listData.value.push(...res!.rows);
-    console.log("listData.value :>> ", listData.value);
+
     if (listData.value.length === res.total) {
       finished.value = true; // 数据全部加载完成
     } else {
@@ -113,28 +122,8 @@ const getCautionList = async () => {
   }
 };
 onMounted(() => {
-  // console.log("window--------------------------");
-  // console.log(window.nativeObj);
-  // console.log("window.nativeObj--------------------------");
-  // console.log(window.nativeObj);
-  // console.log("window.nativeObj.getUserInfo--------------------------");
-  // console.log(window.nativeObj.getUserInfo);
-  // console.log("window.nativeObj.getZjhm--------------------------");
-  // console.log(window.nativeObj.getZjhm());
-  // console.log("window.nativeObj.getUserId--------------------------");
-  // console.log(window.nativeObj.getUserId());
-  // const getUserInfo = window.nativeObj?.getUserInfo();
-  // localStorage.userIdCard = window.nativeObj?.getUserInfo();
-  // console.log("getUserId--------------------------");
-  // console.log(window.nativeObj?.getUserId());
-  // console.log("home----getUserInfo----------------");
-  // console.log(getUserInfo);
-  // showSuccessToast(getUserInfo);
-
   if (env === "prod") {
     onLogin();
-    bannerUrl.value =
-      "http://41.225.2.41:9000/yunling/cautionAdd/警示教育/e9ce17a8-a03d-4f8e-b5d3-c5e0442dd178/2023-12-01/banner-2935889c.jpg";
   }
 });
 watch(
@@ -150,11 +139,11 @@ watch(
 
 watch(
   () => userStore.menuList,
-  menuList => {
-    homeNav.value = [
-      { title: "记分管理", to: "Score" },
-      { title: "警示教育", to: "Caution" }
-    ];
+  () => {
+    homeNav.value = [{ title: "警示教育", to: "Caution" }];
+    if (userStore.getSomeMenu("scoreManageMenu")) {
+      homeNav.value.unshift({ title: "记分管理", to: "Score" });
+    }
     if (userStore.getSomeMenu("warnManage")) {
       homeNav.value.push({ title: "预警管理", to: "Warning" });
     }

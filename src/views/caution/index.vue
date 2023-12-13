@@ -1,5 +1,6 @@
 <script lang="ts" name="Caution" setup>
 import { onMounted, ref } from "vue";
+import { getFileTypeByExtension } from "@/utils";
 import { toList } from "@/utils";
 import { showConfirmDialog, showFailToast, showSuccessToast } from "vant";
 import { CAUTION_STATUS, CAUTION_STATUS_TXT } from "@/const/warnMaterial";
@@ -10,7 +11,7 @@ import {
   batchUpdateWarnMaterial,
   removeWarnMaterial
 } from "@/api/warnMaterial";
-import type { List, Query } from "@/api/warnMaterial/types";
+import type { List, Query, IBattchJson } from "@/api/warnMaterial/types";
 import { useUserStore } from "@/store/modules/user";
 import { useRouteParamsStore } from "@/store/modules/routeParams";
 
@@ -85,8 +86,16 @@ const onLoad = async () => {
     //   searchForm.value.createPoliceNo = userStore.userInfo?.policeNo;
     const res = await getWarnMaterialPage(searchForm.value);
     res!.rows.forEach((item: any) => {
-      item.battchJson = item?.battchJson ? JSON.parse(item?.battchJson) : [];
-      item.coverImg = item.battchJson?.[0]?.attachFullPath;
+      const battchJson = item?.battchJson ? JSON.parse(item?.battchJson) : [];
+      item.battchJson = battchJson;
+      item.coverImg = battchJson.filter(
+        (v: IBattchJson) =>
+          getFileTypeByExtension(v.attachName || "") === "image"
+      )[0]?.attachFullPath;
+      item.videoUrl = battchJson.filter(
+        (v: IBattchJson) =>
+          getFileTypeByExtension(v.attachName || "") === "video"
+      )[0]?.attachFullPath;
     });
     listData.value.push(...res!.rows);
 

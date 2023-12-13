@@ -2,17 +2,33 @@
  * @Description: 
  * @Author: 辰月
  * @Date: 2023-09-13 16:05:07
- * @LastEditTime: 2023-11-10 17:30:06
+ * @LastEditTime: 2023-12-13 10:04:08
  * @LastEditors: 辰月
 -->
 <script setup lang="ts" name="MaterialItem">
+import { ref } from "vue";
 import type { List } from "@/api/warnMaterial/types";
 import defaultImage from "@/assets/default_fm.png";
 import { formatTime } from "@/utils";
+import { getAudiovisual } from "@/api/common";
 
 const props = defineProps<{
   item: List;
 }>();
+
+const url = ref("");
+
+const getResouce = () => {
+  const tmp = props.item.videoUrl || props.item.coverImg;
+  if (!tmp) {
+    url.value = defaultImage;
+    return false;
+  }
+  getAudiovisual(tmp).then(res => {
+    url.value = res as string;
+  });
+};
+getResouce();
 </script>
 
 <template>
@@ -33,7 +49,7 @@ const props = defineProps<{
     </div>
     <div class="img-box" v-if="item?.coverImg">
       <img
-        :src="item?.coverImg"
+        :src="url"
         alt=""
         @error="
           e => {
@@ -44,7 +60,7 @@ const props = defineProps<{
     </div>
     <div class="img-box" v-if="item.videoUrl">
       <video :controls="false">
-        <source :src="item.videoUrl" />
+        <source v-if="url" :src="url" />
         Your browser does not support the video tag.
       </video>
     </div>

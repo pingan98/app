@@ -5,7 +5,11 @@ import Axios, {
   type AxiosRequestConfig
 } from "axios";
 import { ContentTypeEnum, ResultEnum } from "@/enums/requestEnum";
+
 declare module "axios" {
+  interface AxiosRequestConfig {
+    matchUrl?: string; // 用来匹配服务总线的 有时url上有动态的 /teambuild/cautionAdd/警示教育/xxx.png 只需匹配/teambuild/cautionAdd/警示教育
+  }
   interface AxiosInstance {
     (config: AxiosRequestConfig): Promise<any>;
   }
@@ -15,6 +19,7 @@ declare module "axios" {
   }
 }
 import { useUserStore } from "@/store/modules/user";
+import { useAppStore } from "@/store/modules/app";
 import type { LoginData } from "@/api/auth/types";
 
 import NProgress from "../progress";
@@ -45,69 +50,19 @@ class Http {
       config => {
         // dev prod
         if (env === "prod") {
-          // 所有接口需要走总线那边 返回格式如下：(参考数组第一个)
-          /*const tempArr = [
-            {
-              resourceId: "33000998000000-3-0100-00004774",
-              resourceRegionalismCode: "330000000000",
-              resourceServiceType: "20",
-              resourceAddress:
-                "http://20.65.212:1798/proxy/f5a00d68744087776a7014328f7004e39/moveWarnMaterial/removeWarnMaterial"
-            },
-            {
-              resourceId: "330000000000-3-0100-00004774",
-              resourceRegionalismCode: "330000000000",
-              resourceServiceType: "20",
-              resourceAddress:
-                "http://20.65.212:1798/proxy/f5a00d6874408266a7014328f7004e39/moveWarnMaterial/batchUpdateWarnMaterial"
-            }
-          ];*/
-          const tempArr = window.nativeObj.getAddress()
-            ? JSON.parse(window.nativeObj.getAddress())
-            : [];
-          /*showConfirmDialog({
-            title: "getAddress",
-            message: window.nativeObj.getAddress()
-          })
-            .then(() => {
-              // on confirm
-            })
-            .catch(() => {
-              // on cancel
-            });*/
+          const appStore = useAppStore();
 
-          const index = tempArr.findIndex((item: string | any) => {
-            const arr = item.resourceAddress.split("/proxy/")[1].split("/");
-            const url = "/" + arr.splice(1).join("/");
-
-            if (["{", "}"].includes(url)) {
-              return url.includes(config.url);
-            } else if (
-              config.url?.indexOf("?") > -1 &&
-              config.url.includes(url)
-            ) {
-              const queryUrl = config.url?.split("?")[1];
-              item.resourceAddress += queryUrl;
-              return config.url.includes(url);
-            } else {
-              return url === config.url;
-            }
-          });
-          // console.log(index);
-
-          config.url = tempArr[index].resourceAddress;
-          console.log(config.url);
-
-          // config["resourceId"] = tempArr[index].resourceId;
+          // 将baseUrl替换为服务总线的地址 并设置服务总线所需的一些参数
+          config.baseURL = appStore.servicesBusAddress;
           config.headers["messageId"] = generateGuid();
-          config.headers["resOrgId"] = tempArr[index].resourceRegionalismCode;
-          config.headers["resId"] = tempArr[index].resourceId;
-          config.headers["userCredential"] = encodeURI(
-            window.nativeObj.getUserCredential()
+
+          const address = appStore.filterAddress(
+            config.matchUrl || config.url || ""
           );
-          config.headers["appCredential"] = encodeURI(
-            window.nativeObj.getAppCredential()
-          );
+          config.headers["resOrgId"] = address.resourceRegionalismCode;
+          config.headers["resId"] = address.resourceId;
+          config.headers["userCredential"] = encodeURI(appStore.userCredential);
+          config.headers["appCredential"] = encodeURI(appStore.appCredential);
         }
         // NProgress.start();
         const userStore = useUserStore();
@@ -130,6 +85,9 @@ class Http {
       (response: AxiosResponse) => {
         // NProgress.done();
         const res = response.data;
+        if (res.type === "application/octet-stream") {
+          return URL.createObjectURL(res);
+        }
         if (res.status == "20000") {
           // token过期
           // showFailToast(res.msg);

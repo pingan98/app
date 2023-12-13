@@ -9,6 +9,7 @@ import {
   removeWarnMaterial,
   warnMaterialDetail
 } from "@/api/warnMaterial";
+import { getAudiovisual } from "@/api/common";
 import { showConfirmDialog, showSuccessToast, type FormInstance } from "vant";
 import { useUserStore } from "@/store/modules/user";
 import { useRouteParamsStore } from "@/store/modules/routeParams";
@@ -23,18 +24,28 @@ const imgList = ref<Array<IBattchJson>>([]);
 const judgeRole = userStore.getSomeMenu("warnMaterial");
 
 const detailData = ref<Form>();
+
+const getResouce = (item: IBattchJson) => {
+  getAudiovisual(item.attachFullPath).then(res => {
+    item.attachFullPath = res as string;
+    if (getFileTypeByExtension(item.attachName || "") === "video") {
+      videoList.value.push(item);
+    }
+    if (getFileTypeByExtension(item.attachName || "") === "image") {
+      imgList.value.push(item);
+    }
+  });
+};
 onMounted(async () => {
+  videoList.value = [];
+  imgList.value = [];
   const res = await warnMaterialDetail({ id: route.params.id as string });
   const battchJson = res.data?.battchJson
     ? JSON.parse(res.data?.battchJson)
     : [];
-
-  videoList.value = battchJson.filter(
-    (v: IBattchJson) => getFileTypeByExtension(v.attachName || "") === "video"
-  );
-  imgList.value = battchJson.filter(
-    (v: IBattchJson) => getFileTypeByExtension(v.attachName || "") === "image"
-  );
+  battchJson.forEach((v: IBattchJson) => {
+    getResouce(v);
+  });
 
   detailData.value = { ...res.data };
 });

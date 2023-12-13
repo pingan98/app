@@ -1,6 +1,7 @@
 import type { AxiosPromise } from "axios";
 import { http } from "@/utils/http";
 import { ContentTypeEnum } from "@/enums/requestEnum";
+import { useAppStore } from "@/store/modules/app";
 const prefix = "/view/minio/"; // 前缀
 export function uploadFile(data: any) {
   return http.request({
@@ -43,5 +44,30 @@ export function delFile(data: any) {
     url: prefix + "delete",
     method: "post",
     data
+  });
+}
+
+/**
+ * @description: 经过总线去获取音视频
+ * @Author: 辰月
+ * @Date: 2023-12-08 15:52:34
+ * @LastEditTime: Do not edit
+ * @LastEditors: 辰月
+ * @param {any} data
+ */
+export function getAudiovisual(data: any) {
+  const url = data.split("/警示教育/").pop();
+  const env = import.meta.env;
+  const str = env.VITE_APP_ENV === "prod" ? "/yunling" : "/teambuild";
+  const baseURL =
+    env.VITE_APP_ENV === "prod"
+      ? useAppStore().servicesBusAddress
+      : env.VITE_FILE_BASEURL;
+  return http.request({
+    baseURL,
+    url: str + "/cautionAdd/警示教育/" + url,
+    matchUrl: str + "/cautionAdd/警示教育/",
+    method: "get",
+    responseType: "blob"
   });
 }
