@@ -1,6 +1,8 @@
 <script lang="ts" name="Portrait" setup>
 import { useRoute } from "vue-router";
+import { useUserStore } from "@/store/modules/user";
 
+const userStore = useUserStore();
 const route = useRoute();
 </script>
 
@@ -12,7 +14,9 @@ const route = useRoute();
       class="person portrait-item"
       @click="$router.push('/portrait/person')"
     ></div>
+    <!-- 单位画像民警不可见 -->
     <div
+      v-if="userStore.getSomeMenu('unitDrawMenu')"
       class="unit portrait-item"
       @click="$router.push('/portrait/unit')"
     ></div>

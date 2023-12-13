@@ -116,7 +116,7 @@ const routes: Array<RouteRecordRaw> = [
         name: "Mine",
         component: () => import("@/views/mine/index.vue"),
         meta: { title: "我的", noCache: true },
-        redirect: "/mine/audit",
+        // redirect: "/mine/audit",
         children: [
           {
             path: "audit",
