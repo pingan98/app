@@ -7,7 +7,13 @@
 -->
 <template>
   <div class="filter-tabs">
+    <!--个人画像进来的时候需要判断有没有筛选的权限-->
     <div
+      v-if="
+        props.type === TAB_TYPE.people
+          ? userStore.getSomeMenu('peopleSelect')
+          : true
+      "
       :class="['filter-tab', { 'is-active': tabActive === TAB_TYPE.unit }]"
       @click="onTabChange(TAB_TYPE.unit)"
     >
@@ -17,7 +23,9 @@
       </div>
     </div>
     <div
-      v-if="props.type === TAB_TYPE.people"
+      v-if="
+        props.type === TAB_TYPE.people && userStore.getSomeMenu('peopleSelect')
+      "
       :class="['filter-tab', { 'is-active': tabActive === TAB_TYPE.people }]"
       @click="onTabChange(TAB_TYPE.people)"
     >
@@ -145,6 +153,9 @@ import { onMounted } from "vue";
 import { ref, watch } from "vue";
 import dayjs from "dayjs";
 import { showToast } from "vant";
+import { useUserStore } from "@/store/modules/user";
+
+const userStore = useUserStore();
 
 const emit = defineEmits(["refresh"]);
 const props = defineProps({
