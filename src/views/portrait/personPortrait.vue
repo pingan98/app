@@ -82,7 +82,7 @@ function refreshData(param: any) {
 
       <div class="flex-module-box flex justify-between items-center mt-[18px]">
         <module-box
-          title="出差情况"
+          title="接处警"
           bg="from-[#d0eaff] to-[#f9fbff]"
           class="w-[48%]"
         >
@@ -91,23 +91,21 @@ function refreshData(param: any) {
           </template>
           <div class="count-box">
             <div class="count-item van-hairline--right">
-              <div class="name">出差次数</div>
+              <div class="name">数量</div>
               <div>
-                <span class="num">{{ bean.cccs || 0 }}</span
-                >次
+                <span class="num">{{ bean.cccs || 0 }}</span>
               </div>
             </div>
             <div class="count-item">
-              <div class="name">出差时长</div>
+              <div class="name">单位排名</div>
               <div>
-                <span class="num">{{ bean.ccsc || 0 }}</span
-                >小时
+                <span class="num">{{ bean.ccsc || 0 }}</span>
               </div>
             </div>
           </div>
         </module-box>
         <module-box
-          title="信访投诉"
+          title="处分"
           bg="from-[#d0f7ff] to-[#f7fdff]"
           class="w-[48%]"
         >
@@ -116,24 +114,22 @@ function refreshData(param: any) {
           </template>
           <div class="count-box">
             <div class="count-item van-hairline--right">
-              <div class="name">信访数</div>
+              <div class="name">局纪局规</div>
               <div>
-                <span class="num">{{ scoreBean.xfNum || 0 }}</span
-                >件
+                <span class="num">{{ scoreBean.xfNum || 0 }}</span>
               </div>
             </div>
             <div class="count-item">
-              <div class="name">投诉数</div>
+              <div class="name">党纪政务</div>
               <div>
-                <span class="num">{{ scoreBean.tsNum || 0 }}</span
-                >件
+                <span class="num">{{ scoreBean.tsNum || 0 }}</span>
               </div>
             </div>
           </div>
         </module-box>
       </div>
 
-      <module-box
+      <!-- <module-box
         title="执法质态"
         bg="from-[#d0dfff] to-[#fbfdfd]"
         class="mt-[18px]"
@@ -155,7 +151,7 @@ function refreshData(param: any) {
             <div><span class="num">0</span>起</div>
           </div>
         </div>
-      </module-box>
+      </module-box> -->
 
       <!-- TODO: 此处没找到相关接口 -->
       <module-box title="饮酒报备次数：2" class="mt-[18px]" v-if="false">

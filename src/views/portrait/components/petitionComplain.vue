@@ -51,30 +51,32 @@ watch(
       <div class="all-count-box">
         <div
           class="all-count-item van-hairline--right"
-          @click="setQueryType(0)"
+          @click="setQueryType(1)"
         >
+          <div class="name">信访件总量</div>
+          <div>
+            <span class="num">{{ bean.accXfNum || 0 }}</span
+            >件
+          </div>
+        </div>
+        <div class="all-count-item">
           <div class="name">投诉件总量</div>
           <div>
             <span class="num">{{ bean.reportNumVo.comTotalNum || 0 }}</span
             >件
           </div>
         </div>
-        <div
-          class="all-count-item van-hairline--right"
-          @click="setQueryType(1)"
-        >
-          <div class="name">12389派发件</div>
-          <div>
-            <span class="num">{{ bean.reportNumVo.pfNum || 0 }}</span
-            >件
-          </div>
-        </div>
-        <div class="all-count-item" @click="setQueryType(2)">
-          <div class="name">自接件</div>
+        <div class="all-count-item">
+          <!-- <div class="name">自接件</div>
           <div>
             <span class="num">{{ bean.reportNumVo.zjNum || 0 }}</span
             >件
+          </div> -->
+          <div class="all-count-row">
+            自接: <span>{{ bean.reportNumVo.zjNum || 0 }}</span
+            >件
           </div>
+          <div class="all-count-row">12389: <span>12</span>件</div>
         </div>
       </div>
 
