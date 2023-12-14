@@ -47,40 +47,34 @@ watch(
 
 <template>
   <div class="petition-complain">
-    <template v-if="bean.reportNumVo">
-      <div class="all-count-box">
-        <div
-          class="all-count-item van-hairline--right"
-          @click="setQueryType(1)"
-        >
-          <div class="name">信访件总量</div>
-          <div>
-            <span class="num">{{ bean.accXfNum || 0 }}</span
-            >件
-          </div>
-        </div>
-        <div class="all-count-item">
-          <div class="name">投诉件总量</div>
-          <div>
-            <span class="num">{{ bean.reportNumVo.comTotalNum || 0 }}</span
-            >件
-          </div>
-        </div>
-        <div class="all-count-item">
-          <!-- <div class="name">自接件</div>
-          <div>
-            <span class="num">{{ bean.reportNumVo.zjNum || 0 }}</span
-            >件
-          </div> -->
-          <div class="all-count-row">
-            自接: <span>{{ bean.reportNumVo.zjNum || 0 }}</span
-            >件
-          </div>
-          <div class="all-count-row">12389: <span>12</span>件</div>
+    <div class="all-count-box">
+      <div class="all-count-item van-hairline--right" @click="setQueryType(1)">
+        <div class="name">信访件总量</div>
+        <div>
+          <span class="num">{{ bean.petNum || 0 }}</span
+          >件
         </div>
       </div>
+      <div class="all-count-item">
+        <div class="name">投诉件总量</div>
+        <div>
+          <span class="num">{{ bean.compTotalNum || 0 }}</span
+          >件
+        </div>
+      </div>
+      <div class="all-count-item">
+        <div class="all-count-row">
+          自接: <span class="num">{{ bean.selfNum || 0 }}</span
+          >件
+        </div>
+        <div class="all-count-row">
+          12389: <span class="num">{{ bean.oneTwoNum || 0 }}</span
+          >件
+        </div>
+      </div>
+    </div>
 
-      <!-- <div class="status-box">
+    <!-- <div class="status-box">
         <div class="status-item-box wait" @click="setQueryType(3)">
           <div class="name">未办结</div>
           <div>
@@ -100,7 +94,6 @@ watch(
           </div>
         </div>
       </div> -->
-    </template>
 
     <div class="petition-list">
       <div
@@ -178,6 +171,24 @@ watch(
       font-size: 30px;
       font-family: DIN;
       font-weight: bold;
+    }
+  }
+  .all-count-row {
+    width: 80%;
+    background: #ffffff;
+    border-radius: 20px;
+    font-size: 12px;
+    font-family: Source Han Sans SC;
+    font-weight: 500;
+    color: #3c82fe;
+    text-align: center;
+    .num {
+      font-size: 16px;
+      font-family: DIN;
+      font-weight: bold;
+    }
+    & + .all-count-row {
+      margin-top: 15px;
     }
   }
 }

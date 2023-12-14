@@ -16,7 +16,7 @@ const scoreBean = ref<any>({});
 function getData(params: any) {
   getZJ(params).then(data => {
     bean.value = data || {};
-    console.log("bean.value :>> ", bean.value);
+    // console.log("bean.value :>> ", bean.value);
   });
   getPerScoreList(params).then(data => {
     scoreBean.value = data;
@@ -55,6 +55,57 @@ function refreshData(param: any) {
         </div>
       </div>
 
+      <div class="flex-module-box flex justify-between items-center mt-[18px]">
+        <module-box
+          title="接处警"
+          bg="from-[#d0eaff] to-[#f9fbff]"
+          class="w-[48%]"
+        >
+          <template v-slot:icon>
+            <img src="@/assets/sort_icon3@3x.png" alt="" />
+          </template>
+          <div class="count-box">
+            <div class="count-item van-hairline--right">
+              <div class="name">数量</div>
+              <div>
+                <span class="num">{{
+                  bean.caseData.handlePoliceNumber || 0
+                }}</span>
+              </div>
+            </div>
+            <div class="count-item">
+              <div class="name">单位排名</div>
+              <div>
+                <span class="num">{{ bean.caseData.ranking || 0 }}</span>
+              </div>
+            </div>
+          </div>
+        </module-box>
+        <module-box
+          title="处分"
+          bg="from-[#d0f7ff] to-[#f7fdff]"
+          class="w-[48%]"
+        >
+          <template v-slot:icon>
+            <img src="@/assets/sort_icon4@3x.png" alt="" />
+          </template>
+          <div class="count-box">
+            <div class="count-item van-hairline--right">
+              <div class="name">局纪局规</div>
+              <div>
+                <span class="num">{{ bean.caseData.rulePunish || 0 }}</span>
+              </div>
+            </div>
+            <div class="count-item">
+              <div class="name">党纪政务</div>
+              <div>
+                <span class="num">{{ bean.caseData.govPunish || 0 }}</span>
+              </div>
+            </div>
+          </div>
+        </module-box>
+      </div>
+
       <div class="score-list" v-if="scoreBean.rtnList">
         <div
           class="score-item van-hairline--bottom"
@@ -78,55 +129,6 @@ function refreshData(param: any) {
             </div>
           </div>
         </div>
-      </div>
-
-      <div class="flex-module-box flex justify-between items-center mt-[18px]">
-        <module-box
-          title="接处警"
-          bg="from-[#d0eaff] to-[#f9fbff]"
-          class="w-[48%]"
-        >
-          <template v-slot:icon>
-            <img src="@/assets/sort_icon3@3x.png" alt="" />
-          </template>
-          <div class="count-box">
-            <div class="count-item van-hairline--right">
-              <div class="name">数量</div>
-              <div>
-                <span class="num">{{ bean.cccs || 0 }}</span>
-              </div>
-            </div>
-            <div class="count-item">
-              <div class="name">单位排名</div>
-              <div>
-                <span class="num">{{ bean.ccsc || 0 }}</span>
-              </div>
-            </div>
-          </div>
-        </module-box>
-        <module-box
-          title="处分"
-          bg="from-[#d0f7ff] to-[#f7fdff]"
-          class="w-[48%]"
-        >
-          <template v-slot:icon>
-            <img src="@/assets/sort_icon4@3x.png" alt="" />
-          </template>
-          <div class="count-box">
-            <div class="count-item van-hairline--right">
-              <div class="name">局纪局规</div>
-              <div>
-                <span class="num">{{ scoreBean.xfNum || 0 }}</span>
-              </div>
-            </div>
-            <div class="count-item">
-              <div class="name">党纪政务</div>
-              <div>
-                <span class="num">{{ scoreBean.tsNum || 0 }}</span>
-              </div>
-            </div>
-          </div>
-        </module-box>
       </div>
 
       <!-- <module-box
