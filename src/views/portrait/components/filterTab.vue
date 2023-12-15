@@ -7,13 +7,7 @@
 -->
 <template>
   <div class="filter-tabs">
-    <!--个人画像进来的时候需要判断有没有筛选的权限-->
     <div
-      v-if="
-        props.type === TAB_TYPE.people
-          ? userStore.getSomeMenu('peopleSelect')
-          : true
-      "
       :class="['filter-tab', { 'is-active': tabActive === TAB_TYPE.unit }]"
       @click="onTabChange(TAB_TYPE.unit)"
     >
@@ -22,6 +16,7 @@
         <van-icon class="filter-tab_icon" name="play" />
       </div>
     </div>
+    <!-- 个人画像进来的时候需要判断有没有筛选的权限 -->
     <div
       v-if="
         props.type === TAB_TYPE.people && userStore.getSomeMenu('peopleSelect')

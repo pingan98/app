@@ -1,9 +1,10 @@
 <script lang="ts" name="ViolateDiscipline" setup>
-import { ref, watch } from "vue";
+import { ref, watch, nextTick } from "vue";
 import { toList } from "@/utils";
 import { POLICE_TYPE, POLICE_TYPE_TXT } from "@/const";
 
 import { getBreakRuleScore } from "@/api/personPortrait";
+import ModuleBox from "@/components/business/moduleBox.vue";
 
 const props = defineProps({
   params: {
@@ -24,12 +25,19 @@ const bean = ref<{
 
 const policeType = POLICE_TYPE;
 const activeTab = ref<string | number>(policeType.min);
-const tabArr = toList(POLICE_TYPE, POLICE_TYPE_TXT);
+const tabArr = ref(
+  toList(POLICE_TYPE, POLICE_TYPE_TXT).map(item => {
+    return {
+      ...item,
+      score: 0
+    };
+  })
+);
 
 const setBeanData = () => {
   const mapParam = {
-    [POLICE_TYPE.fu]: ["fjList", "fjTotalScore"],
-    [POLICE_TYPE.min]: ["mjList", "mjTotalScore"]
+    [POLICE_TYPE.fu]: ["fjList", "fjTotalNum"],
+    [POLICE_TYPE.min]: ["mjList", "mjTotalNum"]
   };
   const tmp = mapParam[activeTab.value];
   bean.value = {
@@ -42,8 +50,8 @@ const getData = (params: any) => {
   getBreakRuleScore(params).then(data => {
     beanLocal = data || {};
 
-    tabArr[0].score = data?.mjTotalScore || 0;
-    tabArr[1].score = data?.fjTotalScore || 0;
+    tabArr.value[0].score = data.mjTotalNum || 0;
+    tabArr.value[1].score = data.fjTotalNum || 0;
 
     setBeanData();
   });
@@ -81,11 +89,45 @@ watch(
       >
         <div class="name">{{ item.label }}总记分</div>
         <div class="num">
-          {{ item.score || 0 }}
+          {{ item.score }}
         </div>
       </div>
     </div>
-    <div class="score-list" v-if="bean">
+
+    <module-box
+      class="mt-[30px]"
+      title="扣分明细"
+      bg="from-[#d0eaff] to-[#f9fbff]"
+    >
+      <template v-slot:icon>
+        <img src="@/assets/sort_icon3@3x.png" alt="" />
+      </template>
+
+      <div class="drink-module">
+        <div class="drink-module_row is-header">
+          <div class="drink-module_col">序号</div>
+          <div class="drink-module_col">姓名</div>
+          <div class="drink-module_col">扣分次数</div>
+          <div class="drink-module_col">扣分数</div>
+        </div>
+        <div class="drink-module_table">
+          <van-empty description="暂无数据" v-if="!bean.list.length" />
+          <div
+            v-else
+            class="drink-module_row van-hairline--bottom"
+            v-for="(item, ind) in bean.list"
+            :key="ind"
+          >
+            <div class="drink-module_col">{{ ind + 1 }}</div>
+            <div class="drink-module_col">{{ item.name || "" }}</div>
+            <div class="drink-module_col">{{ item.scoreCount || 0 }}</div>
+            <div class="drink-module_col">{{ item.scoreNum || 0 }}</div>
+          </div>
+        </div>
+      </div>
+    </module-box>
+
+    <!--<div class="score-list" v-if="bean">
       <div
         class="score-item van-hairline--bottom"
         v-for="(item, ind) in bean.list"
@@ -110,7 +152,7 @@ watch(
           </div>
         </div>
       </div>
-    </div>
+    </div>-->
   </div>
 </template>
 
@@ -123,6 +165,7 @@ watch(
     width: 100%;
     .flex(space-between, center);
     .tab-item {
+      position: relative;
       width: 48%;
       height: 76px;
       box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1);
@@ -136,17 +179,15 @@ watch(
       }
       &.active::after {
         display: block;
+        position: absolute;
+        bottom: -10px;
+        left: 0;
         content: "";
         width: 64px;
         height: 7px;
         border-radius: 5px;
-        transform: translate(50%, 10px);
-      }
-      &.min.active::after {
+        transform: translateX(50%);
         background: linear-gradient(90deg, #1572f9 0%, #0096ff 100%);
-      }
-      &.fu.active::after {
-        background: linear-gradient(90deg, #fe871b 0%, #ffcd4e 100%);
       }
       .name {
         font-size: 12px;
@@ -157,6 +198,30 @@ watch(
         font-family: DIN;
         font-weight: bold;
       }
+    }
+  }
+
+  .drink-module {
+    width: 100%;
+    padding: 10px;
+    &_table {
+      max-height: 280px;
+      margin: 0 auto;
+      overflow-y: auto;
+    }
+    &_row {
+      color: #666666;
+      .flex(flex-start, center);
+      &.is-header {
+        height: 36px;
+        background: #edeff3;
+        font-size: 12px;
+      }
+    }
+    &_col {
+      text-align: center;
+      width: 25%;
+      padding: 5px 0;
     }
   }
 }
