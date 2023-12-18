@@ -18,7 +18,21 @@ function getData(params: any) {
     bean.value = data || {};
     // console.log("bean.value :>> ", bean.value);
   });
+  const REG =
+    /第[一二三四五六七八九十百千万]*条第[一二三四五六七八九十百千万]*项/;
+
   getPerScoreList(params).then(data => {
+    (data.rtnList || []).forEach(item => {
+      // 记分条款显示会太长 只显示第几条第几款
+      let simpleScore = "";
+      const matchRes = item.queType.match(REG);
+      if (matchRes && matchRes.length) {
+        simpleScore = matchRes[0];
+      } else {
+        simpleScore = item.queType;
+      }
+      item.simpleScore = simpleScore;
+    });
     scoreBean.value = data;
   });
 }
@@ -120,7 +134,7 @@ function refreshData(param: any) {
             <div>记分分值</div>
           </div>
           <div class="right-main-box">
-            <div class="kind">{{ item.queType || "" }}</div>
+            <div class="kind">{{ item.simpleScore || "" }}</div>
             <div class="desc">
               <span class="label">记分类型：</span>{{ item.scoreType || "" }}
             </div>
