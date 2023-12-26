@@ -199,7 +199,10 @@ const removeFn = async () => {
       </van-list>
     </div>
 
-    <div class="bottom-action flex justify-between" v-if="judgeRole">
+    <div
+      class="bottom-action flex justify-between"
+      v-if="judgeRole && listData.length"
+    >
       <van-button
         v-if="!batchFlag"
         round

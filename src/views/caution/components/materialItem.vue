@@ -1,5 +1,5 @@
 <!--
- * @Description: 
+ * @Description:
  * @Author: 辰月
  * @Date: 2023-09-13 16:05:07
  * @LastEditTime: 2023-12-13 16:26:20
@@ -36,6 +36,7 @@ const getResouce = () => {
     url.value = res as string;
   });
 };
+
 getResouce();
 </script>
 
@@ -67,10 +68,12 @@ getResouce();
       />
     </div>
     <div class="img-box" v-if="resouceType === 'video'">
-      <video :controls="false">
+      <!-- 是视频的 统一用默认图片 -->
+      <img src="@/assets/default_video.png" alt="" />
+      <!--<video :controls="false">
         <source v-if="url" :src="url" />
         Your browser does not support the video tag.
-      </video>
+      </video>-->
     </div>
     <div class="img-box" v-if="!resouceType && !url">
       <img :src="defaultImage" alt="" />
@@ -106,6 +109,7 @@ getResouce();
     //background: rgba(140, 144, 255, 0.39);
     opacity: 1;
     border-radius: 5px;
+    overflow: hidden;
     img {
       max-width: 100%;
       max-height: 100%;
