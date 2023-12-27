@@ -40,7 +40,7 @@ export function updateWarnMaterial(data: Form): AxiosPromise {
 export function removeWarnMaterial(data: string[]): AxiosPromise {
   return http.request({
     url: prefix + "removeWarnMaterial",
-    method: "delete",
+    method: "post",
     headers: {
       "Content-Type": ContentTypeEnum.JSON
     },
@@ -61,11 +61,14 @@ export function batchUpdateWarnMaterial(
   warnState: string
 ): AxiosPromise {
   return http.request({
-    url: prefix + "batchUpdateWarnMaterial?warnState=" + warnState,
+    url: prefix + "batchUpdateWarnMaterial",
     method: "post",
     headers: {
       "Content-Type": ContentTypeEnum.JSON
     },
-    data
+    data,
+    params: {
+      warnState: warnState
+    }
   });
 }

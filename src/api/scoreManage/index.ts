@@ -32,7 +32,7 @@ export function editScoreManage(data: Form): AxiosPromise {
 export function removeScoreManage(data: Key): AxiosPromise {
   return http.request({
     url: prefix + "removeScoreManage",
-    method: "delete",
+    method: "post",
     headers: {
       "Content-Type": ContentTypeEnum.JSON
     },
