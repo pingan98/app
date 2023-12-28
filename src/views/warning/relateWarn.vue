@@ -4,6 +4,7 @@ import { ref } from "vue";
 import { getTCarAlarmPage } from "@/api/tCarAlarm";
 import type { Query, List } from "@/api/tCarAlarm/types";
 import ModuleBox from "@/components/business/moduleBox.vue";
+import RemoteImg from "@/views/warning/components/remoteImg.vue";
 
 const route = useRoute();
 const listData = ref<List[]>([]);
@@ -33,7 +34,6 @@ const onLoad = async () => {
         v.cameraname
       ];
     }
-
     return {
       ...v,
       index: index,
@@ -76,13 +76,10 @@ const onLoad = async () => {
         </template>
         <div class="p-[10px]">
           <div class="mb-[6px]">{{ item.txt }}</div>
-          <van-image
-            width="100%"
-            height="160px"
-            fit="contain"
-            :src="item.snappedpicurl"
+          <remote-img
+            v-if="Object.keys(item).length"
+            :url="item.snappedpicurl"
           />
-          <!--<div class="w-[100%] h-[160px] bg-pink-50"></div>-->
         </div>
       </module-box>
     </van-list>

@@ -13,3 +13,12 @@ export function getTCarAlarmPage(data: Query): AxiosPromise {
     data: qs.stringify(data)
   });
 }
+// 图片转为流
+export function imageToStream(data: any): AxiosPromise {
+  return http.request({
+    url: prefix + "imageToStream",
+    method: "post",
+    data: data,
+    responseType: "blob"
+  });
+}
