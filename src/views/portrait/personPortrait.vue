@@ -54,7 +54,8 @@ function refreshData(param: any) {
     <div class="person-portrait-main" v-else>
       <div class="all-count-box">
         <div class="all-count-item left-box">
-          <van-image :src="bean.police?.photoPath || avatar" width="50px" />
+          <!--<van-image :src="bean.police?.photoPath || avatar" width="50px" />-->
+          <van-image :src="avatar" width="50px" />
           <div>
             <div class="name">{{ bean.police?.jyname || "" }}</div>
             <div>{{ bean.orgName || "" }}</div>

@@ -6,7 +6,7 @@
  * @LastEditors: 辰月
  */
 import type { AxiosPromise } from "axios";
-// import qs from "qs";
+import qs from "qs";
 import { http } from "@/utils/http";
 
 const prefix = "/moveSecondaryScreen/";
@@ -79,5 +79,21 @@ export function getYJBBDW(params: any) {
     url: prefix + "getYJBBDW",
     method: "get",
     params
+  });
+}
+// 获取接处警数
+export function getCaseDataHandlePoliceNumber(data: any): AxiosPromise {
+  return http.request({
+    url: prefix + "getCaseDataHandlePoliceNumber",
+    method: "post",
+    data: qs.stringify(data)
+  });
+}
+// 执法办案
+export function getLawCaseHandleData(data: any): AxiosPromise {
+  return http.request({
+    url: prefix + "getLawCaseHandleData",
+    method: "post",
+    data: qs.stringify(data)
   });
 }
