@@ -8,7 +8,7 @@ let timer: number = 0;
 const countdown = ref("");
 
 onMounted(() => {
-  console.log("全国注册备案号》》", window?.nativeObj?.getRecordNum());
+  // console.log("全国注册备案号》》", window?.nativeObj?.getRecordNum());
   startCountdown();
 });
 onBeforeUnmount(() => {

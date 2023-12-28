@@ -48,21 +48,34 @@ class Http {
   private httpInterceptorsRequest(): void {
     Http.axiosInstance.interceptors.request.use(
       config => {
+        console.log(config.url);
         // dev prod
         if (env === "prod") {
           const appStore = useAppStore();
+          console.log("-------请求开始----------");
+          // console.log("servicesBusAddress>>", appStore.servicesBusAddress);
+          console.log("userCredential>>", appStore.userCredential);
+          console.log("appCredential>>", appStore.appCredential);
 
-          // 将baseUrl替换为服务总线的地址 并设置服务总线所需的一些参数
-          config.baseURL = appStore.servicesBusAddress;
           config.headers["messageId"] = generateGuid();
 
+          console.log("config-----", config);
           const address = appStore.filterAddress(
             config.matchUrl || config.url || ""
           );
+          console.log(address);
+
+          // 将baseUrl替换为服务总线的地址 并设置服务总线所需的一些参数
+          config.baseURL = appStore.setServicesBusAddress(address);
+
           config.headers["resOrgId"] = address.resourceRegionalismCode;
           config.headers["resId"] = address.resourceId;
           config.headers["userCredential"] = encodeURI(appStore.userCredential);
           config.headers["appCredential"] = encodeURI(appStore.appCredential);
+        }
+
+        if (env === "dev" && config.url?.includes("/cautionAdd/警示教育/")) {
+          config.baseURL = import.meta.env.VITE_FILE_BASEURL;
         }
         // NProgress.start();
         const userStore = useUserStore();

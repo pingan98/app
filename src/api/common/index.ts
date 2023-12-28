@@ -59,14 +59,21 @@ export function getAudiovisual(data: any) {
   const url = data.split("/警示教育/").pop();
   const env = import.meta.env;
   const str = env.VITE_APP_ENV === "prod" ? "/yunling" : "/teambuild";
-  const baseURL =
-    env.VITE_APP_ENV === "prod"
-      ? useAppStore().servicesBusAddress
-      : env.VITE_FILE_BASEURL;
+
   return http.request({
-    baseURL,
     url: str + "/cautionAdd/警示教育/" + url,
     matchUrl: "/cautionAdd/警示教育/",
+    method: "get",
+    responseType: "blob"
+  });
+}
+// 预警图片
+export function getWarnServeUrl(data: any) {
+  const url = data.split("/pic?").pop();
+
+  return http.request({
+    url: "/pic?" + url,
+    matchUrl: "/pic",
     method: "get",
     responseType: "blob"
   });

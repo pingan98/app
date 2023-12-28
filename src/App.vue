@@ -2,7 +2,7 @@
   <router-view />
 </template>
 
-<script setup lang="ts" name="Home">
+<script setup lang="ts" name="App">
 import { useAppStore } from "@/store/modules/app";
 const appStore = useAppStore();
 appStore.setNativeObj(

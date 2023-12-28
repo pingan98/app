@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { store } from "@/store";
+import { add } from "husky";
 
 interface INativeObj {
   getUserCredential(): string;
@@ -19,39 +20,38 @@ export const useAppStore = defineStore({
   id: "app",
   state: () => ({
     nativeObj: {} as INativeObj,
-    servicesBusAddress: ""
+    userCredential: "",
+    appCredential: "",
+    address: [],
+    zjhm: ""
   }),
   actions: {
-    setNativeObj(data: INativeObj) {
+    setNativeObj(data) {
       this.nativeObj = data;
-      this.setServicesBusAddress(this.address[0] || {});
+      this.userCredential = data.getUserCredential() || "";
+      this.appCredential = data.getAppCredential() || "";
+      this.zjhm = data.getZjhm() || "";
+      const address = data.getAddress();
+      this.address = address ? JSON.parse(address) : [];
     },
-    setServicesBusAddress(data: IAddressItem) {
-      const resourceAddress = data.resourceAddress;
+    setServicesBusAddress(data) {
+      console.log("入参data----", data);
+      const resourceAddress = data.resourceAddress || "";
       const regex = /^http:\/\/[^\/]+\/proxy\/([^\/]+)\//;
       const match = resourceAddress.match(regex);
-      this.servicesBusAddress = match ? match[0] : "" || "";
+      console.log(match);
+      return match ? match[0] : "" || "";
     },
     filterAddress(url: string): IAddressItem {
+      console.log("入参url----", url);
+      const splitUrlArr = url.split("?") || [];
+      console.log("split url>>", splitUrlArr);
+      console.log("this.address---", this.address);
       const address = this.address.filter((item: IAddressItem) => {
-        return item.resourceAddress.includes(url);
+        return item.resourceAddress.includes(splitUrlArr[0]);
       });
+      console.log("filterAddress------", address[0]);
       return address[0] || {};
-    }
-  },
-  getters: {
-    userCredential(state) {
-      return state.nativeObj?.getUserCredential();
-    },
-    appCredential(state) {
-      return state.nativeObj?.getAppCredential();
-    },
-    address(state) {
-      const address = state.nativeObj?.getAddress();
-      return address ? JSON.parse(address) : [];
-    },
-    zjhm(state) {
-      return state.nativeObj?.getZjhm();
     }
   }
 });
