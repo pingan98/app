@@ -180,7 +180,8 @@ const policeData = ref<any>([]);
 // 时间
 const minDate = dayjs().subtract(10, "year").toDate();
 const maxDate = dayjs().add(10, "year").toDate();
-const startDate = ref(dayjs().startOf("M").format("YYYY/MM/DD").split("/"));
+// const startDate = ref(dayjs().startOf("M").format("YYYY/MM/DD").split("/"));
+const startDate = ref((dayjs().year() + "/01/01").split("/"));
 const endDate = ref(dayjs().format("YYYY/MM/DD").split("/"));
 
 const filterTabData = ref<IPersonPortraitParam>({
