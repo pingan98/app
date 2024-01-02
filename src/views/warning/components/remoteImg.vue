@@ -4,6 +4,7 @@
     height="160px"
     fit="contain"
     :src="imgUr ? imgUr : ''"
+    @click="previewImg([imgUr], 0)"
   >
   </van-image>
 </template>
@@ -11,11 +12,22 @@
 <script lang="ts" name="RemoteImg" setup>
 import { ref } from "vue";
 import { imageToStream } from "@/api/tCarAlarm";
+import { showImagePreview } from "vant";
 
 const imgUr = ref("");
 const props = defineProps<{
   url?: string;
 }>();
+// 点击查看图片
+const previewImg = (imgs, index) => {
+  const pics = imgs.filter(v => v);
+  if (!pics.length) return false;
+  showImagePreview({
+    images: pics,
+    startPosition: index,
+    closeable: true
+  });
+};
 const getResouce = () => {
   if (!props.url) return;
 

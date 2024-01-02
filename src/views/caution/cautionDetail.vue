@@ -91,14 +91,14 @@ const removeFn = async () => {
   returnPage();
 };
 // 点击查看图片
-/*const previewImg = (imgs, index) => {
+const previewImg = (imgs, index) => {
   const pics = imgs.map(v => v.attachFullPath);
   showImagePreview({
     images: pics,
     startPosition: index,
     closeable: true
   });
-};*/
+};
 </script>
 
 <template>
@@ -120,8 +120,11 @@ const removeFn = async () => {
     <div class="desc-box">{{ detailData?.warnContent }}</div>
     <div class="img-con" v-if="imgList.length">
       <div class="img-box" v-for="(item, ind) in imgList" :key="ind">
-        <!--@click="previewImg(imgList, ind)"-->
-        <img :src="item.attachFullPath" alt="" />
+        <img
+          :src="item.attachFullPath"
+          alt=""
+          @click="previewImg(imgList, ind)"
+        />
       </div>
     </div>
     <div class="img-con" v-if="videoList.length">

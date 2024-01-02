@@ -76,10 +76,7 @@ const onLoad = async () => {
         </template>
         <div class="p-[10px]">
           <div class="mb-[6px]">{{ item.txt }}</div>
-          <remote-img
-            v-if="Object.keys(item).length"
-            :url="item.snappedpicurl"
-          />
+          <remote-img v-if="item.snappedpicurl" :url="item.snappedpicurl" />
         </div>
       </module-box>
     </van-list>

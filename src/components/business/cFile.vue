@@ -46,7 +46,7 @@ const props = defineProps({
   },
   maxSize: {
     type: Number,
-    default: 1 // 最大上传（M）
+    default: 5 // 最大上传（M）
   }
 });
 
