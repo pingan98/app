@@ -43,6 +43,10 @@ const props = defineProps({
   maxCount: {
     type: Number,
     default: 5
+  },
+  maxSize: {
+    type: Number,
+    default: 5 // 最大上传（M）
   }
 });
 
@@ -57,7 +61,10 @@ const emit = defineEmits<{
   (e: "refresh"): void;
   (e: "update:modelValue", val: any): void;
 }>();
-
+const onOversize = file => {
+  console.log(file);
+  showFailToast("onOversize 文件大小不能超过5M");
+};
 // 图片上传
 const onAfterRead: UploaderAfterRead = item => {
   if (!props.orderId) {
@@ -138,6 +145,8 @@ function getFileList() {
         v-model="viewList"
         :after-read="onAfterRead"
         @delete="onDelete"
+        :max-size="maxSize * 1024 * 1024"
+        @oversize="onOversize"
       >
       </van-uploader>
       <p class="tip" v-if="showTip && !viewList.length">
