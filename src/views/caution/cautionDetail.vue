@@ -10,7 +10,12 @@ import {
   warnMaterialDetail
 } from "@/api/warnMaterial";
 import { getAudiovisual } from "@/api/common";
-import { showConfirmDialog, showSuccessToast, type FormInstance } from "vant";
+import {
+  showImagePreview,
+  showConfirmDialog,
+  showSuccessToast,
+  type FormInstance
+} from "vant";
 import { useUserStore } from "@/store/modules/user";
 import { useRouteParamsStore } from "@/store/modules/routeParams";
 
@@ -85,6 +90,15 @@ const removeFn = async () => {
   showSuccessToast("删除成功");
   returnPage();
 };
+// 点击查看图片
+/*const previewImg = (imgs, index) => {
+  const pics = imgs.map(v => v.attachFullPath);
+  showImagePreview({
+    images: pics,
+    startPosition: index,
+    closeable: true
+  });
+};*/
 </script>
 
 <template>
@@ -106,6 +120,7 @@ const removeFn = async () => {
     <div class="desc-box">{{ detailData?.warnContent }}</div>
     <div class="img-con" v-if="imgList.length">
       <div class="img-box" v-for="(item, ind) in imgList" :key="ind">
+        <!--@click="previewImg(imgList, ind)"-->
         <img :src="item.attachFullPath" alt="" />
       </div>
     </div>
