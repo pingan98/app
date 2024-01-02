@@ -46,7 +46,7 @@ const props = defineProps({
   },
   maxSize: {
     type: Number,
-    default: 5 // 最大上传（M）
+    default: 1 // 最大上传（M）
   }
 });
 
@@ -63,7 +63,7 @@ const emit = defineEmits<{
 }>();
 const onOversize = file => {
   console.log(file);
-  showFailToast("onOversize 文件大小不能超过5M");
+  showFailToast(`文件大小不能超过${props.maxSize}M`);
 };
 // 图片上传
 const onAfterRead: UploaderAfterRead = item => {
