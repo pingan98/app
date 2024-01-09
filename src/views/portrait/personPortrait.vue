@@ -319,6 +319,7 @@ function refreshData(param: any) {
     text-align: center;
     width: 33.33%;
     padding: 5px 0;
+    font-size: inherit;
   }
 }
 </style>

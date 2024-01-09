@@ -84,7 +84,6 @@ watch(
       class="mb-[20px]"
       title="饮酒报备"
       bg="from-[#d0eaff] to-[#f9fbff]"
-      v-if="drinkInfo.zrc && drinkInfo.zrc.length"
     >
       <template v-slot:icon>
         <img src="@/assets/sort_icon3@3x.png" alt="" />
@@ -92,9 +91,9 @@ watch(
       <div class="drink-module">
         <div class="drink-module_row is-header">
           <div class="drink-module_col">姓名</div>
-          <div class="drink-module_col">饮酒开始时间</div>
-          <div class="drink-module_col">提交报备时间</div>
-          <div class="drink-module_col">是否确认到家</div>
+          <div class="drink-module_col">饮酒开始<br />时间</div>
+          <div class="drink-module_col">饮酒结束<br />时间</div>
+          <div class="drink-module_col">是否确认<br />到家</div>
         </div>
         <div class="drink-module_table">
           <div
@@ -104,7 +103,7 @@ watch(
           >
             <div class="drink-module_col">{{ item.name || "" }}</div>
             <div class="drink-module_col">{{ item.createTime || "" }}</div>
-            <div class="drink-module_col">{{ item.createTime || "" }}</div>
+            <div class="drink-module_col">{{ item.drinkEndTime || "" }}</div>
             <div class="drink-module_col">
               {{ item.goHome === 0 ? "否" : "是" }}
             </div>
@@ -222,7 +221,7 @@ watch(
     color: #666666;
     .flex(flex-start, center);
     &.is-header {
-      height: 36px;
+      min-height: 36px;
       background: #edeff3;
       font-size: 12px;
     }
@@ -231,6 +230,7 @@ watch(
     text-align: center;
     width: 25%;
     padding: 5px 0;
+    font-size: inherit;
   }
 }
 .report-6 {
