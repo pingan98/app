@@ -83,7 +83,7 @@ const getRouterName = (code: any) => {
         exact
       >
         <div :class="['top-bg', `bg${ind + 1}`]"></div>
-        <div>{{ item.label }}</div>
+        <div class="label-name">{{ item.label }}</div>
       </router-link>
     </div>
 
@@ -134,7 +134,7 @@ const getRouterName = (code: any) => {
       flex: 1;
       .flex(center, center);
       flex-direction: column;
-      padding: 8px 10px;
+      padding: 6px 8px;
 
       .top-bg {
         width: 42px;
@@ -162,7 +162,11 @@ const getRouterName = (code: any) => {
         border-radius: 10px;
         background: #e0f3ff;
         color: #1472f9;
-        font-weight: bold;
+        //font-weight: bold;
+      }
+
+      .label-name {
+        font-size: 14px;
       }
     }
   }
