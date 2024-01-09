@@ -84,6 +84,7 @@ watch(
       class="mb-[20px]"
       title="饮酒报备"
       bg="from-[#d0eaff] to-[#f9fbff]"
+      v-if="drinkInfo.zrc && drinkInfo.zrc.length"
     >
       <template v-slot:icon>
         <img src="@/assets/sort_icon3@3x.png" alt="" />
