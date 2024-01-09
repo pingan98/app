@@ -84,6 +84,7 @@ watch(
       class="mb-[20px]"
       title="饮酒报备"
       bg="from-[#d0eaff] to-[#f9fbff]"
+      v-if="drinkInfo.zrc && drinkInfo.zrc.length"
     >
       <template v-slot:icon>
         <img src="@/assets/sort_icon3@3x.png" alt="" />
@@ -96,21 +97,18 @@ watch(
           <div class="drink-module_col">是否确认<br />到家</div>
         </div>
         <div class="drink-module_table">
-          <template v-if="drinkInfo.zrc && drinkInfo.zrc.length">
-            <div
-              class="drink-module_row van-hairline--bottom"
-              v-for="(item, ind) in drinkInfo.zrc"
-              :key="ind"
-            >
-              <div class="drink-module_col">{{ item.name || "" }}</div>
-              <div class="drink-module_col">{{ item.createTime || "" }}</div>
-              <div class="drink-module_col">{{ item.drinkEndTime || "" }}</div>
-              <div class="drink-module_col">
-                {{ item.goHome === 0 ? "否" : "是" }}
-              </div>
+          <div
+            class="drink-module_row van-hairline--bottom"
+            v-for="(item, ind) in drinkInfo.zrc"
+            :key="ind"
+          >
+            <div class="drink-module_col">{{ item.name || "" }}</div>
+            <div class="drink-module_col">{{ item.createTime || "" }}</div>
+            <div class="drink-module_col">{{ item.drinkEndTime || "" }}</div>
+            <div class="drink-module_col">
+              {{ item.goHome === 0 ? "否" : "是" }}
             </div>
-          </template>
-          <div v-else class="text-center mt-5">暂无数据</div>
+          </div>
         </div>
       </div>
     </module-box>
