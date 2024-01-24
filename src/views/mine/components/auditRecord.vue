@@ -68,7 +68,7 @@ const onLoad = async () => {
             <span class="label">问题时间：</span>{{ item.queTime }}
           </div>
           <div class="info-line">
-            <span class="label">预警地点：</span>{{ item.rightlass }}
+            <span class="label">预警地点：</span>{{ item.warnAddredd }}
           </div>
         </div>
       </module-box>
