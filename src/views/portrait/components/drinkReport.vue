@@ -1,6 +1,6 @@
 <script lang="ts" name="DrinkReport" setup>
 import { ref, watch } from "vue";
-
+import { formatTime } from "@/utils";
 import { getYJBBDW } from "@/api/personPortrait";
 
 import ModuleBox from "@/components/business/moduleBox.vue";
@@ -103,8 +103,12 @@ watch(
             :key="ind"
           >
             <div class="drink-module_col">{{ item.name || "" }}</div>
-            <div class="drink-module_col">{{ item.createTime || "" }}</div>
-            <div class="drink-module_col">{{ item.drinkEndTime || "" }}</div>
+            <div class="drink-module_col">
+              {{ formatTime(item.createTime, "YYYY-MM-DD hh:mm") || "" }}
+            </div>
+            <div class="drink-module_col">
+              {{ formatTime(item.drinkEndTime, "YYYY-MM-DD hh:mm") || "" }}
+            </div>
             <div class="drink-module_col">
               {{ item.goHome === 0 ? "否" : "是" }}
             </div>
