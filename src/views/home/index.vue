@@ -4,28 +4,26 @@ import { useUserStore } from "@/store/modules/user";
 import { useAppStore } from "@/store/modules/app";
 import type { PickerOption } from "vant";
 import MaterialItem from "@/views/caution/components/materialItem.vue";
-import type { LoginData } from "@/api/auth/types";
 import type { Query, List } from "@/api/warnMaterial/types";
 import { getWarnMaterialPage } from "@/api/warnMaterial";
 import { CAUTION_STATUS } from "@/const/warnMaterial";
-
 import empty from "@/assets/empty@3x.png";
 import { getAudiovisual } from "@/api/common";
-
 const env = import.meta.env.VITE_APP_ENV;
 const userStore = useUserStore();
 const appStore = useAppStore();
 const testRole = [
-  { name: "陈俊文", policeNo: "cjw" },
-  { name: "派出所", policeNo: "pcs" },
-  { name: "jsdc ", policeNo: "jsdc " }
+  { name: "陈俊文", policeNo: "cjw", userSource: "0", password: "M@123456" },
+  { name: "派出所", policeNo: "pcs", userSource: "0", password: "M@123456" },
+  { name: "jsdc ", policeNo: "jsdc ", userSource: "0", password: "M@123456" },
+  {
+    name: "汪赛赛 ",
+    policeNo: "5047",
+    userSource: "1",
+    password: "M@App123456"
+  }
 ];
 const showPicker = ref(false);
-const loginData = ref<LoginData>({
-  username: "",
-  password: "M@123456"
-});
-
 const bannerUrl = ref("");
 getAudiovisual(
   env === "prod"
@@ -58,9 +56,12 @@ const onConfirm = async ({
   selectedOptions: PickerOption;
 }): Promise<void> => {
   showPicker.value = false;
-  loginData.value.username = selectedOptions[0].policeNo;
+  const loginData = {
+    username: selectedOptions[0].policeNo,
+    password: selectedOptions[0].password
+  };
   // 登录
-  userStore.login(loginData.value).then(() => {
+  userStore.login(loginData).then(() => {
     getUserInfo();
     // showSuccessToast("登录成功");
     // location.reload();

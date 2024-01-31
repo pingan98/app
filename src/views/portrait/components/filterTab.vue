@@ -279,7 +279,11 @@ function getOrgData() {
 function getGRHXData() {
   getGRHX({ db33: filterTabData.value.db33 }).then(data => {
     policeData.value = data || [];
-    const jyname = policeData.value[0]?.jyname;
+    const filterArr =
+      policeData.value.filter(v => v.jyname === userStore.userInfo.name) || [];
+    const jyname = filterArr.length
+      ? filterArr[0]?.jyname
+      : policeData.value[0].jyname;
     if (jyname) {
       filterTabData.value.policeHandlingCase = jyname;
       emitChange();
