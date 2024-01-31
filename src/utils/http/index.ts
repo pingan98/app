@@ -166,7 +166,7 @@ class Http {
             message = "网关错误";
             break;
           case 503:
-            message = "服务不可用";
+            message = "网络不佳，请稍后重试";
             break;
           case 504:
             message = "网关超时";
