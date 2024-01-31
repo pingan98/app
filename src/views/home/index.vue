@@ -161,17 +161,6 @@ watch(
       <div class="home-banner w-screen">
         <img :src="bannerUrl" alt="" style="max-width: 100%; height: auto" />
       </div>
-      <!-- 轮播图 -->
-      <!--<div
-        class="home-banner px-[16px] bg-gradient-to-t from-[#ffffff] to-[#8dc2ff] w-screen h-[200px] pt-[20px]"
-      >
-        <van-swipe indicator-color="#fff" :autoplay="3000">
-          <van-swipe-item v-for="image in images" :key="image">
-            <img :src="image" />
-          </van-swipe-item>
-        </van-swipe>
-      </div>-->
-
       <!-- nav -->
       <van-grid
         clickable
@@ -184,7 +173,7 @@ watch(
           v-for="(item, ind) in homeNav"
           :key="ind"
         >
-          <div class="img-box" :class="[`bg${ind + 1}`]"></div>
+          <div :class="['img-box', `bg_${item.to}`]"></div>
           <div class="name">{{ item.title }}</div>
         </van-grid-item>
       </van-grid>
@@ -254,13 +243,13 @@ watch(
   .img-box {
     width: 60px;
     height: 60px;
-    &.bg1 {
+    &.bg_Score {
       background: url("@/assets/score@3x.png") no-repeat center / 100%;
     }
-    &.bg2 {
+    &.bg_Caution {
       background: url("@/assets/education@3x.png") no-repeat center / 100%;
     }
-    &.bg3 {
+    &.bg_Warning {
       background: url("@/assets/warning@3x.png") no-repeat center / 100%;
     }
   }
