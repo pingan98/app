@@ -48,7 +48,7 @@ class Http {
   private httpInterceptorsRequest(): void {
     Http.axiosInstance.interceptors.request.use(
       config => {
-        console.log(config.url);
+        // console.log(config.url);
         // dev prod
         if (env === "prod") {
           const appStore = useAppStore();
@@ -59,11 +59,11 @@ class Http {
 
           config.headers["messageId"] = generateGuid();
 
-          console.log("config-----", config);
+          // console.log("config-----", config);
           const address = appStore.filterAddress(
             config.matchUrl || config.url || ""
           );
-          console.log(address);
+          // console.log(address);
 
           // 将baseUrl替换为服务总线的地址 并设置服务总线所需的一些参数
           config.baseURL = appStore.setServicesBusAddress(address);

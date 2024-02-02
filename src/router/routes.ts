@@ -103,7 +103,7 @@ const routes: Array<RouteRecordRaw> = [
         path: "/home",
         name: "Home",
         component: Home,
-        meta: { title: "首页" }
+        meta: { title: "首页", noCache: true }
       },
       {
         path: "/portrait",

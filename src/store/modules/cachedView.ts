@@ -6,7 +6,8 @@ export const useCachedViewStore = defineStore({
   id: "cached-view",
   state: () => ({
     // 缓存页面 keepAlive
-    cachedViewList: [] as string[]
+    cachedViewList: [] as string[],
+    bannerUrl: ""
   }),
   actions: {
     addCachedView(view: toRouteType) {
@@ -22,6 +23,11 @@ export const useCachedViewStore = defineStore({
     },
     delAllCachedViews() {
       this.cachedViewList = [] as string[];
+    },
+    addBannerUrl(url: string) {
+      console.log("addBannerUrl");
+      if (this.bannerUrl) return;
+      this.bannerUrl = url;
     }
   }
 });

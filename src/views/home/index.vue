@@ -1,5 +1,5 @@
 <script setup lang="ts" name="Home">
-import { ref, onMounted, watch } from "vue";
+import { ref, watch } from "vue";
 import { useUserStore } from "@/store/modules/user";
 import { useAppStore } from "@/store/modules/app";
 import type { PickerOption } from "vant";
@@ -9,6 +9,8 @@ import { getWarnMaterialPage } from "@/api/warnMaterial";
 import { CAUTION_STATUS } from "@/const/warnMaterial";
 import empty from "@/assets/empty@3x.png";
 import { getAudiovisual } from "@/api/common";
+import type { LoginData } from "@/api/auth/types";
+import { useCachedViewStoreHook } from "@/store/modules/cachedView";
 const env = import.meta.env.VITE_APP_ENV;
 const userStore = useUserStore();
 const appStore = useAppStore();
@@ -25,13 +27,6 @@ const testRole = [
 ];
 const showPicker = ref(false);
 const bannerUrl = ref("");
-getAudiovisual(
-  env === "prod"
-    ? "/cautionAdd/警示教育/e9ce17a8-a03d-4f8e-b5d3-c5e0442dd178/2023-12-01/banner-2935889c.jpg"
-    : "/cautionAdd/警示教育/6f06e55d-79d5-4768-8d47-15a9ade4550e/2023-12-01/banner.jpg"
-).then(res => {
-  bannerUrl.value = res as string;
-});
 // 加载中状态
 const loading = ref(false);
 // 是否完全加载完毕数据
@@ -63,8 +58,7 @@ const onConfirm = async ({
   // 登录
   userStore.login(loginData).then(() => {
     getUserInfo();
-    // showSuccessToast("登录成功");
-    // location.reload();
+    refreshList();
   });
 
   showPicker.value = false;
@@ -74,24 +68,47 @@ function getUserInfo() {
     console.log("getUserInfo res :>> ", res);
   });
 }
-
-// 正式
-const onLogin = () => {
-  // console.log(window.nativeObj.getZjhm());
-  // 测试 330421196508134111
-  // 正式 window.nativeObj.getZjhm()
-  // 登录
-  userStore
-    .login({
-      // username: "330421196508134111"
-      username: appStore.zjhm
-    })
-    .then(() => {
-      getUserInfo();
-      // showSuccessToast("登录成功");
-      // location.reload();
+function getBanner() {
+  const url = useCachedViewStoreHook().bannerUrl || "";
+  if (url) {
+    bannerUrl.value = url;
+  } else {
+    getAudiovisual(
+      env === "prod"
+        ? "/cautionAdd/警示教育/e9ce17a8-a03d-4f8e-b5d3-c5e0442dd178/2023-12-01/banner-2935889c.jpg"
+        : "/cautionAdd/警示教育/6f06e55d-79d5-4768-8d47-15a9ade4550e/2023-12-01/banner.jpg"
+    ).then(res => {
+      bannerUrl.value = res as string;
+      useCachedViewStoreHook().addBannerUrl(bannerUrl.value);
     });
-};
+  }
+}
+function onLogin() {
+  const serve: LoginData = {
+    username: ""
+  };
+  if (env === "prod") {
+    // 正式
+    serve.username = appStore.zjhm; // 测试 330421196508134111
+  } else {
+    // 测试
+    serve.username = userStore?.userInfo?.policeNo || "cjw";
+    serve.password = testRole.filter(
+      v => v.policeNo === serve.username
+    )[0].password;
+  }
+  userStore.login(serve).then(() => {
+    getUserInfo();
+    getCautionList();
+  });
+}
+function refreshList() {
+  listData.value = [];
+  materialForm.value.page = 1;
+  getCautionList();
+}
+onLogin();
+getBanner();
 const getCautionList = async () => {
   try {
     const res = await getWarnMaterialPage(materialForm.value);
@@ -109,22 +126,6 @@ const getCautionList = async () => {
     finished.value = true;
   }
 };
-onMounted(() => {
-  if (env === "prod") {
-    onLogin();
-  }
-});
-watch(
-  () => userStore.accessToken,
-  (newValue, oldValue) => {
-    if (listData.value.length) return;
-    listData.value = [];
-    materialForm.value.page = 1;
-    listData.value = [];
-    getCautionList();
-  }
-);
-
 watch(
   () => userStore.menuList,
   menuList => {
@@ -208,6 +209,7 @@ watch(
           v-model:loading="loading"
           :finished="finished"
           finished-text="没有更多了"
+          :immediate-check="false"
           @load="getCautionList"
         >
           <material-item
